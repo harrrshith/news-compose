@@ -13,7 +13,7 @@ import com.harshith.news.R
 
 // Set of Material typography styles to start with
 private val Montserrat = FontFamily(
-    Font( R.font.montserrat_variable)
+    Font( R.font.montserrat_medium)
 )
 
 val defaultTextStyle = TextStyle(
@@ -23,13 +23,9 @@ val defaultTextStyle = TextStyle(
         trim = LineHeightStyle.Trim.None
     )
 )
-private val caprasimo = FontFamily(
-    Font(R.font.caprasimo_regular)
-)
 
 
-@OptIn(ExperimentalTextApi::class)
-val jetNewsTypography = Typography(
+val newsTypography = Typography(
     displayLarge = defaultTextStyle.copy(
         fontSize = 57.sp,
         lineHeight = 64.sp,

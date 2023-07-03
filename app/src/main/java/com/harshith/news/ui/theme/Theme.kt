@@ -102,7 +102,7 @@ fun NewsTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = jetNewsTypography,
+        typography = newsTypography,
         content = content
     )
 }

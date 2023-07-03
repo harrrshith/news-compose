@@ -68,4 +68,12 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    val navVersion = "2.6.0"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
+    val viewModelVersion = "2.5.1"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$viewModelVersion")
+
+    implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
 }
