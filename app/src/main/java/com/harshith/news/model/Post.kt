@@ -9,9 +9,9 @@ data class Post(
     val url: String,
     val publication: Publication? = null,
     val metadata: MetaData,
-    val paragraph: List<Paragraph>,
+    val paragraphs: List<Paragraph>,
     @DrawableRes val imageId: Int,
-    @DrawableRes val imageResId: Int
+    @DrawableRes val imageThumbId: Int
 )
 
 data class Publication(
@@ -21,8 +21,8 @@ data class Publication(
 
 data class MetaData(
     val author: PostAuthor,
-    val data: String,
-    val readTimeMinutes: String
+    val date: String,
+    val readTimeMinutes: Int
 )
 
 data class PostAuthor(
@@ -36,7 +36,13 @@ data class Paragraph(
     val markups: List<Markup> = emptyList()
 )
 
-enum class Markup{
+data class Markup(
+    val type: MarkupType,
+    val start: Int,
+    val end: Int,
+    val href: String? = null
+)
+enum class MarkupType{
     Link,
     Code,
     Italic,

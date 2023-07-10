@@ -1,5 +1,16 @@
 package com.harshith.news.data.posts
 
+import com.harshith.news.R
+import com.harshith.news.model.Markup
+import com.harshith.news.model.MarkupType
+import com.harshith.news.model.MetaData
+import com.harshith.news.model.Paragraph
+import com.harshith.news.model.ParagraphType
+import com.harshith.news.model.Post
+import com.harshith.news.model.PostAuthor
+import com.harshith.news.model.PostsFeed
+import com.harshith.news.model.Publication
+
 
 val pietro = PostAuthor("Pietro Maggi", "https://medium.com/@pmaggi")
 val manuel = PostAuthor("Manuel Vivo", "https://medium.com/@manuelvicnt")
@@ -909,14 +920,14 @@ val post1 = Post(
     subtitle = "How to configure your module paths, instead of using Gradle’s default.",
     url = "https://medium.com/androiddevelopers/gradle-path-configuration-dc523f0ed25c",
     publication = publication,
-    metadata = Metadata(
+    metadata = MetaData(
         author = pietro,
         date = "August 02",
         readTimeMinutes = 1
     ),
     paragraphs = paragraphsPost1,
-    imageId = R.drawable.post_1,
-    imageThumbId = R.drawable.post_1_thumb
+    imageId = R.drawable.image_post,
+    imageThumbId = R.drawable.image_post_thumb
 )
 
 val post2 = Post(
@@ -925,14 +936,14 @@ val post2 = Post(
     subtitle = "Use Dagger in Kotlin! This article includes best practices to optimize your build time and gotchas you might encounter.",
     url = "https://medium.com/androiddevelopers/dagger-in-kotlin-gotchas-and-optimizations-7446d8dfd7dc",
     publication = publication,
-    metadata = Metadata(
+    metadata = MetaData(
         author = manuel,
         date = "July 30",
         readTimeMinutes = 3
     ),
     paragraphs = paragraphsPost2,
-    imageId = R.drawable.post_2,
-    imageThumbId = R.drawable.post_2_thumb
+    imageId = R.drawable.image_post,
+    imageThumbId = R.drawable.image_post_thumb
 )
 
 val post3 = Post(
@@ -941,14 +952,14 @@ val post3 = Post(
     subtitle = "Learn how to get started converting Java Programming Language code to Kotlin, making it more idiomatic and avoid common pitfalls, by…",
     url = "https://medium.com/androiddevelopers/from-java-programming-language-to-kotlin-the-idiomatic-way-ac552dcc1741",
     publication = publication,
-    metadata = Metadata(
+    metadata = MetaData(
         author = florina,
         date = "July 09",
         readTimeMinutes = 1
     ),
     paragraphs = paragraphsPost3,
-    imageId = R.drawable.post_3,
-    imageThumbId = R.drawable.post_3_thumb
+    imageId = R.drawable.image_post,
+    imageThumbId = R.drawable.image_post_thumb
 )
 
 val post4 = Post(
@@ -957,14 +968,14 @@ val post4 = Post(
     subtitle = "TL;DR: Expose resource IDs from ViewModels to avoid showing obsolete data.",
     url = "https://medium.com/androiddevelopers/locale-changes-and-the-androidviewmodel-antipattern-84eb677660d9",
     publication = publication,
-    metadata = Metadata(
+    metadata = MetaData(
         author = jose,
         date = "April 02",
         readTimeMinutes = 1
     ),
     paragraphs = paragraphsPost4,
-    imageId = R.drawable.post_4,
-    imageThumbId = R.drawable.post_4_thumb
+    imageId = R.drawable.image_post,
+    imageThumbId = R.drawable.image_post_thumb
 )
 
 val post5 = Post(
@@ -973,14 +984,14 @@ val post5 = Post(
     subtitle = "Working with collections is a common task and the Kotlin Standard Library offers many great utility functions. It also offers two ways of…",
     url = "https://medium.com/androiddevelopers/collections-and-sequences-in-kotlin-55db18283aca",
     publication = publication,
-    metadata = Metadata(
+    metadata = MetaData(
         author = florina,
         date = "July 24",
         readTimeMinutes = 4
     ),
     paragraphs = paragraphsPost5,
-    imageId = R.drawable.post_5,
-    imageThumbId = R.drawable.post_5_thumb
+    imageId = R.drawable.image_post,
+    imageThumbId = R.drawable.image_post_thumb
 )
 
 val posts: PostsFeed =

@@ -11,7 +11,6 @@ import com.harshith.news.model.PostsFeed
 import com.harshith.news.util.ErrorMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -62,7 +61,7 @@ private data class HomeViewModelState(
                 postsFeed = postsFeed,
                 selectedPost = postsFeed.allPosts.find {
                     it.id == selectedPostId
-                } ?: postsFeed.highLightedPost,
+                } ?: postsFeed.highlightedPost,
                 isArticleOpen = isArticleOpen,
                 favourites = favourites,
                 isLoading = isLoading,

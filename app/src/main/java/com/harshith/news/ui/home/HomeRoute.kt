@@ -62,8 +62,19 @@ fun HomeRoute(
 private fun getHomeScreenType(
     isExpandedScreen: Boolean,
     uiState: HomeUiState
-){
-
+): HomeScreenType = when(isExpandedScreen){
+    false -> {
+        when(uiState){
+            is HomeUiState.HasPosts -> {
+                if(uiState.isArticleOpen)
+                    HomeScreenType.ArticleDetails
+                else
+                    HomeScreenType.Feed
+            }
+            is HomeUiState.NoPosts -> HomeScreenType.Feed
+        }
+    }
+    true -> HomeScreenType.FeedWithArticles
 }
 
 enum class HomeScreenType{
