@@ -1,20 +1,38 @@
 package com.harshith.news.ui.home
 
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -35,33 +53,58 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
+import com.harshith.news.data.posts.post1
+import com.harshith.news.data.posts.post2
+import com.harshith.news.data.posts.post3
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
+import com.harshith.news.ui.modifier.interceptKey
+import com.harshith.news.ui.rememberContentPaddingForScreen
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.ui.utils.BookMarkButton
+import com.harshith.news.ui.utils.FavouriteButton
+import com.harshith.news.ui.utils.ShareButton
+import com.harshith.news.ui.utils.TextSettingsButton
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 
+@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
     uiState: HomeUiState,
@@ -88,17 +131,99 @@ fun HomeFeedWithArticleDetailsScreen(
         snackbarHostState = snackbarHostState,
         modifier = modifier
     ){hasPostsUiState, contentModifier ->
-
-
+        val contentPadding = rememberContentPaddingForScreen(additionalTop = 16.dp)
+        Row(contentModifier) {
+            PostList(
+                postsFeed = hasPostsUiState.postsFeed,
+                favourites = hasPostsUiState.favourites,
+                showExpandedSearch = !showTopAppBar,
+                onArticleTapped = onSelectPosts,
+                onToggleFavourite = onToggleFavourite,
+                onSearchInputChanged = onSearchInputChanged,
+                contentPadding = contentPadding,
+                modifier = Modifier
+                    .width(334.dp)
+                    .notifyInput { onInteractWithList() }
+                    .imePadding(),
+                state = homeListLazyListState,
+                searchInput = hasPostsUiState.searchInput
+            )
+            Crossfade(targetState = hasPostsUiState.selectedPost) {detailPost ->
+                val detailLazyListState by derivedStateOf {
+                    articleDetailsLazyListStates.getValue(detailPost.id)
+                }
+                key(detailPost.id) {
+                    LazyColumn(
+                        state = detailLazyListState,
+                        contentPadding = contentPadding,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxSize()
+                            .notifyInput {
+                                onInteractWithDetail(detailPost.id)
+                            }
+                            .imePadding(),
+                    ){
+                        stickyHeader {
+                            val context = LocalContext.current
+                            PostTopBar(
+                                isFavourite = hasPostsUiState.favourites.contains(detailPost.id),
+                                onToggleFavourite = { onToggleFavourite(detailPost.id) },
+                                onSharePost = { /*TODO:sharePost(detailPost.id, context)*/ },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth(Alignment.End)
+                            )
+                        }
+                        //TODO:postContentItems(detailPost)
+                    }
+                }
+            }
+        }
     }
-
 }
 
 @Composable
 fun HomeFeedScreen(
-
+    uiState: HomeUiState,
+    showTopAppBar: Boolean,
+    onToggleFavourite: (String) -> Unit,
+    onSelectPosts: (String) -> Unit,
+    onRefreshPosts: () -> Unit,
+    onErrorDismiss: (Long) -> Unit,
+    openDrawer: () -> Unit,
+    homeListLazyListState: LazyListState,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    searchInput: String = "",
+    onSearchInputChanged: (String) -> Unit
 ){
+    HomeScreenWithList(
+        uiState = uiState,
+        showTopAppBar = showTopAppBar,
+        onRefreshPosts = { onRefreshPosts() },
+        onErrorDismiss = onErrorDismiss,
+        openDrawer = { openDrawer() },
+        snackbarHostState = snackbarHostState,
+        modifier = modifier
+    ) {hasPostsUiState, contentModifier ->
+        PostList(
+            postsFeed = hasPostsUiState.postsFeed,
+            favourites = hasPostsUiState.favourites,
+            showExpandedSearch = !showTopAppBar,
+            onArticleTapped = onSelectPosts,
+            onToggleFavourite = onToggleFavourite,
+            modifier = contentModifier,
+            contentPadding = rememberContentPaddingForScreen(
+                additionalTop = if(showTopAppBar) 0.dp else 8.dp,
+                excludeTop = showTopAppBar
+            ),
+            state = homeListLazyListState,
+            searchInput = searchInput,
+            onSearchInputChanged = onSearchInputChanged,
 
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -181,7 +306,7 @@ private fun HomeScreenWithList(
                 actionLabel = retryTextMessage
             )
             if(snackBarResult == SnackbarResult.ActionPerformed){
-                onRefreshPosts()
+                onRefreshPostsState()
             }
             onErrorDismissState(errorMessage.id)
         }
@@ -216,6 +341,24 @@ fun PostList(
             }
         }
         item { PostListTopSelection( postsFeed.highlightedPost, onArticleTapped) }
+        if(postsFeed.recommendedPosts.isNotEmpty()){
+            item {
+                PostListSimpleSelection(
+                    posts = postsFeed.recommendedPosts,
+                    navigateToArticle = onArticleTapped,
+                    favourites = favourites,
+                    onToggleFavourite = onToggleFavourite
+                )
+            }
+        }
+
+        if(postsFeed.popularPosts.isNotEmpty()){
+            item { PostListPopularSection(posts = postsFeed.popularPosts, navigateToArticle = onArticleTapped) }
+        }
+
+        if(postsFeed.recentPosts.isNotEmpty()){
+            item { PostListHistorySection(posts = postsFeed.recentPosts, navigateToArticle = onArticleTapped) }
+        }
     }
 }
 
@@ -251,9 +394,78 @@ fun PostListSimpleSelection(
                 isFavourite = favourites.contains(post.id),
                 onToggleFavourite = { onToggleFavourite(post.id) }
             )
+            PostListDivider()
         }
     }
 }
+
+@Composable
+fun PostListPopularSection(
+    posts: List<Post>,
+    navigateToArticle: (String) -> Unit
+){
+    Column {
+        Text(
+            text = stringResource(id = R.string.popular_on_news),
+            modifier =  Modifier.padding(16.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            items(posts){ post ->
+                PostCardPopular(
+                    post,
+                    navigateToArticle
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        PostListDivider()
+    }
+}
+
+@Composable
+fun PostListHistorySection(
+    posts: List<Post>,
+    navigateToArticle: (String) -> Unit
+){
+    Column {
+        posts.forEach { post ->
+            PostCardHistory(
+                post,
+                navigateToArticle
+            )
+            PostListDivider()
+        }
+    }
+}
+
+@Composable
+fun PostTopBar(
+    isFavourite: Boolean,
+    onToggleFavourite: () -> Unit,
+    onSharePost: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(
+            Dp.Hairline,
+            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        ),
+        modifier = modifier.padding(0.dp, 0.dp, 16.dp, 0.dp)
+    ) {
+        Row(modifier = Modifier.padding(16.dp, 0.dp)) {
+            FavouriteButton(onClick = {} )
+            BookMarkButton(isBookmarked = isFavourite, onClick = { onToggleFavourite() })
+            ShareButton(onClick = onSharePost)
+            TextSettingsButton(onClick = {})
+        }
+    }
+}
+
 @Composable
 fun PostListDivider(){
     Divider(
@@ -298,7 +510,7 @@ private fun HomeTopAppBar(
                 )
             }
         },
-//        scrollBehavior = scrollBehaviour,
+        scrollBehavior = scrollBehaviour,
     modifier = modifier
     )
 }
@@ -318,13 +530,38 @@ private fun LoadingContent(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HomeSearch(
     modifier: Modifier = Modifier,
     searchInput: String = "",
     onSearchInputChanged: (String) -> Unit
 ){
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyBoardController = LocalSoftwareKeyboardController.current
 
+    OutlinedTextField(
+        value = searchInput,
+        onValueChange = onSearchInputChanged,
+        placeholder = { Text(text = stringResource(id = R.string.search_articles)) },
+        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
+        modifier = modifier
+            .fillMaxWidth()
+            .interceptKey(Key.Enter){
+                submitSearch(onSearchInputChanged, context)
+                keyBoardController?.hide()
+                focusManager.clearFocus(force = true)
+            },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                submitSearch(onSearchInputChanged, context)
+                keyBoardController?.hide()
+            }
+        )
+    )
 }
 
 @Composable
@@ -339,6 +576,26 @@ fun FullScreenLoading(){
 
 }
 
+private fun Modifier.notifyInput(block: () -> Unit): Modifier =
+    composed {
+        val blockState = rememberUpdatedState(newValue = block)
+        pointerInput(Unit){
+            while (currentCoroutineContext().isActive){
+                awaitPointerEventScope {
+                    awaitPointerEvent(PointerEventPass.Initial)
+                    blockState.value()
+                }
+            }
+        }
+    }
+
+private fun submitSearch(
+    onSearchInputChanged: (String) -> Unit,
+    context: Context
+){
+
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview()
@@ -348,4 +605,26 @@ fun PreviewHomeTopBar(){
         openDrawer = {},
         topAppBarState = TopAppBarState(1f, 1f, 1f),
     )
+}
+
+@Preview
+@Composable
+fun PreviewPostListSimpleSelection(){
+    val posts = listOf(post1, post2, post3)
+    NewsTheme {
+        Surface {
+            Column {
+                PostListSimpleSelection(
+                    posts = posts,
+                    navigateToArticle = {},
+                    favourites = emptySet(),
+                    onToggleFavourite = {}
+                )
+                PostListPopularSection(
+                    posts = posts,
+                    navigateToArticle = {}
+                )
+            }
+        }
+    }
 }

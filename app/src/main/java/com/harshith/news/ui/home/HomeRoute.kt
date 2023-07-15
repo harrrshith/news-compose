@@ -18,6 +18,19 @@ fun HomeRoute(
     }
 ){
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    HomeRoute(
+        uiState = uiState,
+        isExpandedScreen = isExpandedScreen,
+        onToggleFavourite = { homeViewModel.toggleFavourites(it) },
+        onSelectPosts = { homeViewModel.selectArticle(it) },
+        onRefreshPosts = { homeViewModel.refreshPosts() },
+        onErrorDismiss = { },
+        onInteractWithFeed = { homeViewModel.interactWithFeed() },
+        onInteractWidthArticleDetails = { homeViewModel.interactWithArticleDetails(it) },
+        onSearchInputChange = { homeViewModel.onSearchInputChanged(it) },
+        openDrawer = { openDrawer() },
+        snackbarHostState = snackbarHostState
+    )
 
 }
 
@@ -29,7 +42,7 @@ fun HomeRoute(
     onSelectPosts: (String) -> Unit,
     onRefreshPosts: () -> Unit,
     onErrorDismiss: (Long) -> Unit,
-    onInteractWidth: () -> Unit,
+    onInteractWithFeed: () -> Unit,
     onInteractWidthArticleDetails: (String) -> Unit,
     onSearchInputChange: (String) -> Unit,
     openDrawer: () -> Unit,
@@ -48,10 +61,35 @@ fun HomeRoute(
     val homeScreenType = getHomeScreenType(isExpandedScreen, uiState)
     when(homeScreenType){
         HomeScreenType.FeedWithArticles -> {
-
+            HomeFeedWithArticleDetailsScreen(
+                uiState = uiState,
+                showTopAppBar = !isExpandedScreen,
+                onToggleFavourite = onToggleFavourite,
+                onSelectPosts = onSelectPosts,
+                onRefreshPosts = { onRefreshPosts() },
+                onErrorDismiss = onErrorDismiss,
+                onInteractWithList = { onInteractWithFeed() },
+                onInteractWithDetail = onInteractWidthArticleDetails,
+                openDrawer = { openDrawer() },
+                homeListLazyListState = homeLazyListState,
+                articleDetailsLazyListStates = articleDetailsLazyListState,
+                snackbarHostState = snackbarHostState,
+                onSearchInputChanged = onSearchInputChange
+            )
         }
         HomeScreenType.Feed -> {
-
+            HomeFeedScreen(
+                uiState = uiState,
+                showTopAppBar = !isExpandedScreen,
+                onToggleFavourite = onToggleFavourite,
+                onSelectPosts = onSelectPosts,
+                onRefreshPosts = { onRefreshPosts() },
+                onErrorDismiss = onErrorDismiss,
+                openDrawer = { openDrawer() },
+                homeListLazyListState = homeLazyListState,
+                snackbarHostState = snackbarHostState,
+                onSearchInputChanged = onSearchInputChange
+            )
         }
         HomeScreenType.ArticleDetails -> {
 
