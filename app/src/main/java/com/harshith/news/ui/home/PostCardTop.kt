@@ -25,6 +25,7 @@ import com.harshith.news.data.posts.post1
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.util.CompletePreviews
 
 @Composable
 fun PostCardTop(
@@ -76,7 +77,7 @@ fun PostCardTop(
 
 }
 
-@Preview
+@CompletePreviews
 @Composable
 fun PreviewPostCardTop(){
     NewsTheme {
