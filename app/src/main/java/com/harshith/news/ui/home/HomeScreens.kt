@@ -2,6 +2,7 @@ package com.harshith.news.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -25,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -73,6 +75,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -80,6 +83,7 @@ import com.harshith.news.R
 import com.harshith.news.data.posts.post1
 import com.harshith.news.data.posts.post2
 import com.harshith.news.data.posts.post3
+import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import com.harshith.news.ui.modifier.interceptKey
@@ -89,6 +93,7 @@ import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
 import com.harshith.news.ui.utils.TextSettingsButton
+import com.harshith.news.util.CompletePreviews
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
@@ -537,7 +542,7 @@ fun HomeSearch(
         leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
         modifier = modifier
             .fillMaxWidth()
-            .interceptKey(Key.Enter){
+            .interceptKey(Key.Enter) {
                 submitSearch(onSearchInputChanged, context)
                 keyBoardController?.hide()
                 focusManager.clearFocus(force = true)
@@ -585,35 +590,101 @@ private fun submitSearch(
 
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview()
+@Preview("Home list drawer screen")
+@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
+@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
 @Composable
-fun PreviewHomeTopBar(){
-    HomeTopAppBar(
-        openDrawer = {},
-        topAppBarState = TopAppBarState(1f, 1f, 1f),
-    )
+fun PreviewHomeListDrawerScreen(){
+    NewsTheme {
+        HomeFeedScreen(
+            uiState = HomeUiState.HasPosts(
+                postsFeed = posts,
+                selectedPost = posts.highlightedPost,
+                isArticleOpen = false,
+                favourites = emptySet(),
+                isLoading = false,
+                errorMessage = emptyList(),
+                searchInput = ""
+            ),
+            showTopAppBar = true,
+            onToggleFavourite = {},
+            onSelectPosts = {},
+            onRefreshPosts = {},
+            onErrorDismiss = {},
+            openDrawer = {},
+            homeListLazyListState = rememberLazyListState(),
+            snackbarHostState = SnackbarHostState(),
+            onSearchInputChanged ={}
+        )
+    }
 }
 
-@Preview
+@Preview("Home List navrail Scrern", device = Devices.NEXUS_7_2013)
+@Preview(
+    "Home list navrail screen (dark)",
+    uiMode = UI_MODE_NIGHT_YES,
+    device = Devices.NEXUS_7_2013
+)
+@Preview("Home list navrail screen (big font)", fontScale = 1.5f, device = Devices.NEXUS_7_2013)
 @Composable
-fun PreviewPostListSimpleSelection(){
-    val posts = listOf(post1, post2, post3)
+fun PreviewNavListHomeRail(){
     NewsTheme {
-        Surface {
-            Column {
-                PostListSimpleSelection(
-                    posts = posts,
-                    navigateToArticle = {},
-                    favourites = emptySet(),
-                    onToggleFavourite = {}
-                )
-                PostListPopularSection(
-                    posts = posts,
-                    navigateToArticle = {}
-                )
-            }
-        }
+        HomeFeedScreen(
+            uiState = HomeUiState.HasPosts(
+                postsFeed = posts,
+                selectedPost = posts.highlightedPost,
+                isArticleOpen = false,
+                favourites = emptySet(),
+                isLoading = false,
+                errorMessage = emptyList(),
+                searchInput = ""
+            ),
+            showTopAppBar = true,
+            onToggleFavourite = {},
+            onSelectPosts = {},
+            onRefreshPosts = {},
+            onErrorDismiss = {},
+            openDrawer = {},
+            homeListLazyListState = rememberLazyListState(),
+            snackbarHostState = SnackbarHostState(),
+            onSearchInputChanged ={}
+        )
+    }
+}
+
+@Preview("Home List details screen", device = Devices.PIXEL_C)
+@Preview("Home list detail screen (dark)", uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_C)
+@Preview("Home list detail screen (big font)", fontScale = 1.5f, device = Devices.PIXEL_C)
+@Composable
+fun PreviewHomeListSimpleSelection(){
+    NewsTheme {
+        HomeFeedWithArticleDetailsScreen(
+            uiState = HomeUiState.HasPosts(
+                postsFeed = posts,
+                selectedPost = posts.highlightedPost,
+                isArticleOpen = false,
+                favourites = emptySet(),
+                isLoading = false,
+                errorMessage = emptyList(),
+                searchInput = ""
+            ),
+            showTopAppBar = true,
+            onToggleFavourite = {},
+            onSelectPosts = {},
+            onRefreshPosts = {},
+            onErrorDismiss = {},
+            onInteractWithList = {},
+            onInteractWithDetail = {},
+            openDrawer = {},
+            homeListLazyListState = rememberLazyListState(),
+            articleDetailsLazyListStates = posts
+                .allPosts.associate {
+                    key(it.id) {
+                        it.id to rememberLazyListState()
+                    }
+            },
+            snackbarHostState = SnackbarHostState(),
+            onSearchInputChanged = {}
+        )
     }
 }
