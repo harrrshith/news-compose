@@ -1,6 +1,5 @@
 package com.harshith.news.data.posts.impl
 
-import com.harshith.news.data.posts.PostRepository
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import kotlinx.coroutines.Dispatchers
@@ -8,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import com.harshith.news.data.Result
+import com.harshith.news.data.posts.PostRepository
 import com.harshith.news.data.posts.posts
 import com.harshith.news.util.addOrRemove
 import kotlinx.coroutines.flow.MutableStateFlow

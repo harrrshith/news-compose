@@ -43,11 +43,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
     }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+     packaging.resources {
+         excludes += "/META-INF/{AL2.0,LGPL2.1}"
+     }
 }
 
 dependencies {
@@ -78,7 +76,5 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
 
     val lifeCycleVersion = "2.6.1"
-//    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersion")
-//    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifeCycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifeCycleVersion")
 }

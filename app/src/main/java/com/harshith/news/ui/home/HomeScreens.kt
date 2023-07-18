@@ -80,9 +80,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
-import com.harshith.news.data.posts.post1
-import com.harshith.news.data.posts.post2
-import com.harshith.news.data.posts.post3
+import com.harshith.news.data.Result
+import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
@@ -93,9 +92,9 @@ import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
 import com.harshith.news.ui.utils.TextSettingsButton
-import com.harshith.news.util.CompletePreviews
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
@@ -595,11 +594,14 @@ private fun submitSearch(
 @Preview("Home list drawer screen (big font)", fontScale = 1.5f)
 @Composable
 fun PreviewHomeListDrawerScreen(){
+    val postsFeed = runBlocking {
+        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
+    }
     NewsTheme {
         HomeFeedScreen(
             uiState = HomeUiState.HasPosts(
                 postsFeed = posts,
-                selectedPost = posts.highlightedPost,
+                selectedPost = postsFeed.highlightedPost,
                 isArticleOpen = false,
                 favourites = emptySet(),
                 isLoading = false,
@@ -619,20 +621,23 @@ fun PreviewHomeListDrawerScreen(){
     }
 }
 
-@Preview("Home List navrail Scrern", device = Devices.NEXUS_7_2013)
+@Preview("Home List nav rail Screen", device = Devices.NEXUS_7_2013)
 @Preview(
-    "Home list navrail screen (dark)",
+    "Home list nav rail screen (dark)",
     uiMode = UI_MODE_NIGHT_YES,
     device = Devices.NEXUS_7_2013
 )
-@Preview("Home list navrail screen (big font)", fontScale = 1.5f, device = Devices.NEXUS_7_2013)
+@Preview("Home list nav rail screen (big font)", fontScale = 1.5f, device = Devices.NEXUS_7_2013)
 @Composable
 fun PreviewNavListHomeRail(){
+    val postsFeed = runBlocking {
+        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
+    }
     NewsTheme {
         HomeFeedScreen(
             uiState = HomeUiState.HasPosts(
                 postsFeed = posts,
-                selectedPost = posts.highlightedPost,
+                selectedPost = postsFeed.highlightedPost,
                 isArticleOpen = false,
                 favourites = emptySet(),
                 isLoading = false,
@@ -657,11 +662,14 @@ fun PreviewNavListHomeRail(){
 @Preview("Home list detail screen (big font)", fontScale = 1.5f, device = Devices.PIXEL_C)
 @Composable
 fun PreviewHomeListSimpleSelection(){
+    val postsFeed = runBlocking {
+        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
+    }
     NewsTheme {
         HomeFeedWithArticleDetailsScreen(
             uiState = HomeUiState.HasPosts(
                 postsFeed = posts,
-                selectedPost = posts.highlightedPost,
+                selectedPost = postsFeed.highlightedPost,
                 isArticleOpen = false,
                 favourites = emptySet(),
                 isLoading = false,
