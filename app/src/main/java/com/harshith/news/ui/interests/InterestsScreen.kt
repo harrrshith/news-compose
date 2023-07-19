@@ -36,6 +36,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,6 +49,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.R
 import com.harshith.news.data.Result
 import com.harshith.news.data.interests.InterestsSection
@@ -298,6 +300,39 @@ private fun TopicItem(
             SelectTopicButton(selected = selected)
         }
     }
+}
+
+@Composable
+fun rememberTabContent(interestsViewModel: InterestsViewModel): List<TabContent>{
+    val uiState by interestsViewModel.uiState.collectAsStateWithLifecycle()
+
+    val topicsSelection = TabContent(Sections.Topic){
+        val selectedTopics by interestsViewModel.selectedTopics.collectAsStateWithLifecycle()
+        TabWithSection(
+            sections = uiState.topics,
+            selectedTopics = selectedTopics,
+            onTopicSelect = { interestsViewModel.toggleTopicSelection(it) }
+        )
+    }
+
+    val peopleSection = TabContent(Sections.People){
+        val selectedPeople by interestsViewModel.selectedPeople.collectAsStateWithLifecycle()
+        TabWithTopics(
+            topics = uiState.people,
+            selectedTopics = selectedPeople,
+            onTopicSelect = { interestsViewModel.togglePeopleSelection(it) }
+        )
+    }
+
+    val publicationSelection = TabContent(Sections.Publication){
+        val selectedPublication by interestsViewModel.selectedPublication.collectAsStateWithLifecycle()
+        TabWithTopics(
+            topics = uiState.publications,
+            selectedTopics = selectedPublication,
+            onTopicSelect = { interestsViewModel.togglePublicationSelection(it) }
+        )
+    }
+    return listOf(topicsSelection, peopleSection, publicationSelection)
 }
 
 @Preview
