@@ -17,4 +17,8 @@
     <string name="fewer_stories">show fewer stories like this?</string>
     <string name="agree">Agree</string>
     <string name="search_articles">Search articles</string>
+    <string name="topics">Topics</string>
+    <string name="people">People</string>
+    <string name="publications">Publications</string>
+    <string name="search_not_impleted">Search is not implemented</string>
 </resources>
