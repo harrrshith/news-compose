@@ -1,5 +1,6 @@
 package com.harshith.news.ui.interests
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ fun SelectTopicButton(
     modifier: Modifier = Modifier,
     selected: Boolean = false
 ) {
+    Log.e("Response", "Clicked")
     val icon = if (selected) Icons.Filled.Done else Icons.Filled.Add
     val iconColor = if (selected) {
         MaterialTheme.colorScheme.onPrimary

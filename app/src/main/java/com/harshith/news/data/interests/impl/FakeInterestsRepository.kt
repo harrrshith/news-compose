@@ -4,9 +4,11 @@ import com.harshith.news.data.Result
 import com.harshith.news.data.interests.InterestsRepository
 import com.harshith.news.data.interests.InterestsSection
 import com.harshith.news.data.interests.TopicSelection
+import com.harshith.news.util.addOrRemove
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.update
 
 class FakeInterestsRepository: InterestsRepository {
 
@@ -65,26 +67,26 @@ class FakeInterestsRepository: InterestsRepository {
     }
 
     override suspend fun toggleTopicSelection(topic: TopicSelection) {
-
+        selectedTopic.update {
+            it.addOrRemove(topic)
+        }
     }
 
     override suspend fun togglePersonSelection(person: String) {
-
+        selectedPeople.update {
+            it.addOrRemove(person)
+        }
     }
 
     override suspend fun togglePublicationSelection(publication: String) {
-
+        selectedPublication.update {
+            it.addOrRemove(publication)
+        }
     }
 
-    override fun observerTopicsSelected(): Flow<Set<TopicSelection>> {
-        return emptyFlow()
-    }
+    override fun observerTopicsSelected(): Flow<Set<TopicSelection>> = selectedTopic
 
-    override fun observePeopleSelected(): Flow<Set<String>> {
-        return emptyFlow()
-    }
+    override fun observePeopleSelected(): Flow<Set<String>> = selectedPeople
 
-    override fun observePublicationSelected(): Flow<Set<String>> {
-        return emptyFlow()
-    }
+    override fun observePublicationSelected(): Flow<Set<String>> = selectedPublication
 }
