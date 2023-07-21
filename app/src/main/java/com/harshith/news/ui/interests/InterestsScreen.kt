@@ -229,7 +229,7 @@ fun InterestsTabRowContent(
         }
     }
 }
-private val tabContainer = Modifier
+private val tabContainerModifier = Modifier
     .fillMaxWidth()
     .wrapContentWidth(Alignment.CenterHorizontally)
 @Composable
@@ -238,7 +238,7 @@ fun TabWithSection(
     selectedTopics: Set<TopicSelection>,
     onTopicSelect: (TopicSelection) -> Unit
 ){
-    Column(tabContainer.verticalScroll(rememberScrollState())) {
+    Column(tabContainerModifier.verticalScroll(rememberScrollState())) {
         sections.forEach { (section, topic) ->
             Text(
                 text = section,
@@ -247,12 +247,14 @@ fun TabWithSection(
                     .semantics { heading() },
                 style = MaterialTheme.typography.titleMedium
             )
-            topic.forEach { topic ->
-                TopicItem(
-                    itemTitle = topic,
-                    selected = selectedTopics.contains(TopicSelection(section, topic)),
-                    onToggle = { onTopicSelect(TopicSelection(section, topic))}
-                )
+            InterestsAdaptiveContentLayout{
+                topic.forEach { topic ->
+                    TopicItem(
+                        itemTitle = topic,
+                        selected = selectedTopics.contains(TopicSelection(section, topic)),
+                        onToggle = { onTopicSelect(TopicSelection(section, topic))}
+                    )
+                }
             }
         }
     }
@@ -264,12 +266,17 @@ fun TabWithTopics(
     selectedTopics: Set<String>,
     onTopicSelect: (String) -> Unit
 ){
-    topics.forEach{ topic ->
-        TopicItem(
-            itemTitle = topic,
-            selected = selectedTopics.contains(topic),
-            onToggle = { onTopicSelect(topic)}
-        )
+    InterestsAdaptiveContentLayout(
+        topPadding = 16.dp,
+        modifier = tabContainerModifier.verticalScroll(rememberScrollState())
+    ) {
+        topics.forEach{ topic ->
+            TopicItem(
+                itemTitle = topic,
+                selected = selectedTopics.contains(topic),
+                onToggle = { onTopicSelect(topic)}
+            )
+        }
     }
 }
 @Composable
@@ -355,8 +362,9 @@ private fun InterestsAdaptiveContentLayout(
         content = content
     ){measurables, outerConstraints ->
         val multipleColumnsBreakPointPx = multipleColumnsBreakPoint.roundToPx()
-        val topPaddingPx = topPadding.roundToPx(),
-        val itemSpacingPx = itemsSpacing.roundToPx(),
+
+        val topPaddingPx = topPadding.roundToPx()
+        val itemSpacingPx = itemsSpacing.roundToPx()
         val itemMaxWidthPx = itemMaxWidth.roundToPx()
 
         val columns = if(outerConstraints.maxWidth < multipleColumnsBreakPointPx) 1 else 2
@@ -385,6 +393,14 @@ private fun InterestsAdaptiveContentLayout(
             height = outerConstraints.constrainHeight(layoutHeight)
         ){
             var yPosition = topPaddingPx
+            placeables.chunked(columns).forEachIndexed { rowIndex, row ->
+                var xPosition = 0
+                row.forEach {placeable ->
+                    placeable.placeRelative(x = xPosition, y = yPosition)
+                    xPosition += placeable.width + itemSpacingPx
+                }
+                yPosition += rowHeights[rowIndex]
+            }
         }
     }
 }
