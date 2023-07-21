@@ -42,13 +42,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
+import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.R
 import com.harshith.news.data.Result
@@ -57,6 +62,7 @@ import com.harshith.news.data.interests.TopicSelection
 import com.harshith.news.data.interests.impl.FakeInterestsRepository
 import com.harshith.news.ui.theme.NewsTheme
 import kotlinx.coroutines.runBlocking
+import kotlin.math.max
 
 enum class Sections(@StringRes val titleId: Int){
     Topic(R.string.topics),
@@ -333,6 +339,54 @@ fun rememberTabContent(interestsViewModel: InterestsViewModel): List<TabContent>
         )
     }
     return listOf(topicsSelection, peopleSection, publicationSelection)
+}
+
+@Composable
+private fun InterestsAdaptiveContentLayout(
+    modifier: Modifier = Modifier,
+    topPadding: Dp = 0.dp,
+    itemsSpacing: Dp = 4.dp,
+    itemMaxWidth: Dp = 450.dp,
+    multipleColumnsBreakPoint: Dp = 600.dp,
+    content: @Composable () -> Unit
+){
+    Layout(
+        modifier = modifier,
+        content = content
+    ){measurables, outerConstraints ->
+        val multipleColumnsBreakPointPx = multipleColumnsBreakPoint.roundToPx()
+        val topPaddingPx = topPadding.roundToPx(),
+        val itemSpacingPx = itemsSpacing.roundToPx(),
+        val itemMaxWidthPx = itemMaxWidth.roundToPx()
+
+        val columns = if(outerConstraints.maxWidth < multipleColumnsBreakPointPx) 1 else 2
+        val itemWidth = if(columns == 1){
+            outerConstraints.maxWidth
+        }else{
+            val maxWidthSpaces = outerConstraints.maxWidth - (columns - 1) * itemSpacingPx
+            (maxWidthSpaces/ columns).coerceIn(0, itemMaxWidthPx)
+        }
+
+        val itemConstraints = outerConstraints.copy(maxWidth = itemWidth)
+
+        val rowHeights = IntArray(measurables.size/ columns + 1)
+        val placeables = measurables.mapIndexed { index, measurable ->
+            val placeable = measurable.measure(itemConstraints)
+
+            val row = index.floorDiv(columns)
+            rowHeights[row] = max(rowHeights[row], placeable.height)
+            placeable
+        }
+        val layoutHeight = topPaddingPx + rowHeights.sum()
+        val layoutWidth = itemWidth * columns + (itemSpacingPx * (columns - 1))
+
+        layout(
+            width = outerConstraints.constrainWidth(layoutWidth),
+            height = outerConstraints.constrainHeight(layoutHeight)
+        ){
+            var yPosition = topPaddingPx
+        }
+    }
 }
 
 @Preview
