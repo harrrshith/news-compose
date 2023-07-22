@@ -85,6 +85,8 @@ import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
+import com.harshith.news.ui.article.postContentItems
+import com.harshith.news.ui.article.sharePost
 import com.harshith.news.ui.modifier.interceptKey
 import com.harshith.news.ui.rememberContentPaddingForScreen
 import com.harshith.news.ui.theme.NewsTheme
@@ -162,13 +164,13 @@ fun HomeFeedWithArticleDetailsScreen(
                             PostTopBar(
                                 isFavourite = hasPostsUiState.favourites.contains(detailPost.id),
                                 onToggleFavourite = { onToggleFavourite(detailPost.id) },
-                                onSharePost = { /*TODO:sharePost(detailPost.id, context)*/ },
+                                onSharePost = { sharePost(detailPost, context) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentWidth(Alignment.End)
                             )
                         }
-                        //TODO:postContentItems(detailPost)
+                        postContentItems(detailPost)
                     }
                 }
             }

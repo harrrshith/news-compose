@@ -1,5 +1,6 @@
 package com.harshith.news.ui.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -7,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.key
+import com.harshith.news.ui.article.ArticleScreen
 
 @Composable
 fun HomeRoute(
@@ -92,7 +94,20 @@ fun HomeRoute(
             )
         }
         HomeScreenType.ArticleDetails -> {
-
+            check(uiState is HomeUiState.HasPosts)
+            ArticleScreen(
+                post = uiState.selectedPost,
+                isExpandedScreen = isExpandedScreen,
+                onBack = { onInteractWithFeed() },
+                isFavourite = uiState.favourites.contains(uiState.selectedPost.id),
+                onToggleFavourite = { onToggleFavourite(uiState.selectedPost.id) },
+                lazyListState = articleDetailsLazyListState.getValue(
+                    uiState.selectedPost.id
+                )
+            )
+            BackHandler {
+                onInteractWithFeed()
+            }
         }
     }
 }

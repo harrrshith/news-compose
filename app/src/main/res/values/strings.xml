@@ -21,4 +21,7 @@
     <string name="people">People</string>
     <string name="publications">Publications</string>
     <string name="search_not_impleted">Search is not implemented</string>
+    <string name="published_in">Published in: \n %1$s</string>
+    <string name="not_implemented">Not Implemented</string>
+    <string name="close">Close</string>
 </resources>
