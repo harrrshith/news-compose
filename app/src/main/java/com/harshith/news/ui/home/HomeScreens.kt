@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.data.Result
 import com.harshith.news.data.posts.BlockingFakePostRepository
+import com.harshith.news.data.posts.post1
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
@@ -143,7 +144,7 @@ fun HomeFeedWithArticleDetailsScreen(
                 state = homeListLazyListState,
                 searchInput = hasPostsUiState.searchInput
             )
-            Crossfade(targetState = hasPostsUiState.selectedPost) {detailPost ->
+            Crossfade(targetState = hasPostsUiState.selectedPost, label = "") { detailPost ->
                 val detailLazyListState by derivedStateOf {
                     articleDetailsLazyListStates.getValue(detailPost.id)
                 }
@@ -357,7 +358,7 @@ fun PostList(
     }
 }
 
-@Composable
+@Composable //First Section
 fun PostListTopSelection(
     post: Post,
     navigateToArticle: (String) -> Unit
@@ -374,7 +375,7 @@ fun PostListTopSelection(
     PostListDivider()
 }
 
-@Composable
+@Composable // Second Section
 fun PostListSimpleSelection(
     posts: List<Post>,
     navigateToArticle: (String) -> Unit,
@@ -696,5 +697,18 @@ fun PreviewHomeListSimpleSelection(){
             snackbarHostState = SnackbarHostState(),
             onSearchInputChanged = {}
         )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPostListTopSelection(){
+    NewsTheme {
+        Surface {
+            PostListTopSelection(
+                post = post1,
+                navigateToArticle = {}
+            )
+        }
     }
 }
