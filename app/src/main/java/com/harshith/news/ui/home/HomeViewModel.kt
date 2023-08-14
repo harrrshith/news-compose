@@ -1,20 +1,24 @@
 package com.harshith.news.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.R
 import com.harshith.news.data.Result
+import com.harshith.news.data.network.RetrofitClientInstance
 import com.harshith.news.data.posts.PostRepository
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import com.harshith.news.util.ErrorMessage
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 sealed interface HomeUiState{
@@ -103,6 +107,7 @@ class HomeViewModel(
     }
 
     fun refreshPosts(){
+        getNewsResponse()
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val result = postRepository.getPostsFeed()
@@ -154,6 +159,20 @@ class HomeViewModel(
                 selectedPostId = postId,
                 isArticleOpen = true
             )
+        }
+    }
+
+    fun getNewsResponse() = runBlocking{
+        val service = RetrofitClientInstance.createInstance()
+        coroutineScope {
+            launch {
+                val result = service.getTopHeadlines("in").body()
+                Log.e("response", "${result?.articles?.get(0)}")
+            }
+            launch {
+                val result = service.getTopHeadlines("in").body()
+                Log.e("response", "${result?.articles?.get(0)}")
+            }
         }
     }
 

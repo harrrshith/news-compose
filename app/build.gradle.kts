@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.kotlin)
@@ -19,9 +22,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+
     }
+    val localPropertiesFile = rootProject.file("local.properties")
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(localPropertiesFile))
 
     buildTypes {
+        getByName("debug"){
+            buildConfigField("String", "API_KEY", localProperties.getProperty("NEWS_API"))
+        }
         getByName("release") {
             isMinifyEnabled = true
             proguardFiles(
@@ -39,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
@@ -70,4 +82,6 @@ dependencies {
     implementation(libs.androidx.viemodel.compose)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.material3.window.size)
+    implementation(libs.square.retrofit2)
+    implementation(libs.retrofit.convertor.gson)
 }
