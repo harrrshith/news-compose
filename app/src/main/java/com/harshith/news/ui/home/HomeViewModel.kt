@@ -8,6 +8,7 @@ import com.harshith.news.R
 import com.harshith.news.data.Result
 import com.harshith.news.data.network.RetrofitClientInstance
 import com.harshith.news.data.posts.PostRepository
+import com.harshith.news.data.successOr
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import com.harshith.news.util.ErrorMessage
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.lang.IllegalArgumentException
 import java.util.UUID
 
 sealed interface HomeUiState{
@@ -99,6 +101,7 @@ class HomeViewModel(
     init {
         refreshPosts()
         viewModelScope.launch {
+            getNewsResponse()
             postRepository.observeFavourites().collect{_favourites ->
                 viewModelState.update { it.copy(favourites = _favourites) }
             }
@@ -107,7 +110,6 @@ class HomeViewModel(
     }
 
     fun refreshPosts(){
-        getNewsResponse()
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val result = postRepository.getPostsFeed()
@@ -162,18 +164,11 @@ class HomeViewModel(
         }
     }
 
-    fun getNewsResponse() = runBlocking{
+    private suspend fun getNewsResponse(){
         val service = RetrofitClientInstance.createInstance()
-        coroutineScope {
-            launch {
-                val result = service.getTopHeadlines("in").body()
-                Log.e("response", "${result?.articles?.get(0)}")
-            }
-            launch {
-                val result = service.getTopHeadlines("in").body()
-                Log.e("response", "${result?.articles?.get(0)}")
-            }
-        }
+        val result = service.getTopHeadlines("in").body()
+        Log.e("response", "$result")
+
     }
 
     companion object{

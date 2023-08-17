@@ -8,6 +8,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,6 +28,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -83,6 +89,10 @@ import com.harshith.news.R
 import com.harshith.news.data.Result
 import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.post1
+import com.harshith.news.data.posts.post2
+import com.harshith.news.data.posts.post3
+import com.harshith.news.data.posts.post4
+import com.harshith.news.data.posts.post5
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
@@ -340,7 +350,7 @@ fun PostList(
         if(postsFeed.recommendedPosts.isNotEmpty()){
             item {
                 PostListSimpleSelection(
-                    posts = postsFeed.recommendedPosts,
+                    posts = listOf(post1, post2, post3, post4, post5, post1, post2, post3, post4, post5),
                     navigateToArticle = onArticleTapped,
                     favourites = favourites,
                     onToggleFavourite = onToggleFavourite
@@ -375,6 +385,7 @@ fun PostListTopSelection(
     PostListDivider()
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable // Second Section
 fun PostListSimpleSelection(
     posts: List<Post>,
@@ -382,24 +393,36 @@ fun PostListSimpleSelection(
     favourites: Set<String>,
     onToggleFavourite: (String) -> Unit
 ){
-    Column {
-        posts.forEach { post ->
+    val state = rememberLazyGridState()
+    val snappingLayout = remember(state) { SnapLayoutInfoProvider(state) }
+    val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
+
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(3),
+        modifier = Modifier.heightIn(min = 250.dp, max = 350.dp),
+        state = state,
+        flingBehavior = flingBehavior
+    ){
+        items(posts.size){postIndex ->
             PostCardSimple(
-                post = post,
-                navigateToArticle = { navigateToArticle(post.id) },
-                isFavourite = favourites.contains(post.id),
-                onToggleFavourite = { onToggleFavourite(post.id) }
+                post = posts[postIndex],
+                navigateToArticle = { navigateToArticle(posts[postIndex].id) },
+                isFavourite = favourites.contains(posts[postIndex].id),
+                onToggleFavourite = { onToggleFavourite(posts[postIndex].id) }
             )
-            PostListDivider()
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostListPopularSection(
     posts: List<Post>,
     navigateToArticle: (String) -> Unit
 ){
+    val state = rememberLazyListState()
+    val snappingLayout = remember(state) { SnapLayoutInfoProvider(state) }
+    val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
     Column {
         Text(
             text = stringResource(id = R.string.popular_on_news),
@@ -408,7 +431,9 @@ fun PostListPopularSection(
         )
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            state = state,
+            flingBehavior = flingBehavior
         ){
             items(posts){ post ->
                 PostCardPopular(
