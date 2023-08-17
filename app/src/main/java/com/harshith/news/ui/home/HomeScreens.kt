@@ -143,7 +143,10 @@ fun HomeFeedWithArticleDetailsScreen(
                 state = homeListLazyListState,
                 searchInput = hasPostsUiState.searchInput
             )
-            Crossfade(targetState = hasPostsUiState.selectedPost) {detailPost ->
+            Crossfade(
+                targetState = hasPostsUiState.selectedPost,
+                label = ""
+            ) { detailPost ->
                 val detailLazyListState by derivedStateOf {
                     articleDetailsLazyListStates.getValue(detailPost.id)
                 }
