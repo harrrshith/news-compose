@@ -1,12 +1,12 @@
 package com.harshith.news.data.network
 
+import android.util.Log
 import com.harshith.news.BuildConfig
 import com.harshith.news.data.network.models.NetworkNewsResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Query
 
@@ -20,6 +20,7 @@ interface ApiService {
 
 object RetrofitClientInstance{
     fun createInstance(): ApiService{
+        Log.e("Response", "Helloooo")
         val retrofit = Retrofit.Builder()
             .baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create())

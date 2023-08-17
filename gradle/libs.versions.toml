@@ -45,4 +45,4 @@ androidx-compose-ui = ["androidx-compose-ui", "androidx-compose-ui-graphics", "a
 [plugins]
 android-application = { id="com.android.application", version.ref="androidGradlePlugin" }
 android-library = { id="com.android.library", version.ref="androidGradlePlugin" }
-android-kotlin = { id="org.jetbrains.kotlin.android", version.ref="kotlinAndroid" }
+android-kotlin = { id="org.jetbrains.kotlin.android", version = "1.9.0" }
