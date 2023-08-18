@@ -69,7 +69,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.androidx.material3)
-    implementation("androidx.core:core-ktx:+")
     testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.espresso.core)

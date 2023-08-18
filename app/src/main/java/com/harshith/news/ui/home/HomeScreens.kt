@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -154,7 +157,7 @@ fun HomeFeedWithArticleDetailsScreen(
                 state = homeListLazyListState,
                 searchInput = hasPostsUiState.searchInput
             )
-            Crossfade(targetState = hasPostsUiState.selectedPost, label = "") { detailPost ->
+            Crossfade(targetState = hasPostsUiState.selectedPost, label = "", animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)) { detailPost ->
                 val detailLazyListState by derivedStateOf {
                     articleDetailsLazyListStates.getValue(detailPost.id)
                 }

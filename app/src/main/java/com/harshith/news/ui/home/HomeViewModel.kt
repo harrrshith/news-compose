@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.R
 import com.harshith.news.data.Result
+import com.harshith.news.data.network.ApiService
+import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.network.RetrofitClientInstance
+import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.data.posts.PostRepository
 import com.harshith.news.data.successOr
 import com.harshith.news.model.Post
@@ -101,7 +104,8 @@ class HomeViewModel(
     init {
         refreshPosts()
         viewModelScope.launch {
-            getNewsResponse()
+            getIndiaNewsResponse()
+            getUSANewsResponse()
             postRepository.observeFavourites().collect{_favourites ->
                 viewModelState.update { it.copy(favourites = _favourites) }
             }
@@ -164,11 +168,20 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun getNewsResponse(){
-        val service = RetrofitClientInstance.createInstance()
-        val result = service.getTopHeadlines("in").body()
-        Log.e("response", "$result")
+    private suspend fun getIndiaNewsResponse(){
+        when(val response = NewsRepository().fetchTopHeadlines("in")){
+            is NetworkResult.Error -> Log.e("Response", "Error:\t${response.statusCode} ${response.message}")
+            is NetworkResult.Success -> Log.e("Response", "Success:\t${response.data.articles}")
+            is NetworkResult.Exception -> Log.e("Response", "Exception:\t${response.e}")
+        }
+    }
 
+    private suspend fun getUSANewsResponse(){
+        when(val response = NewsRepository().fetchTopHeadlines("us")){
+            is NetworkResult.Error -> Log.e("Response", "Error:\t${response.statusCode} ${response.message}")
+            is NetworkResult.Success -> Log.e("Response", "Success:\t${response.data.articles}")
+            is NetworkResult.Exception -> Log.e("Response", "Exception:\t${response.e}")
+        }
     }
 
     companion object{
