@@ -4,6 +4,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.kotlin)
+    kotlin("kapt")
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -84,4 +86,10 @@ dependencies {
     implementation(libs.androidx.material3.window.size)
     implementation(libs.square.retrofit2)
     implementation(libs.retrofit.convertor.gson)
+    implementation(libs.dagger.hilt)
+    kapt(libs.dagger.hilt.compiler)
+}
+
+kapt{
+    correctErrorTypes = true
 }
