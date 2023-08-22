@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.interests.InterestsRepository
 import com.harshith.news.data.interests.InterestsSection
 import com.harshith.news.data.interests.TopicSelection
+import com.harshith.news.data.interests.impl.FakeInterestsRepository
 import com.harshith.news.data.successOr
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class InterestUiState(
     val topics: List<InterestsSection> = emptyList(),

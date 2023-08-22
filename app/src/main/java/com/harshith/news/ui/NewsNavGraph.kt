@@ -1,10 +1,7 @@
 package com.harshith.news.ui
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -43,7 +40,7 @@ fun NewsNavGraph(
         ){navBackStackEntry ->
             val homeViewModel: HomeViewModel = viewModel(
                 factory = HomeViewModel.provideFactory(
-                    postRepository = appContainer.postRepository,
+                    newsRepository = appContainer.newsRepository,
                     preSelectedPostId = navBackStackEntry.arguments?.getString(POST_ID)
                 )
             )

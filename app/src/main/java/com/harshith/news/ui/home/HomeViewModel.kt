@@ -1,6 +1,7 @@
 package com.harshith.news.ui.home
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,10 +12,13 @@ import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.network.RetrofitClientInstance
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.data.posts.PostRepository
+import com.harshith.news.data.posts.impl.FakePostsRepository
 import com.harshith.news.data.successOr
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import com.harshith.news.util.ErrorMessage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.lang.IllegalArgumentException
 import java.util.UUID
+import javax.inject.Inject
 
 sealed interface HomeUiState{
     val isLoading: Boolean
@@ -79,11 +84,11 @@ private data class HomeViewModelState(
             )
         }
 }
+
 class HomeViewModel(
-    private val postRepository: PostRepository,
+    private val newsRepository: NewsRepository,
     preSelectedPostId: String?
 ) : ViewModel() {
-
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true,
@@ -102,44 +107,50 @@ class HomeViewModel(
 
 
     init {
-        refreshPosts()
         viewModelScope.launch {
             getIndiaNewsResponse()
             getUSANewsResponse()
-            postRepository.observeFavourites().collect{_favourites ->
-                viewModelState.update { it.copy(favourites = _favourites) }
-            }
         }
-
+        /**
+         * viewModelScope.launch {
+         *             getIndiaNewsResponse()
+         *             getUSANewsResponse()
+         *             postRepository.observeFavourites().collect{_favourites ->
+         *                 viewModelState.update { it.copy(favourites = _favourites) }
+         *             }
+         *         }
+         */
     }
 
-    fun refreshPosts(){
-        viewModelState.update { it.copy(isLoading = true) }
-        viewModelScope.launch {
-            val result = postRepository.getPostsFeed()
-            viewModelState.update {
-                when(result){
-                    is Result.Success -> it.copy(postsFeed = result.data, isLoading = false)
-                    is Result.Error -> {
-                        val errorMessage = it.errorMessage + ErrorMessage(
-                            id = UUID.randomUUID().mostSignificantBits,
-                            messageId = R.string.load_error
-                        )
-                        it.copy(
-                            errorMessage = errorMessage,
-                            isLoading = false
-                        )
-                    }
-
-                }
-            }
-
-        }
-    }
+    /**
+     * fun refreshPosts(){
+     *         viewModelState.update { it.copy(isLoading = true) }
+     *         viewModelScope.launch {
+     *             val result = postRepository.getPostsFeed()
+     *             viewModelState.update {
+     *                 when(result){
+     *                     is Result.Success -> it.copy(postsFeed = result.data, isLoading = false)
+     *                     is Result.Error -> {
+     *                         val errorMessage = it.errorMessage + ErrorMessage(
+     *                             id = UUID.randomUUID().mostSignificantBits,
+     *                             messageId = R.string.load_error
+     *                         )
+     *                         it.copy(
+     *                             errorMessage = errorMessage,
+     *                             isLoading = false
+     *                         )
+     *                     }
+     *
+     *                 }
+     *             }
+     *
+     *         }
+     *     }
+     */
 
     fun toggleFavourites(_postId: String?){
         viewModelScope.launch {
-            postRepository.toggleFavourite(_postId)
+            newsRepository.toggleFavourite(_postId)
         }
     }
 
@@ -169,28 +180,28 @@ class HomeViewModel(
     }
 
     private suspend fun getIndiaNewsResponse(){
-        when(val response = NewsRepository().fetchTopHeadlines("in")){
-            is NetworkResult.Error -> Log.e("Response", "Error:\t${response.statusCode} ${response.message}")
-            is NetworkResult.Success -> Log.e("Response", "Success:\t${response.data.articles}")
-            is NetworkResult.Exception -> Log.e("Response", "Exception:\t${response.e}")
+        when(val response = newsRepository.fetchTopHeadlines("in")){
+            is NetworkResult.Error -> Log.e("ResponseError", "Error:\t${response.statusCode} ${response.message}")
+            is NetworkResult.Success -> Log.e("ResponseSuccess", "Success:\t${response.data.articles}")
+            is NetworkResult.Exception -> Log.e("ResponseException", "Exception:\t${response.e}")
         }
     }
 
     private suspend fun getUSANewsResponse(){
-        when(val response = NewsRepository().fetchTopHeadlines("us")){
-            is NetworkResult.Error -> Log.e("Response", "Error:\t${response.statusCode} ${response.message}")
-            is NetworkResult.Success -> Log.e("Response", "Success:\t${response.data.articles}")
-            is NetworkResult.Exception -> Log.e("Response", "Exception:\t${response.e}")
+        when(val response = newsRepository.fetchTopHeadlines("us")){
+            is NetworkResult.Error -> Log.e("ResponseError", "Error:\t${response.statusCode} ${response.message}")
+            is NetworkResult.Success -> Log.e("ResponseSuccess", "Success:\t${response.data}")
+            is NetworkResult.Exception -> Log.e("ResponseException", "Exception:\t${response.e}")
         }
     }
 
     companion object{
         fun provideFactory(
-            postRepository: PostRepository,
+            newsRepository: NewsRepository,
             preSelectedPostId: String? = null
         ): ViewModelProvider.Factory = object: ViewModelProvider.Factory{
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HomeViewModel(postRepository, preSelectedPostId) as T
+                return HomeViewModel(newsRepository ,preSelectedPostId) as T
             }
         }
     }

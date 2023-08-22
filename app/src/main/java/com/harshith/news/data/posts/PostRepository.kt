@@ -1,9 +1,9 @@
 package com.harshith.news.data.posts
 
+import com.harshith.news.data.Result
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import kotlinx.coroutines.flow.Flow
-import com.harshith.news.data.Result
 
 interface PostRepository {
     suspend fun getPost(postId: String?): Result<Post>

@@ -1,6 +1,7 @@
 package com.harshith.news.data.interests
 
 import com.harshith.news.data.Result
+import dagger.Binds
 import kotlinx.coroutines.flow.Flow
 
 data class InterestsSection(

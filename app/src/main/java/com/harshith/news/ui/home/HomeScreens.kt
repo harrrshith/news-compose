@@ -2,11 +2,9 @@ package com.harshith.news.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -84,7 +82,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -299,6 +296,10 @@ private fun HomeScreenWithList(
             }
         )
     }
+    /**
+     * When the viewModelState emits the error then this block of executes.
+     * LaunchedEffect is used to call the snackbar inside the composable
+     */
     if(uiState.errorMessage.isNotEmpty()){
         val errorMessage = remember(uiState){
             uiState.errorMessage[0]
@@ -500,10 +501,10 @@ fun PostListDivider(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeTopAppBar(
+    modifier: Modifier = Modifier,
     openDrawer: () -> Unit,
     topAppBarState: TopAppBarState,
     scrollBehaviour: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState),
-    modifier: Modifier = Modifier
 ){
     val title = stringResource(id = R.string.app_name)
     CenterAlignedTopAppBar(
@@ -621,8 +622,8 @@ private fun submitSearch(
 }
 
 @Preview("Home list drawer screen")
-@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
-@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
+//@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
+//@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
 @Composable
 fun PreviewHomeListDrawerScreen(){
     val postsFeed = runBlocking {
@@ -651,7 +652,7 @@ fun PreviewHomeListDrawerScreen(){
         )
     }
 }
-
+/*
 @Preview("Home List nav rail Screen", device = Devices.NEXUS_7_2013)
 @Preview(
     "Home list nav rail screen (dark)",
@@ -727,6 +728,7 @@ fun PreviewHomeListSimpleSelection(){
         )
     }
 }
+*/
 
 @Preview
 @Composable
