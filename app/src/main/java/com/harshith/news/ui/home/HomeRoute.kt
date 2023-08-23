@@ -95,8 +95,8 @@ fun HomeRoute(
             )
         }
         HomeScreenType.ArticleDetails -> {
-            /**
             check(uiState is HomeUiState.HasPosts)
+            /**
             ArticleScreen(
                 post = uiState.selectedPost,
                 isExpandedScreen = isExpandedScreen,

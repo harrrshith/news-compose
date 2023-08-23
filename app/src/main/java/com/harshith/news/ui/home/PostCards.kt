@@ -1,11 +1,11 @@
 package com.harshith.news.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -23,8 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -33,10 +33,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.harshith.news.R
-import com.harshith.news.data.posts.post1
-import com.harshith.news.data.posts.post3
-import com.harshith.news.model.Post
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
@@ -92,12 +90,13 @@ fun PostImage(
     article: Article,
     modifier: Modifier = Modifier
 ){
-    Image(
-        painter = painterResource(R.drawable.image_post),
+    AsyncImage(
+        model = article.urlToImage ?: R.drawable.image_post,
         contentDescription = null,
+        contentScale = ContentScale.Fit,
         modifier = modifier
-            .size(40.dp, 40.dp)
-            .clip(MaterialTheme.shapes.small)
+            .size(80.dp, 60.dp)
+            .clip(MaterialTheme.shapes.small),
     )
 }
 @Composable
@@ -122,8 +121,8 @@ fun AuthorReadTime(
             text = stringResource(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
-                    article.author!!,
-                    article.publishedAt!!
+                    article.author ?: "",
+                    article.publishedAt ?: ""
                 )
             ),
             style = MaterialTheme.typography.bodyMedium
@@ -139,30 +138,19 @@ fun PostCardHistory(
     var openDialog by remember {
         mutableStateOf(false)
     }
-
+    val configuration = LocalConfiguration.current
     Row(
         modifier = Modifier
+            .widthIn(min = 200.dp, max = configuration.screenWidthDp.dp)
             .clickable(onClick = { }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         PostImage(
             article = article,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(8.dp, 4.dp)
         )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 12.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.based_on_your_history).uppercase(),
-                style = MaterialTheme.typography.labelMedium
-            )
+        Column(modifier = Modifier.weight(1f)) {
             PostTitle(article = article)
-            AuthorReadTime(
-                article = article,
-                modifier = Modifier.padding(top = 4.dp)
-            )
         }
         IconButton(
             onClick = { openDialog = true }) {
@@ -228,16 +216,26 @@ fun PreviewPostCard(){
         }
     }
 }
-/*
 @Preview
 @Composable
 fun PreviewPostCardHistory(){
     NewsTheme {
         Surface {
             PostCardHistory(
-                post1,
+                article = Article(
+                    "Harshith",
+                    "",
+                    "description",
+                    "publishedAt",
+                    Source(
+                        "",
+                        ""
+                    ),
+                    "title",
+                    "url",
+                    "urlToImage"
+                ),
             ){}
         }
     }
 }
- */

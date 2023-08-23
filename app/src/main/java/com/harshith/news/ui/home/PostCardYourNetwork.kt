@@ -1,5 +1,6 @@
 package com.harshith.news.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,16 +14,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.data.posts.post1
 import com.harshith.news.model.Post
 import com.harshith.news.model.news.Article
+import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,8 +42,8 @@ fun PostCardPopular(
         modifier = modifier.size(280.dp, 240.dp)
     ) {
         Column {
-            Image(
-                painter = painterResource(id = R.drawable.image_post),
+            AsyncImage(
+                model = article.urlToImage ?: R.drawable.image_post_thumb,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -49,6 +53,7 @@ fun PostCardPopular(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+                Log.e("published at", "${article.publishedAt}")
                 Text(
                     text = article.title!!,
                     style = MaterialTheme.typography.headlineSmall,
@@ -56,12 +61,13 @@ fun PostCardPopular(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = article.author!!,
+                    text = article.author ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
+
                     text = stringResource(
                         id = R.string.post_min_read,
                         formatArgs = arrayOf(
@@ -75,17 +81,28 @@ fun PostCardPopular(
         }
     }
 }
-/*
+
 @Preview
 @Composable
 fun Preview(){
     NewsTheme {
         Surface {
             PostCardPopular(
-                post = post1,
+                article = Article(
+                    "Author",
+                    "content",
+                    "description",
+                    "publishedAt",
+                    Source(
+                        "",
+                        ""
+                    ),
+                    stringResource(id = R.string.lorem_title),
+                    "url",
+                    ""
+                ),
                 navigateToArticle = {}
             )
         }
     }
 }
- */

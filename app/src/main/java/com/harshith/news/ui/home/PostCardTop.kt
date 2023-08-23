@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
@@ -40,8 +41,8 @@ fun PostCardTop(
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
 
-        Image(
-            painter = painterResource(id = R.drawable.image_post),
+        AsyncImage(
+            model = article.urlToImage ?: R.drawable.image_post,
             contentDescription = null,
             modifier = imageModifier,
             contentScale = ContentScale.Crop

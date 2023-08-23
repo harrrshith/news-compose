@@ -13,7 +13,7 @@
     <string name="unbookmark">Unbookmark</string>
     <string name="bookmark">Bookmark</string>
     <string name="popular_on_news">Popular on News</string>
-    <string name="based_on_your_history">Based on your history</string>
+    <string name="you_may_also_like">You may also like</string>
     <string name="fewer_stories">show fewer stories like this?</string>
     <string name="agree">Agree</string>
     <string name="search_articles">Search articles</string>
@@ -24,4 +24,5 @@
     <string name="published_in">Published in: \n %1$s</string>
     <string name="not_implemented">Not Implemented</string>
     <string name="close">Close</string>
+    <string name="lorem_title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
 </resources>

@@ -169,7 +169,7 @@ class HomeViewModel(
     fun interactWithArticleDetails(postId: String?){
         viewModelState.update {
             it.copy(
-                selectedPostId = "postIdq",
+                selectedPostId = postId,
                 isArticleOpen = true
             )
         }
