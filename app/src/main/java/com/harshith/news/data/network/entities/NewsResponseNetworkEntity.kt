@@ -1,18 +1,18 @@
-package com.harshith.news.data.network.models
+package com.harshith.news.data.network.entities
 
 import com.google.gson.annotations.SerializedName
 
 
-data class NetworkNewsResponse(
+data class NewsResponseNetworkEntity(
     @SerializedName("articles")
-    val articles: List<NetworkArticle>,
+    val articles: List<NewsArticleNetworkEntity>,
     @SerializedName("status")
     val status: String,
     @SerializedName("totalResults")
     val totalResults: Int
 )
 
-data class NetworkArticle(
+data class NewsArticleNetworkEntity(
     @SerializedName("author")
     val author: String,
     @SerializedName("content")
@@ -22,7 +22,7 @@ data class NetworkArticle(
     @SerializedName("publishedAt")
     val publishedAt: String,
     @SerializedName("source")
-    val source: NetworkSource,
+    val source: NewsSourceNetworkEntity,
     @SerializedName("title")
     val title: String,
     @SerializedName("url")
@@ -31,7 +31,7 @@ data class NetworkArticle(
     val urlToImage: String
 )
 
-data class NetworkSource(
+data class NewsSourceNetworkEntity(
     @SerializedName("id")
     val id: String,
     @SerializedName("name")

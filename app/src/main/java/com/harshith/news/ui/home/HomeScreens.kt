@@ -2,6 +2,7 @@ package com.harshith.news.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
@@ -87,6 +88,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.data.Result
+import com.harshith.news.data.network.entities.NewsArticleNetworkEntity
 import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.post1
 import com.harshith.news.data.posts.post2
@@ -96,6 +98,7 @@ import com.harshith.news.data.posts.post5
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
+import com.harshith.news.model.news.Article
 import com.harshith.news.ui.article.postContentItems
 import com.harshith.news.ui.article.sharePost
 import com.harshith.news.ui.modifier.interceptKey
@@ -105,10 +108,11 @@ import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
 import com.harshith.news.ui.utils.TextSettingsButton
+import com.harshith.news.util.toUiArticleResponse
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
-
+/**
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -140,7 +144,7 @@ fun HomeFeedWithArticleDetailsScreen(
         val contentPadding = rememberContentPaddingForScreen(additionalTop = 16.dp)
         Row(contentModifier) {
             PostList(
-                postsFeed = hasPostsUiState.postsFeed,
+                postsFeed = hasPostsUiState.newsFeed,
                 favourites = hasPostsUiState.favourites,
                 showExpandedSearch = !showTopAppBar,
                 onArticleTapped = onSelectPosts,
@@ -156,7 +160,7 @@ fun HomeFeedWithArticleDetailsScreen(
             )
             Crossfade(targetState = hasPostsUiState.selectedPost, label = "", animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)) { detailPost ->
                 val detailLazyListState by derivedStateOf {
-                    articleDetailsLazyListStates.getValue(detailPost.id)
+                    articleDetailsLazyListStates.getValue(detailPost)
                 }
                 key(detailPost.id) {
                     LazyColumn(
@@ -188,6 +192,7 @@ fun HomeFeedWithArticleDetailsScreen(
         }
     }
 }
+*/
 
 @Composable
 fun HomeFeedScreen(
@@ -214,7 +219,7 @@ fun HomeFeedScreen(
         modifier = modifier
     ) {hasPostsUiState, contentModifier ->
         PostList(
-            postsFeed = hasPostsUiState.postsFeed,
+            newsFeed = hasPostsUiState.newsFeed!!,
             favourites = hasPostsUiState.favourites,
             showExpandedSearch = !showTopAppBar,
             onArticleTapped = onSelectPosts,
@@ -325,7 +330,7 @@ private fun HomeScreenWithList(
 
 @Composable
 fun PostList(
-    postsFeed: PostsFeed,
+    newsFeed: NewsFeed,
     favourites: Set<String>,
     showExpandedSearch: Boolean,
     onArticleTapped: (postId: String) -> Unit,
@@ -350,11 +355,11 @@ fun PostList(
                 )
             }
         }
-        item { PostListTopSelection( postsFeed.highlightedPost, onArticleTapped) }
-        if(postsFeed.recommendedPosts.isNotEmpty()){
+        item { PostListTopSelection( newsFeed.highlightedNews.toUiArticleResponse(), onArticleTapped) }
+        if(newsFeed.recommendedNews.isNotEmpty()){
             item {
                 PostListSimpleSelection(
-                    posts = listOf(post1, post2, post3, post4, post5, post1, post2, post3, post4, post5),
+                    articles = newsFeed.recommendedNews.map { it.toUiArticleResponse() },
                     navigateToArticle = onArticleTapped,
                     favourites = favourites,
                     onToggleFavourite = onToggleFavourite
@@ -362,19 +367,19 @@ fun PostList(
             }
         }
 
-        if(postsFeed.popularPosts.isNotEmpty()){
-            item { PostListPopularSection(posts = postsFeed.popularPosts, navigateToArticle = onArticleTapped) }
+        if(newsFeed.popularNews.isNotEmpty()){
+            item { PostListPopularSection(posts = newsFeed.popularNews.map { it.toUiArticleResponse() }, navigateToArticle = onArticleTapped) }
         }
 
-        if(postsFeed.recentPosts.isNotEmpty()){
-            item { PostListHistorySection(posts = postsFeed.recentPosts, navigateToArticle = onArticleTapped) }
-        }
+//        if(newsFeed.recentNews.isNotEmpty()){
+//            item { PostListHistorySection(posts = newsFeed.recentNews.map { it.toUiArticleResponse() }, navigateToArticle = onArticleTapped) }
+//        }
     }
 }
 
 @Composable //First Section
 fun PostListTopSelection(
-    post: Post,
+    article: Article,
     navigateToArticle: (String) -> Unit
 ){
     Text(
@@ -383,8 +388,8 @@ fun PostListTopSelection(
         style = MaterialTheme.typography.titleMedium
     )
     PostCardTop(
-        post,
-        modifier = Modifier.clickable(onClick = { navigateToArticle(post.id) })
+        article = article,
+        modifier = Modifier.clickable(onClick = {  })
     )
     PostListDivider()
 }
@@ -392,7 +397,7 @@ fun PostListTopSelection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable // Second Section
 fun PostListSimpleSelection(
-    posts: List<Post>,
+    articles: List<Article>,
     navigateToArticle: (String) -> Unit,
     favourites: Set<String>,
     onToggleFavourite: (String) -> Unit
@@ -403,16 +408,16 @@ fun PostListSimpleSelection(
 
     LazyHorizontalGrid(
         rows = GridCells.Fixed(3),
-        modifier = Modifier.heightIn(min = 250.dp, max = 350.dp),
+        modifier = Modifier.heightIn(min = 250.dp, max=250.dp),
         state = state,
         flingBehavior = flingBehavior
     ){
-        items(posts.size){postIndex ->
+        items(articles.size){index ->
             PostCardSimple(
-                post = posts[postIndex],
-                navigateToArticle = { navigateToArticle(posts[postIndex].id) },
-                isFavourite = favourites.contains(posts[postIndex].id),
-                onToggleFavourite = { onToggleFavourite(posts[postIndex].id) }
+                article = articles[index],
+                navigateToArticle = {  },
+                isFavourite = false,
+                onToggleFavourite = { }
             )
         }
     }
@@ -421,7 +426,7 @@ fun PostListSimpleSelection(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PostListPopularSection(
-    posts: List<Post>,
+    posts: List<Article>,
     navigateToArticle: (String) -> Unit
 ){
     val state = rememberLazyListState()
@@ -453,13 +458,13 @@ fun PostListPopularSection(
 
 @Composable
 fun PostListHistorySection(
-    posts: List<Post>,
+    posts: List<Article>,
     navigateToArticle: (String) -> Unit
 ){
     Column {
-        posts.forEach { post ->
+        posts.forEach { news ->
             PostCardHistory(
-                post,
+                news,
                 navigateToArticle
             )
             PostListDivider()
@@ -620,10 +625,10 @@ private fun submitSearch(
 ){
 
 }
-
+/*
 @Preview("Home list drawer screen")
-//@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
-//@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
+@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
+@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
 @Composable
 fun PreviewHomeListDrawerScreen(){
     val postsFeed = runBlocking {
@@ -742,3 +747,5 @@ fun PreviewPostListTopSelection(){
         }
     }
 }
+
+ */

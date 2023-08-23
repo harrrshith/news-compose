@@ -52,16 +52,17 @@ fun HomeRoute(
 ){
     val homeLazyListState = rememberLazyListState()
     val articleDetailsLazyListState = when(uiState){
-        is HomeUiState.HasPosts -> uiState.postsFeed.allPosts
+        is HomeUiState.HasPosts -> uiState.newsFeed?.popularNews!!
         is HomeUiState.NoPosts -> emptyList()
     }.associate { post ->
-        key(post.id){
-            post.id to rememberLazyListState()
+        key(post.title){
+            post.title to rememberLazyListState()
         }
     }
 
     when(getHomeScreenType(isExpandedScreen, uiState)){
         HomeScreenType.FeedWithArticles -> {
+            /*
             HomeFeedWithArticleDetailsScreen(
                 uiState = uiState,
                 showTopAppBar = !isExpandedScreen,
@@ -77,6 +78,7 @@ fun HomeRoute(
                 snackbarHostState = snackbarHostState,
                 onSearchInputChanged = onSearchInputChange
             )
+             */
         }
         HomeScreenType.Feed -> {
             HomeFeedScreen(
@@ -93,6 +95,7 @@ fun HomeRoute(
             )
         }
         HomeScreenType.ArticleDetails -> {
+            /**
             check(uiState is HomeUiState.HasPosts)
             ArticleScreen(
                 post = uiState.selectedPost,
@@ -104,6 +107,7 @@ fun HomeRoute(
                     uiState.selectedPost.id
                 )
             )
+             */
             BackHandler {
                 onInteractWithFeed()
             }

@@ -9,7 +9,7 @@
     <string name="click_here">Click Here</string>
     <string name="retry">Retry</string>
     <string name="top_stories_for_you">Top stories for you</string>
-    <string name="post_min_read">%1$s - %2$d min read</string>
+    <string name="post_min_read">%1$s - %2$s min read</string>
     <string name="unbookmark">Unbookmark</string>
     <string name="bookmark">Bookmark</string>
     <string name="popular_on_news">Popular on News</string>

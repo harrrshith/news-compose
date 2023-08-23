@@ -37,12 +37,14 @@ import com.harshith.news.R
 import com.harshith.news.data.posts.post1
 import com.harshith.news.data.posts.post3
 import com.harshith.news.model.Post
+import com.harshith.news.model.news.Article
+import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
 
 @Composable
 fun PostCardSimple(
-    post: Post,
+    article: Article,
     navigateToArticle: (String) -> Unit,
     isFavourite: Boolean,
     onToggleFavourite: () -> Unit
@@ -52,7 +54,7 @@ fun PostCardSimple(
     Row(
         modifier = Modifier
             .widthIn(min = 200.dp, max = configuration.screenWidthDp.dp)
-            .clickable(onClick = { navigateToArticle(post.id) })
+            .clickable(onClick = { })
             .semantics {
                 customActions = listOf(
                     CustomAccessibilityAction(
@@ -64,7 +66,7 @@ fun PostCardSimple(
         verticalAlignment = Alignment.CenterVertically
     ) {
         PostImage(
-            post = post,
+            article = article,
             modifier = Modifier.padding(16.dp)
         )
         Column(
@@ -72,8 +74,8 @@ fun PostCardSimple(
                 .weight(1f)
                 .padding(vertical = 10.dp)
         ) {
-            PostTitle(post)
-            AuthorReadTime(post)
+            PostTitle(article)
+            //AuthorReadTime(article)
         }
         BookMarkButton(
             isBookmarked = isFavourite,
@@ -87,11 +89,11 @@ fun PostCardSimple(
 
 @Composable
 fun PostImage(
-    post: Post,
+    article: Article,
     modifier: Modifier = Modifier
 ){
     Image(
-        painter = painterResource(post.imageThumbId),
+        painter = painterResource(R.drawable.image_post),
         contentDescription = null,
         modifier = modifier
             .size(40.dp, 40.dp)
@@ -100,19 +102,19 @@ fun PostImage(
 }
 @Composable
 fun PostTitle(
-    post: Post,
+    article: Article,
 ){
     Text(
-        text = post.title,
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 3,
+        text = article.title!!,
+        style = MaterialTheme.typography.titleSmall,
+        maxLines = 2,
         overflow = TextOverflow.Ellipsis
     )
 }
 
 @Composable
 fun AuthorReadTime(
-    post: Post,
+    article: Article,
     modifier: Modifier = Modifier
 ){
     Row(modifier) {
@@ -120,8 +122,8 @@ fun AuthorReadTime(
             text = stringResource(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
-                    post.metadata.author.name,
-                    post.metadata.readTimeMinutes
+                    article.author!!,
+                    article.publishedAt!!
                 )
             ),
             style = MaterialTheme.typography.bodyMedium
@@ -131,7 +133,7 @@ fun AuthorReadTime(
 
 @Composable
 fun PostCardHistory(
-    post: Post,
+    article: Article,
     navigateToArticle: (String) -> Unit
 ){
     var openDialog by remember {
@@ -140,11 +142,11 @@ fun PostCardHistory(
 
     Row(
         modifier = Modifier
-            .clickable(onClick = { navigateToArticle(post.id) }),
+            .clickable(onClick = { }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         PostImage(
-            post = post,
+            article = article,
             modifier = Modifier.padding(16.dp)
         )
         Column(
@@ -156,9 +158,9 @@ fun PostCardHistory(
                 text = stringResource(id = R.string.based_on_your_history).uppercase(),
                 style = MaterialTheme.typography.labelMedium
             )
-            PostTitle(post = post)
+            PostTitle(article = article)
             AuthorReadTime(
-                post = post,
+                article = article,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
@@ -206,7 +208,19 @@ fun PreviewPostCard(){
     NewsTheme {
         Surface {
             PostCardSimple(
-                post3,
+                Article(
+                    "Harshith",
+                    "",
+                    "description",
+                    "publishedAt",
+                    Source(
+                        "",
+                        ""
+                    ),
+                    "title",
+                    "url",
+                    "urlToImage"
+                ),
                 {},
                 false,
                 {}
@@ -214,7 +228,7 @@ fun PreviewPostCard(){
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun PreviewPostCardHistory(){
@@ -226,3 +240,4 @@ fun PreviewPostCardHistory(){
         }
     }
 }
+ */

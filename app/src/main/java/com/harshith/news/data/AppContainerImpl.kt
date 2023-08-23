@@ -23,7 +23,6 @@ class AppContainerImpl(private val applicationContext: Context): AppContainer {
         FakeInterestsRepository()
     }
     override val newsRepository: NewsRepository by lazy{
-        Log.e("ResponseNewsRepository", "Hello")
         NewsRepositoryImpl()
     }
 

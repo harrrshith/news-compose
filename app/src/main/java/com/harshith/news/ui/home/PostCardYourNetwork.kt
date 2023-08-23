@@ -22,23 +22,24 @@ import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.data.posts.post1
 import com.harshith.news.model.Post
+import com.harshith.news.model.news.Article
 import com.harshith.news.ui.theme.NewsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCardPopular(
-    post: Post,
+    article: Article,
     navigateToArticle: (String) -> Unit,
     modifier: Modifier = Modifier
 ){
     Card(
-        onClick = { navigateToArticle(post.id) },
+        onClick = {  },
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.size(280.dp, 240.dp)
     ) {
         Column {
             Image(
-                painter = painterResource(id = post.imageId),
+                painter = painterResource(id = R.drawable.image_post),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -49,13 +50,13 @@ fun PostCardPopular(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = post.title,
+                    text = article.title!!,
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = post.metadata.author.name,
+                    text = article.author!!,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -64,8 +65,8 @@ fun PostCardPopular(
                     text = stringResource(
                         id = R.string.post_min_read,
                         formatArgs = arrayOf(
-                            post.metadata.date,
-                            post.metadata.readTimeMinutes
+                            article.publishedAt!!,
+                            "5"
                         )
                     ),
                     style = MaterialTheme.typography.bodySmall
@@ -74,7 +75,7 @@ fun PostCardPopular(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun Preview(){
@@ -87,3 +88,4 @@ fun Preview(){
         }
     }
 }
+ */

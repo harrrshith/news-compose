@@ -20,12 +20,13 @@ import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.data.posts.posts
 import com.harshith.news.model.Post
+import com.harshith.news.model.news.Article
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.util.CompletePreviews
 
 @Composable
 fun PostCardTop(
-    post: Post,
+    article: Article,
     modifier: Modifier = Modifier
 ){
     val typography = MaterialTheme.typography
@@ -40,7 +41,7 @@ fun PostCardTop(
             .clip(MaterialTheme.shapes.medium)
 
         Image(
-            painter = painterResource(id = post.imageId),
+            painter = painterResource(id = R.drawable.image_post),
             contentDescription = null,
             modifier = imageModifier,
             contentScale = ContentScale.Crop
@@ -49,13 +50,13 @@ fun PostCardTop(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = post.title,
+            text = article.title!!,
             style = typography.titleLarge,
             modifier = modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
         )
 
         Text(
-            text = post.metadata.author.name,
+            text = article.author!!,
             style = typography.labelLarge,
             modifier = modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
         )
@@ -63,8 +64,8 @@ fun PostCardTop(
             text = stringResource(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
-                    post.metadata.date,
-                    post.metadata.readTimeMinutes
+                    article.publishedAt!!,
+                    "5"
                 )
             ),
             style = typography.bodySmall
@@ -72,7 +73,7 @@ fun PostCardTop(
     }
 
 }
-
+/*
 @CompletePreviews
 @Composable
 fun PreviewPostCardTop(){
@@ -84,3 +85,4 @@ fun PreviewPostCardTop(){
         }
     }
 }
+ */

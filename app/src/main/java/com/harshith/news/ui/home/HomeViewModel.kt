@@ -1,35 +1,24 @@
 package com.harshith.news.ui.home
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.harshith.news.R
-import com.harshith.news.data.Result
-import com.harshith.news.data.network.ApiService
 import com.harshith.news.data.network.NetworkResult
-import com.harshith.news.data.network.RetrofitClientInstance
+import com.harshith.news.data.network.entities.NewsArticleNetworkEntity
 import com.harshith.news.data.network.repository.NewsRepository
-import com.harshith.news.data.posts.PostRepository
-import com.harshith.news.data.posts.impl.FakePostsRepository
-import com.harshith.news.data.successOr
-import com.harshith.news.model.Post
 import com.harshith.news.model.PostsFeed
 import com.harshith.news.util.ErrorMessage
-import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.lang.IllegalArgumentException
-import java.util.UUID
-import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 sealed interface HomeUiState{
     val isLoading: Boolean
@@ -43,8 +32,8 @@ sealed interface HomeUiState{
     ): HomeUiState
 
     data class HasPosts(
-        val postsFeed: PostsFeed,
-        val selectedPost: Post,
+        val newsFeed: NewsFeed?,
+        val selectedPost: Boolean,
         val isArticleOpen: Boolean,
         val favourites: Set<String>,
         override val isLoading: Boolean,
@@ -55,7 +44,7 @@ sealed interface HomeUiState{
 }
 
 private data class HomeViewModelState(
-    val postsFeed: PostsFeed? = null,
+    val newsFeed: NewsFeed? = null,
     val selectedPostId: String? = null,
     val isArticleOpen: Boolean = false,
     val favourites: Set<String> = emptySet(),
@@ -64,7 +53,7 @@ private data class HomeViewModelState(
     val searchInput: String = ""
 ){
     fun toUiState(): HomeUiState =
-        if(postsFeed == null){
+        if(newsFeed == null){
             HomeUiState.NoPosts(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
@@ -72,11 +61,9 @@ private data class HomeViewModelState(
             )
         }else{
             HomeUiState.HasPosts(
-                postsFeed = postsFeed,
-                selectedPost = postsFeed.allPosts.find {
-                    it.id == selectedPostId
-                } ?: postsFeed.highlightedPost,
-                isArticleOpen = isArticleOpen,
+                newsFeed = newsFeed,
+                selectedPost = false,
+                isArticleOpen = false,
                 favourites = favourites,
                 isLoading = isLoading,
                 errorMessage = errorMessage,
@@ -84,6 +71,13 @@ private data class HomeViewModelState(
             )
         }
 }
+
+data class NewsFeed(
+    val highlightedNews: NewsArticleNetworkEntity,
+    val recommendedNews: List<NewsArticleNetworkEntity>,
+    val popularNews: List<NewsArticleNetworkEntity>,
+    val recentNews: List<NewsArticleNetworkEntity>
+)
 
 class HomeViewModel(
     private val newsRepository: NewsRepository,
@@ -93,7 +87,7 @@ class HomeViewModel(
         HomeViewModelState(
             isLoading = true,
             selectedPostId = preSelectedPostId,
-            isArticleOpen = preSelectedPostId != null
+            isArticleOpen = false
         )
     )
 
@@ -107,9 +101,11 @@ class HomeViewModel(
 
 
     init {
+        getSomeResponse()
         viewModelScope.launch {
+
             getIndiaNewsResponse()
-            getUSANewsResponse()
+            //getUSANewsResponse()
         }
         /**
          * viewModelScope.launch {
@@ -173,7 +169,7 @@ class HomeViewModel(
     fun interactWithArticleDetails(postId: String?){
         viewModelState.update {
             it.copy(
-                selectedPostId = postId,
+                selectedPostId = "postIdq",
                 isArticleOpen = true
             )
         }
@@ -181,18 +177,53 @@ class HomeViewModel(
 
     private suspend fun getIndiaNewsResponse(){
         when(val response = newsRepository.fetchTopHeadlines("in")){
-            is NetworkResult.Error -> Log.e("ResponseError", "Error:\t${response.statusCode} ${response.message}")
-            is NetworkResult.Success -> Log.e("ResponseSuccess", "Success:\t${response.data.articles}")
-            is NetworkResult.Exception -> Log.e("ResponseException", "Exception:\t${response.e}")
+            is NetworkResult.Success -> {
+               //Log.e("Response", "${response.data}")
+            }
+            is NetworkResult.Error -> Log.e("Response", "${response.statusCode} & ${response.message}")
+            is NetworkResult.Exception -> Log.e("Response", "${response.e}")
         }
-    }
 
-    private suspend fun getUSANewsResponse(){
-        when(val response = newsRepository.fetchTopHeadlines("us")){
-            is NetworkResult.Error -> Log.e("ResponseError", "Error:\t${response.statusCode} ${response.message}")
-            is NetworkResult.Success -> Log.e("ResponseSuccess", "Success:\t${response.data}")
-            is NetworkResult.Exception -> Log.e("ResponseException", "Exception:\t${response.e}")
-        }
+    }
+    private fun getSomeResponse(){
+        var indiaResponse: List<NewsArticleNetworkEntity> = emptyList()
+        var usResponse: List<NewsArticleNetworkEntity> = emptyList()
+        viewModelScope.launch {
+            val indiaHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("in") }
+            val usHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("us") }
+
+           when(val indiaHeadlines = indiaHeadLinesDeferred.await()){
+               is NetworkResult.Success -> {
+                   //Log.e("ResponseIndia", "${indiaHeadlines.data.articles}")
+                   indiaResponse = indiaHeadlines.data.articles
+               }
+               is NetworkResult.Error -> Log.e("ResponseIndia", "${indiaHeadlines.statusCode} & ${indiaHeadlines.message}")
+               is NetworkResult.Exception -> Log.e("ResponseIndia", "${indiaHeadlines.e}")
+           }
+
+           when(val usHeadlines = usHeadLinesDeferred.await()){
+               is NetworkResult.Success -> {
+                   //Log.e("ResponseUs", "${usHeadlines.data.articles}")
+                   usResponse = usHeadlines.data.articles
+               }
+               is NetworkResult.Error -> Log.e("ResponseUs", "${usHeadlines.statusCode} & ${usHeadlines.message}")
+               is NetworkResult.Exception -> Log.e("ResponseUs", "${usHeadlines.e}")
+           }
+            val newsFeed = NewsFeed(
+                highlightedNews = indiaResponse[0],
+                recommendedNews = indiaResponse,
+                popularNews = usResponse,
+                recentNews = usResponse
+            )
+           viewModelState.update {
+               it.copy(
+                   newsFeed = newsFeed,
+                   isLoading = false,
+                   isArticleOpen = false
+               )
+           }
+       }
+
     }
 
     companion object{
