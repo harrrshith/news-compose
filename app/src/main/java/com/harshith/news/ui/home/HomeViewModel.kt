@@ -8,7 +8,9 @@ import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.network.entities.NewsArticleNetworkEntity
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.model.PostsFeed
+import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
+import com.harshith.news.util.toUiArticleResponse
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -73,10 +75,10 @@ private data class HomeViewModelState(
 }
 
 data class NewsFeed(
-    val highlightedNews: NewsArticleNetworkEntity,
-    val recommendedNews: List<NewsArticleNetworkEntity>,
-    val popularNews: List<NewsArticleNetworkEntity>,
-    val recentNews: List<NewsArticleNetworkEntity>
+    val highlightedNews: Article,
+    val recommendedNews: List<Article>,
+    val popularNews: List<Article>,
+    val recentNews: List<Article>
 )
 
 class HomeViewModel(
@@ -195,7 +197,7 @@ class HomeViewModel(
            when(val indiaHeadlines = indiaHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
                    //Log.e("ResponseIndia", "${indiaHeadlines.data.articles}")
-                   indiaResponse = indiaHeadlines.data.articles
+                   indiaResponse = indiaHeadlines.data.articles!!
                }
                is NetworkResult.Error -> Log.e("ResponseIndia", "${indiaHeadlines.statusCode} & ${indiaHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseIndia", "${indiaHeadlines.e}")
@@ -204,16 +206,16 @@ class HomeViewModel(
            when(val usHeadlines = usHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
                    //Log.e("ResponseUs", "${usHeadlines.data.articles}")
-                   usResponse = usHeadlines.data.articles
+                   usResponse = usHeadlines.data.articles!!
                }
                is NetworkResult.Error -> Log.e("ResponseUs", "${usHeadlines.statusCode} & ${usHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseUs", "${usHeadlines.e}")
            }
             val newsFeed = NewsFeed(
-                highlightedNews = indiaResponse[0],
-                recommendedNews = indiaResponse,
-                popularNews = usResponse,
-                recentNews = usResponse
+                highlightedNews = indiaResponse[0].toUiArticleResponse(),
+                recommendedNews = indiaResponse.map { it.toUiArticleResponse() },
+                popularNews = usResponse.map { it.toUiArticleResponse() },
+                recentNews = usResponse.map { it.toUiArticleResponse() }
             )
            viewModelState.update {
                it.copy(

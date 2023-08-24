@@ -53,9 +53,8 @@ fun PostCardPopular(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                Log.e("published at", "${article.publishedAt}")
                 Text(
-                    text = article.title!!,
+                    text = article.title ?: "",
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -71,7 +70,7 @@ fun PostCardPopular(
                     text = stringResource(
                         id = R.string.post_min_read,
                         formatArgs = arrayOf(
-                            article.publishedAt!!,
+                            article.publishedAt ?: "",
                             "5"
                         )
                     ),
@@ -89,6 +88,7 @@ fun Preview(){
         Surface {
             PostCardPopular(
                 article = Article(
+                    "",
                     "Author",
                     "content",
                     "description",

@@ -54,9 +54,9 @@ fun HomeRoute(
     val articleDetailsLazyListState = when(uiState){
         is HomeUiState.HasPosts -> uiState.newsFeed?.popularNews!!
         is HomeUiState.NoPosts -> emptyList()
-    }.associate { post ->
-        key(post.title){
-            post.title to rememberLazyListState()
+    }.associate { article ->
+        key(article.uuid){
+            article.title to rememberLazyListState()
         }
     }
 

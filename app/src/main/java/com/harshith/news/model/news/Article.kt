@@ -1,6 +1,9 @@
 package com.harshith.news.model.news
 
+import java.util.UUID
+
 data class Article(
+    val uuid: String = generateId(),
     val author: String? = "",
     val content: String? = "",
     val description: String? = "",
@@ -9,4 +12,10 @@ data class Article(
     val title: String? = "",
     val url: String? = "",
     val urlToImage: String? = ""
-)
+){
+    companion object{
+        fun generateId(): String{
+            return UUID.randomUUID().toString()
+        }
+    }
+}

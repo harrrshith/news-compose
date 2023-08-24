@@ -1,6 +1,7 @@
 package com.harshith.news.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -330,11 +331,11 @@ fun PostList(
                 )
             }
         }
-        item { PostListTopSelection( newsFeed.highlightedNews.toUiArticleResponse(), onArticleTapped) }
+        item { PostListTopSelection( newsFeed.highlightedNews, onArticleTapped) }
         if(newsFeed.recommendedNews.isNotEmpty()){
             item {
                 PostListSimpleSelection(
-                    articles = newsFeed.recommendedNews.map { it.toUiArticleResponse() },
+                    articles = newsFeed.recommendedNews,
                     navigateToArticle = onArticleTapped,
                     favourites = favourites,
                     onToggleFavourite = onToggleFavourite
@@ -343,11 +344,11 @@ fun PostList(
         }
 
         if(newsFeed.popularNews.isNotEmpty()){
-            item { PostListPopularSection(articles = newsFeed.popularNews.map { it.toUiArticleResponse() }, navigateToArticle = onArticleTapped) }
+            item { PostListPopularSection(articles = newsFeed.popularNews, navigateToArticle = onArticleTapped) }
         }
 
         if(newsFeed.recentNews.isNotEmpty()){
-            item { PostListHistorySection(posts = newsFeed.recentNews.map { it.toUiArticleResponse() }, navigateToArticle = onArticleTapped) }
+            item { PostListHistorySection(articles = newsFeed.recentNews, navigateToArticle = onArticleTapped) }
         }
     }
 }
@@ -433,7 +434,7 @@ fun PostListPopularSection(
 
 @Composable
 fun PostListHistorySection(
-    posts: List<Article>,
+    articles: List<Article>,
     navigateToArticle: (String) -> Unit
 ){
     Column {
@@ -442,9 +443,9 @@ fun PostListHistorySection(
             modifier =  Modifier.padding(16.dp, 4.dp),
             style = MaterialTheme.typography.titleMedium
         )
-        posts.forEach { news ->
+        articles.forEach { article ->
             PostCardHistory(
-                news,
+                article,
                 navigateToArticle
             )
             PostListDivider()

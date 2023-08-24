@@ -104,7 +104,7 @@ fun PostTitle(
     article: Article,
 ){
     Text(
-        text = article.title!!,
+        text = article.title ?: "",
         style = MaterialTheme.typography.titleSmall,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
@@ -197,6 +197,7 @@ fun PreviewPostCard(){
         Surface {
             PostCardSimple(
                 Article(
+                    "",
                     "Harshith",
                     "",
                     "description",
@@ -223,6 +224,7 @@ fun PreviewPostCardHistory(){
         Surface {
             PostCardHistory(
                 article = Article(
+                    "",
                     "Harshith",
                     "",
                     "description",

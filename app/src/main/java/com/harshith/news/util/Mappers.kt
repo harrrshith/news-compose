@@ -17,7 +17,7 @@ fun NewsArticleNetworkEntity.toUiArticleResponse(): Article{
         content = this.content,
         description = this.description,
         publishedAt = this.publishedAt,
-        source = this.source.toUiSourceResponse(),
+        source = this.source?.toUiSourceResponse(),
         title = this.title,
         url = this.url,
         urlToImage = this.urlToImage
