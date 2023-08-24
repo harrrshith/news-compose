@@ -1,11 +1,12 @@
 package com.harshith.news.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -39,6 +40,7 @@ import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
+import com.harshith.news.util.parseTime
 
 @Composable
 fun PostCardSimple(
@@ -111,6 +113,7 @@ fun PostTitle(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AuthorReadTime(
     article: Article,
@@ -122,7 +125,7 @@ fun AuthorReadTime(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
                     article.author ?: "",
-                    article.publishedAt ?: ""
+                    parseTime(time = article.publishedAt!!)
                 )
             ),
             style = MaterialTheme.typography.bodyMedium

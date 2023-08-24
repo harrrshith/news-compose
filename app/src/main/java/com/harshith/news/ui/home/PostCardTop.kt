@@ -1,6 +1,8 @@
 package com.harshith.news.ui.home
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.model.news.Article
+import com.harshith.news.util.parseTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostCardTop(
     article: Article,
@@ -60,7 +64,7 @@ fun PostCardTop(
             text = stringResource(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
-                    article.publishedAt ?: "",
+                    parseTime(article.publishedAt!!),
                     "5"
                 )
             ),
