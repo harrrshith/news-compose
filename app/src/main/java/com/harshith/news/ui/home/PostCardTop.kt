@@ -22,7 +22,6 @@ import com.harshith.news.R
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.parseTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostCardTop(
     article: Article,

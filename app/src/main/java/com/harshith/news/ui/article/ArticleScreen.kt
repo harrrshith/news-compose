@@ -1,9 +1,14 @@
 package com.harshith.news.ui.article
 
 import android.content.Context
+import android.os.Build
+import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -42,6 +49,8 @@ import com.harshith.news.data.Result
 import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.post1
 import com.harshith.news.model.Post
+import com.harshith.news.model.news.Article
+import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
@@ -51,7 +60,7 @@ import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ArticleScreen(
-    post: Post,
+    text: String,
     isExpandedScreen: Boolean,
     onBack: () -> Unit,
     isFavourite: Boolean,
@@ -63,10 +72,11 @@ fun ArticleScreen(
     if(showUnimplementedActionDialog){
         FunctionalityNotAvailablePopup{showUnimplementedActionDialog = false}
     }
+    /**
     Row(modifier.fillMaxSize()) {
         val context = LocalContext.current
         ArticleScreenContent(
-            post = post,
+            article = article,
             navigationIconContent = {
                 if(!isExpandedScreen){
                     IconButton(onClick = onBack) {
@@ -84,7 +94,7 @@ fun ArticleScreen(
                         actions = {
                             FavouriteButton(onClick = {showUnimplementedActionDialog = true})
                             BookMarkButton(isBookmarked = isFavourite, onClick = onToggleFavourite)
-                            ShareButton(onClick = { sharePost(post, context) })
+                            ShareButton(onClick = { sharePost(article, context) })
                             TextSettingsButton(onClick = {showUnimplementedActionDialog = true})
                         }
                     )
@@ -93,12 +103,16 @@ fun ArticleScreen(
             lazyListState = lazyListState
         )
     }
+     */
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+        Text(text = text)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticleScreenContent(
-    post: Post,
+    article: Article,
     navigationIconContent: @Composable () -> Unit = {},
     bottomBarContent: @Composable () -> Unit = {},
     lazyListState: LazyListState = rememberLazyListState()
@@ -109,7 +123,7 @@ fun ArticleScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = post.publication?.name.orEmpty(),
+                title = article.title ?: "",
                 navigationIconContent = navigationIconContent,
                 scrollBehaviour = scrollBehavior
             )
@@ -117,7 +131,7 @@ fun ArticleScreenContent(
         bottomBar = bottomBarContent,
     ){innerPadding ->
         PostContent(
-            post = post,
+            article = article,
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -174,7 +188,7 @@ private fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit){
         }
     )
 }
-fun sharePost(post: Post, context: Context){
+fun sharePost(article: Article, context: Context){
 
 }
 
@@ -182,16 +196,15 @@ fun sharePost(post: Post, context: Context){
 @Composable
 fun PreviewArticleScreen(){
     NewsTheme {
-        val post = runBlocking {
-            (BlockingFakePostRepository().getPost(post1.id) as Result.Success).data
+        Surface {
+            ArticleScreen(
+                text = "Hello",
+                isExpandedScreen = false,
+                onBack = { },
+                isFavourite = true,
+                onToggleFavourite = { }
+            )
         }
-        ArticleScreen(
-            post = post,
-            isExpandedScreen = false,
-            onBack = { },
-            isFavourite = true,
-            onToggleFavourite = { }
-        )
     }
 }
 
@@ -205,3 +218,20 @@ fun PreviewTopAppBar(){
             scrollBehaviour = TopAppBarDefaults.enterAlwaysScrollBehavior())
     }
 }
+
+/**
+article = Article(
+                "",
+                "Author",
+                "content",
+                "description",
+                "publishedAt",
+                Source(
+                    "",
+                    ""
+                ),
+                stringResource(id = R.string.lorem_title),
+                "url",
+                ""
+            ),
+ */

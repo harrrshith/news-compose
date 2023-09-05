@@ -1,7 +1,7 @@
 package com.harshith.news.ui.home
 
 import android.content.Context
-import android.util.Log
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -74,12 +74,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.model.news.Article
+import com.harshith.news.model.news.Source
 import com.harshith.news.ui.modifier.interceptKey
 import com.harshith.news.ui.rememberContentPaddingForScreen
+import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
@@ -365,7 +368,7 @@ fun PostListTopSelection(
     )
     PostCardTop(
         article = article,
-        modifier = Modifier.clickable(onClick = {  })
+        modifier = Modifier.clickable(onClick = { navigateToArticle(article.uuid) })
     )
     PostListDivider()
 }
@@ -606,20 +609,35 @@ private fun submitSearch(
 ){
 
 }
-/*
+
 @Preview("Home list drawer screen")
 @Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
 @Preview("Home list drawer screen (big font)", fontScale = 1.5f)
 @Composable
 fun PreviewHomeListDrawerScreen(){
-    val postsFeed = runBlocking {
-        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
-    }
     NewsTheme {
         HomeFeedScreen(
             uiState = HomeUiState.HasPosts(
-                postsFeed = posts,
-                selectedPost = postsFeed.highlightedPost,
+                newsFeed = NewsFeed(
+                    Article(
+                        "",
+                        "Author",
+                        "content",
+                        "description",
+                        "1970-01-01T00:00:00Z",
+                        Source(
+                            "",
+                            ""
+                        ),
+                        stringResource(id = R.string.lorem_title),
+                        "url",
+                        ""
+                    ),
+                    emptyList(),
+                    emptyList(),
+                    emptyList()
+                ),
+                selectedPost = true,
                 isArticleOpen = false,
                 favourites = emptySet(),
                 isLoading = false,
@@ -638,6 +656,7 @@ fun PreviewHomeListDrawerScreen(){
         )
     }
 }
+
 /*
 @Preview("Home List nav rail Screen", device = Devices.NEXUS_7_2013)
 @Preview(
@@ -714,7 +733,6 @@ fun PreviewHomeListSimpleSelection(){
         )
     }
 }
-*/
 
 @Preview
 @Composable
@@ -728,5 +746,5 @@ fun PreviewPostListTopSelection(){
         }
     }
 }
+*/
 
- */

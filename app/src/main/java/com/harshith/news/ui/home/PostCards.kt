@@ -113,7 +113,6 @@ fun PostTitle(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AuthorReadTime(
     article: Article,
@@ -125,7 +124,7 @@ fun AuthorReadTime(
                 id = R.string.post_min_read,
                 formatArgs = arrayOf(
                     article.author ?: "",
-                    parseTime(time = article.publishedAt!!)
+                    parseTime(isoString = article.publishedAt!!)
                 )
             ),
             style = MaterialTheme.typography.bodyMedium

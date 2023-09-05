@@ -1,7 +1,5 @@
 package com.harshith.news.ui.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,7 +24,6 @@ import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.util.parseTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCardPopular(
@@ -35,7 +32,7 @@ fun PostCardPopular(
     modifier: Modifier = Modifier
 ){
     Card(
-        onClick = {  },
+        onClick = { navigateToArticle(article.uuid) },
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.size(280.dp, 240.dp)
     ) {
@@ -79,7 +76,6 @@ fun PostCardPopular(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun Preview(){

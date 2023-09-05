@@ -1,5 +1,7 @@
 package com.harshith.news.ui.article
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -51,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.data.posts.post1
 import com.harshith.news.model.Markup
@@ -59,12 +62,15 @@ import com.harshith.news.model.MetaData
 import com.harshith.news.model.Paragraph
 import com.harshith.news.model.ParagraphType
 import com.harshith.news.model.Post
+import com.harshith.news.model.news.Article
+import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.util.parseTime
 
 private val defaultSpacerSize = 16.dp
 @Composable
 fun PostContent(
-    post: Post,
+    article: Article,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState()
 ){
@@ -73,34 +79,34 @@ fun PostContent(
         modifier = modifier,
         state = state
     ){
-        postContentItems(post = post)
+        postContentItems(article = article)
     }
 }
 
-fun LazyListScope.postContentItems(post: Post){
+fun LazyListScope.postContentItems(article: Article){
     item {
-        PostHeaderImage(post = post)
+        PostHeaderImage(article = article)
         Spacer(modifier = Modifier.height(defaultSpacerSize))
-        Text(text = post.title, style = MaterialTheme.typography.headlineLarge)
+        Text(text = article.title ?: "", style = MaterialTheme.typography.headlineLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        post.subtitle.let {subtitle ->
-            Text(text = subtitle, style = MaterialTheme.typography.bodyMedium)
+        article.description?.let {description ->
+            Text(text = description, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(defaultSpacerSize))
         }
     }
-    item { PostMetaData(metadata = post.metadata, modifier = Modifier.padding(bottom = 24.dp))}
-    items(post.paragraphs){ Paragraph(paragraph = it) }
+    item { PostMetaData(authorName = article.author!!, publishedData = article.publishedAt!!, modifier = Modifier.padding(bottom = 24.dp))}
+    //items(article.paragraphs){ Paragraph(paragraph = it) }
 }
 
 @Composable
-fun PostHeaderImage(post: Post){
+fun PostHeaderImage(article: Article){
     val modifier = Modifier
         .heightIn(min = 180.dp)
         .fillMaxWidth()
         .clip(shape = MaterialTheme.shapes.medium)
 
-    Image(
-        painter = painterResource(id = post.imageId),
+    AsyncImage(
+        model = article.urlToImage ?: R.drawable.image_post,
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.Crop
@@ -109,7 +115,8 @@ fun PostHeaderImage(post: Post){
 
 @Composable
 fun PostMetaData(
-    metadata: MetaData,
+    authorName: String,
+    publishedData: String,
     modifier: Modifier = Modifier
 ){
     Row(
@@ -125,7 +132,7 @@ fun PostMetaData(
         Spacer(modifier = Modifier.width(8.dp))
         Column{
             Text(
-                text = metadata.author.name,
+                text = authorName,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -133,8 +140,8 @@ fun PostMetaData(
                 text = stringResource(
                     id = R.string.post_min_read,
                     formatArgs = arrayOf(
-                        metadata.date,
-                        metadata.readTimeMinutes
+                        parseTime(publishedData),
+                        "8"
                     )
                 ),
                 style = MaterialTheme.typography.bodySmall
@@ -142,6 +149,7 @@ fun PostMetaData(
         }
     }
 }
+/*
 @Composable
 fun Paragraph(paragraph: Paragraph){
     val (textStyle, paragraphStyle, trailingPadding) = paragraph.type.getTextAndParagraphStyle()
@@ -314,7 +322,7 @@ fun Markup.toAnnotatedStringItem(
         }
     }
 }
-
+*/
 private val ColorScheme.codeColorBackground: Color
     get() = onSurface.copy(alpha = .15f)
 
@@ -323,7 +331,22 @@ private val ColorScheme.codeColorBackground: Color
 fun PreviewPostContent(){
     NewsTheme {
         Surface {
-            PostContent(post = post1)
+            PostContent(
+                article = Article(
+                    "",
+                    "Author",
+                    "content",
+                    "description",
+                    "publishedAt",
+                    Source(
+                        "",
+                        ""
+                    ),
+                    stringResource(id = R.string.lorem_title),
+                    "url",
+                    ""
+                )
+            )
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.harshith.news.data
 
 import android.content.Context
-import android.util.Log
 import com.harshith.news.data.interests.InterestsRepository
 import com.harshith.news.data.interests.impl.FakeInterestsRepository
 import com.harshith.news.data.network.repository.NewsRepository
@@ -15,7 +14,7 @@ interface AppContainer{
     val interestsRepository: InterestsRepository
     val newsRepository: NewsRepository
 }
-class AppContainerImpl(private val applicationContext: Context): AppContainer {
+class AppContainerImpl: AppContainer {
     override val postRepository: PostRepository by lazy {
         FakePostsRepository()
     }

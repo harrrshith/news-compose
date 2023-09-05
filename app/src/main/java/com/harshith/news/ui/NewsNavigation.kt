@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 object NewsDestination{
     const val HOME = "home"
     const val INTERESTS_ROUTE = "interests"
+    const val  ARTICLE_DETAILS_ROUTE = "articleDetails"
 }
 
 class NewsNavigationActions(navController: NavHostController){
@@ -30,4 +31,13 @@ class NewsNavigationActions(navController: NavHostController){
         }
     }
 
+    val navigateToArticleDetail: (String) -> Unit = {id ->
+        navController.navigate("${NewsDestination.ARTICLE_DETAILS_ROUTE}/$id"){
+            popUpTo(navController.graph.findStartDestination().id){
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 }

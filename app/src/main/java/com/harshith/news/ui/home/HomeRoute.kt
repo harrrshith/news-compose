@@ -5,16 +5,17 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.runtime.key
-import com.harshith.news.ui.article.ArticleScreen
+import com.harshith.news.model.news.Article
 
 @Composable
 fun HomeRoute(
     homeViewModel: HomeViewModel,
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
+    navigateToArticleDetail: (String) -> Unit,
     snackbarHostState: SnackbarHostState = remember {
         SnackbarHostState()
     }
@@ -24,7 +25,7 @@ fun HomeRoute(
         uiState = uiState,
         isExpandedScreen = isExpandedScreen,
         onToggleFavourite = { homeViewModel.toggleFavourites(it) },
-        onSelectPosts = { homeViewModel.selectArticle(it) },
+        onSelectPosts = { navigateToArticleDetail(it) },
         onRefreshPosts = {  },
         onErrorDismiss = { },
         onInteractWithFeed = { homeViewModel.interactWithFeed() },
@@ -85,7 +86,7 @@ fun HomeRoute(
                 uiState = uiState,
                 showTopAppBar = !isExpandedScreen,
                 onToggleFavourite = onToggleFavourite,
-                onSelectPosts = onSelectPosts,
+                onSelectPosts = { onSelectPosts(it)},
                 onRefreshPosts = { onRefreshPosts() },
                 onErrorDismiss = onErrorDismiss,
                 openDrawer = { openDrawer() },
@@ -96,18 +97,17 @@ fun HomeRoute(
         }
         HomeScreenType.ArticleDetails -> {
             check(uiState is HomeUiState.HasPosts)
-            /**
-            ArticleScreen(
-                post = uiState.selectedPost,
-                isExpandedScreen = isExpandedScreen,
-                onBack = { onInteractWithFeed() },
-                isFavourite = uiState.favourites.contains(uiState.selectedPost.id),
-                onToggleFavourite = { onToggleFavourite(uiState.selectedPost.id) },
-                lazyListState = articleDetailsLazyListState.getValue(
-                    uiState.selectedPost.id
-                )
-            )
-             */
+//            ArticleScreen(
+//                article = ,
+//                isExpandedScreen = isExpandedScreen,
+//                onBack = { onInteractWithFeed() },
+//                isFavourite = uiState.favourites.contains(uiState.selectedPost.id),
+//                onToggleFavourite = { onToggleFavourite(uiState.selectedPost.id) },
+//                lazyListState = articleDetailsLazyListState.getValue(
+//                    uiState.selectedPost.id
+//                )
+//            )
+
             BackHandler {
                 onInteractWithFeed()
             }

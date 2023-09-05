@@ -56,7 +56,8 @@ fun NewsApp(
                 appContainer = appContainer,
                 isExpandedScreen = isExpandedSize,
                 navController = navController,
-                openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } }
+                openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
+                navigationToDetail = { navigationActions.navigateToArticleDetail(it) }
             )
         }
     }

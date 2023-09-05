@@ -3,13 +3,19 @@ package com.harshith.news.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import androidx.navigation.navigation
 import com.harshith.news.NewsApplication.Companion.NEWS_APP_URI
 import com.harshith.news.data.AppContainer
+import com.harshith.news.model.news.Article
+import com.harshith.news.ui.article.ArticleScreen
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.home.HomeViewModel
 import com.harshith.news.ui.interests.InterestsRoute
@@ -23,6 +29,7 @@ fun NewsNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
+    navigationToDetail: (String) -> Unit,
     startDestination: String = NewsDestination.HOME
 ){
     NavHost(
@@ -47,7 +54,8 @@ fun NewsNavGraph(
             HomeRoute(
                 homeViewModel = homeViewModel,
                 isExpandedScreen = isExpandedScreen,
-                openDrawer = openDrawer
+                openDrawer = openDrawer,
+                navigateToArticleDetail = { navigationToDetail(it) }
             )
         }
         composable(NewsDestination.INTERESTS_ROUTE){
@@ -61,6 +69,14 @@ fun NewsNavGraph(
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer
             )
+        }
+        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{id}"){navBackStackEntry ->
+            ArticleScreen(
+                text = navBackStackEntry.arguments?.getString("id") ?: "",
+                isExpandedScreen = isExpandedScreen,
+                onBack = { navController.popBackStack() },
+                isFavourite = true,
+                onToggleFavourite = { })
         }
     }
 }
