@@ -1,7 +1,7 @@
 package com.harshith.news.data.network
 
 import com.harshith.news.BuildConfig
-import com.harshith.news.data.network.entities.NewsResponseNetworkEntity
+import com.harshith.news.data.network.model.NetworkNewsResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface ApiService {
     @Headers("X-Api-Key:${BuildConfig.API_KEY}")
     @GET("top-headlines")
-    suspend fun getTopHeadlines(@Query("country") country: String): Response<NewsResponseNetworkEntity>
+    suspend fun getTopHeadlines(@Query("country") country: String): Response<NetworkNewsResponse>
 
 
 }

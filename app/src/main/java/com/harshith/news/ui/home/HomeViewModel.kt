@@ -5,22 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.network.NetworkResult
-import com.harshith.news.data.network.entities.NewsArticleNetworkEntity
+import com.harshith.news.data.network.model.NetworkNewsArticle
 import com.harshith.news.data.network.repository.NewsRepository
-import com.harshith.news.model.PostsFeed
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.toUiArticleResponse
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.system.measureTimeMillis
 
 sealed interface HomeUiState{
     val isLoading: Boolean
@@ -104,61 +100,21 @@ class HomeViewModel(
 
     init {
         getSomeResponse()
-        viewModelScope.launch {
-
-            getIndiaNewsResponse()
-            //getUSANewsResponse()
-        }
-        /**
-         * viewModelScope.launch {
-         *             getIndiaNewsResponse()
-         *             getUSANewsResponse()
-         *             postRepository.observeFavourites().collect{_favourites ->
-         *                 viewModelState.update { it.copy(favourites = _favourites) }
-         *             }
-         *         }
-         */
     }
 
-    /**
-     * fun refreshPosts(){
-     *         viewModelState.update { it.copy(isLoading = true) }
-     *         viewModelScope.launch {
-     *             val result = postRepository.getPostsFeed()
-     *             viewModelState.update {
-     *                 when(result){
-     *                     is Result.Success -> it.copy(postsFeed = result.data, isLoading = false)
-     *                     is Result.Error -> {
-     *                         val errorMessage = it.errorMessage + ErrorMessage(
-     *                             id = UUID.randomUUID().mostSignificantBits,
-     *                             messageId = R.string.load_error
-     *                         )
-     *                         it.copy(
-     *                             errorMessage = errorMessage,
-     *                             isLoading = false
-     *                         )
-     *                     }
-     *
-     *                 }
-     *             }
-     *
-     *         }
-     *     }
-     */
-
-    fun toggleFavourites(_postId: String?){
+    fun toggleFavourites(postId: String?){
         viewModelScope.launch {
-            newsRepository.toggleFavourite(_postId)
+            newsRepository.toggleFavourite(postId)
         }
     }
 
-    fun selectArticle(_postId: String?){
-        interactWithArticleDetails(_postId)
+    fun selectArticle(postId: String?){
+        interactWithArticleDetails(postId)
     }
 
-    fun onSearchInputChanged(_searchInput: String){
+    fun onSearchInputChanged(searchInput: String){
         viewModelState.update {
-            it.copy(searchInput = _searchInput)
+            it.copy(searchInput = searchInput)
         }
     }
 
@@ -176,20 +132,9 @@ class HomeViewModel(
             )
         }
     }
-
-    private suspend fun getIndiaNewsResponse(){
-        when(val response = newsRepository.fetchTopHeadlines("in")){
-            is NetworkResult.Success -> {
-               //Log.e("Response", "${response.data}")
-            }
-            is NetworkResult.Error -> Log.e("Response", "${response.statusCode} & ${response.message}")
-            is NetworkResult.Exception -> Log.e("Response", "${response.e}")
-        }
-
-    }
     private fun getSomeResponse(){
-        var indiaResponse: List<NewsArticleNetworkEntity> = emptyList()
-        var usResponse: List<NewsArticleNetworkEntity> = emptyList()
+        var indiaResponse: List<NetworkNewsArticle> = emptyList()
+        var usResponse: List<NetworkNewsArticle> = emptyList()
         viewModelScope.launch {
             val indiaHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("in") }
             val usHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("us") }
@@ -197,7 +142,7 @@ class HomeViewModel(
            when(val indiaHeadlines = indiaHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
                    //Log.e("ResponseIndia", "${indiaHeadlines.data.articles}")
-                   indiaResponse = indiaHeadlines.data.articles!!
+                   indiaResponse = indiaHeadlines.data.articles
                }
                is NetworkResult.Error -> Log.e("ResponseIndia", "${indiaHeadlines.statusCode} & ${indiaHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseIndia", "${indiaHeadlines.e}")
@@ -206,7 +151,7 @@ class HomeViewModel(
            when(val usHeadlines = usHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
                    //Log.e("ResponseUs", "${usHeadlines.data.articles}")
-                   usResponse = usHeadlines.data.articles!!
+                   usResponse = usHeadlines.data.articles
                }
                is NetworkResult.Error -> Log.e("ResponseUs", "${usHeadlines.statusCode} & ${usHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseUs", "${usHeadlines.e}")
@@ -217,6 +162,8 @@ class HomeViewModel(
                 popularNews = usResponse.map { it.toUiArticleResponse() },
                 recentNews = usResponse.map { it.toUiArticleResponse() }
             )
+            //Needs changes in implementation. After MVP
+
            viewModelState.update {
                it.copy(
                    newsFeed = newsFeed,

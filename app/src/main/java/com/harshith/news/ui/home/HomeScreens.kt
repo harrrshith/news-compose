@@ -1,7 +1,11 @@
 package com.harshith.news.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -18,8 +22,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -54,7 +61,9 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -78,8 +87,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
+import com.harshith.news.data.previewData.article
 import com.harshith.news.model.news.Article
-import com.harshith.news.model.news.Source
+import com.harshith.news.ui.article.postContentItems
+import com.harshith.news.ui.article.sharePost
 import com.harshith.news.ui.modifier.interceptKey
 import com.harshith.news.ui.rememberContentPaddingForScreen
 import com.harshith.news.ui.theme.NewsTheme
@@ -87,11 +98,10 @@ import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
 import com.harshith.news.ui.utils.TextSettingsButton
-import com.harshith.news.util.toUiArticleResponse
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
-/**
+
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -106,7 +116,7 @@ fun HomeFeedWithArticleDetailsScreen(
     onInteractWithDetail: (String) -> Unit,
     openDrawer: () -> Unit,
     homeListLazyListState: LazyListState,
-    articleDetailsLazyListStates: Map<String,LazyListState>,
+    articleDetailsLazyListStates: Map<String?,LazyListState>,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onSearchInputChanged: (String) -> Unit
@@ -123,7 +133,7 @@ fun HomeFeedWithArticleDetailsScreen(
         val contentPadding = rememberContentPaddingForScreen(additionalTop = 16.dp)
         Row(contentModifier) {
             PostList(
-                postsFeed = hasPostsUiState.newsFeed,
+                newsFeed = hasPostsUiState.newsFeed!!,
                 favourites = hasPostsUiState.favourites,
                 showExpandedSearch = !showTopAppBar,
                 onArticleTapped = onSelectPosts,
@@ -137,11 +147,15 @@ fun HomeFeedWithArticleDetailsScreen(
                 state = homeListLazyListState,
                 searchInput = hasPostsUiState.searchInput
             )
-            Crossfade(targetState = hasPostsUiState.selectedPost, label = "", animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)) { detailPost ->
+            Crossfade(
+                targetState = hasPostsUiState.selectedPost,
+                label = "",
+                animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)
+            ) { newsDetail ->
                 val detailLazyListState by derivedStateOf {
-                    articleDetailsLazyListStates.getValue(detailPost)
+                    articleDetailsLazyListStates.getValue("")
                 }
-                key(detailPost.id) {
+                key(newsDetail) {
                     LazyColumn(
                         state = detailLazyListState,
                         contentPadding = contentPadding,
@@ -149,29 +163,28 @@ fun HomeFeedWithArticleDetailsScreen(
                             .padding(horizontal = 16.dp)
                             .fillMaxSize()
                             .notifyInput {
-                                onInteractWithDetail(detailPost.id)
+                                onInteractWithDetail("")
                             }
                             .imePadding(),
                     ){
                         stickyHeader {
                             val context = LocalContext.current
                             PostTopBar(
-                                isFavourite = hasPostsUiState.favourites.contains(detailPost.id),
-                                onToggleFavourite = { onToggleFavourite(detailPost.id) },
-                                onSharePost = { sharePost(detailPost, context) },
+                                isFavourite = hasPostsUiState.favourites.contains(""),
+                                onToggleFavourite = { onToggleFavourite("") },
+                                onSharePost = { sharePost(article, context) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentWidth(Alignment.End)
                             )
                         }
-                        postContentItems(detailPost)
+                        postContentItems(article)
                     }
                 }
             }
         }
     }
 }
-*/
 
 @Composable
 fun HomeFeedScreen(
@@ -619,23 +632,10 @@ fun PreviewHomeListDrawerScreen(){
         HomeFeedScreen(
             uiState = HomeUiState.HasPosts(
                 newsFeed = NewsFeed(
-                    Article(
-                        "",
-                        "Author",
-                        "content",
-                        "description",
-                        "1970-01-01T00:00:00Z",
-                        Source(
-                            "",
-                            ""
-                        ),
-                        stringResource(id = R.string.lorem_title),
-                        "url",
-                        ""
-                    ),
-                    emptyList(),
-                    emptyList(),
-                    emptyList()
+                    article,
+                    listOf(article, article, article, article),
+                    listOf(article, article, article),
+                    listOf(article, article, article, article, article, article, article)
                 ),
                 selectedPost = true,
                 isArticleOpen = false,

@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.data.posts.post1
+import com.harshith.news.data.previewData.article
 import com.harshith.news.model.Markup
 import com.harshith.news.model.MarkupType
 import com.harshith.news.model.MetaData
@@ -332,20 +333,7 @@ fun PreviewPostContent(){
     NewsTheme {
         Surface {
             PostContent(
-                article = Article(
-                    "",
-                    "Author",
-                    "content",
-                    "description",
-                    "publishedAt",
-                    Source(
-                        "",
-                        ""
-                    ),
-                    stringResource(id = R.string.lorem_title),
-                    "url",
-                    ""
-                )
+                article = article
             )
         }
     }

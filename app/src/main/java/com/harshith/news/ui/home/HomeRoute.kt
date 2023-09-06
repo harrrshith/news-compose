@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.harshith.news.model.news.Article
 
 @Composable
 fun HomeRoute(
@@ -63,7 +62,6 @@ fun HomeRoute(
 
     when(getHomeScreenType(isExpandedScreen, uiState)){
         HomeScreenType.FeedWithArticles -> {
-            /*
             HomeFeedWithArticleDetailsScreen(
                 uiState = uiState,
                 showTopAppBar = !isExpandedScreen,
@@ -79,7 +77,6 @@ fun HomeRoute(
                 snackbarHostState = snackbarHostState,
                 onSearchInputChanged = onSearchInputChange
             )
-             */
         }
         HomeScreenType.Feed -> {
             HomeFeedScreen(
