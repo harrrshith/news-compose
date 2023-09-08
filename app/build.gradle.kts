@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.kotlin)
     kotlin("kapt")
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
@@ -79,7 +80,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.viemodel.compose)
     implementation(libs.androidx.lifecycle.compose)
@@ -90,6 +90,9 @@ dependencies {
     kapt(libs.dagger.hilt.compiler)
     implementation(libs.androidx.hilt.navigation)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.room)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
 
 kapt{

@@ -1,23 +1,26 @@
 [versions]
-ktx = "1.10.1"
+ktx = "1.12.0"
 androidGradlePlugin = "8.1.1"
 kotlinVersion = "1.9.0"
 kotlinBom = "1.8.0"
 activityCompose = "1.7.2"
-androidxLifecycle = "2.6.1"
-composeBom = "2023.08.00"
+androidxLifecycle = "2.6.2"
+composeBom = "2023.09.00"
 junit = "4.13.2"
 junitExt = "1.1.5"
 espressoVersion = "3.5.1"
 compose = "1.4.3"
-navVersion = "2.7.0"
-viewModelVersion = "2.6.1"
-lifeCycleVersion = "2.6.1"
+navVersion = "2.7.2"
+viewModelVersion = "2.6.2"
+lifeCycleVersion = "2.6.2"
 windowSizeVersion = "1.1.1"
 retrofitVersion = "2.9.0"
 hiltVersion = "2.44"
 hiltNavigationVersion = "1.0.0"
 coilVersion = "2.4.0"
+kaptVersion = "1.9.10"
+googleKspVersion = "1.9.0-1.0.11"
+roomVersion = "2.5.2"
 
 [libraries]
 androidx-ktx = { group="androidx.core", name="core-ktx", version.ref="ktx" }
@@ -45,6 +48,9 @@ dagger-hilt = { group="com.google.dagger", name="hilt-android", version.ref="hil
 dagger-hilt-compiler = { group="com.google.dagger", name="hilt-android-compiler", version.ref="hiltVersion" }
 androidx-hilt-navigation = { group="androidx.hilt", name="hilt-navigation-compose", version.ref="hiltNavigationVersion" }
 coil-compose = { group="io.coil-kt", name="coil-compose", version.ref="coilVersion" }
+androidx-room = { group = "androidx.room", name = "room-runtime" , version.ref = "roomVersion" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion"}
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion"}
 
 [bundles]
 androidx-compose-ui = ["androidx-compose-ui", "androidx-compose-ui-graphics", "androidx-compose-ui-tooling"]
@@ -53,4 +59,7 @@ androidx-compose-ui = ["androidx-compose-ui", "androidx-compose-ui-graphics", "a
 android-application = { id="com.android.application", version.ref="androidGradlePlugin" }
 android-library = { id="com.android.library", version.ref="androidGradlePlugin" }
 android-kotlin = { id="org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kaptVersion" }
 dagger-hilt = { id ="com.google.dagger.hilt.android", version.ref="hiltVersion" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "googleKspVersion" }
