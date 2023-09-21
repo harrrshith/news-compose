@@ -49,7 +49,7 @@ fun NewsApp(
                     closeDrawer = { coroutineScope.launch{sizeAwareDrawerState.close()} }
                 )
             },
-            drawerState = sizeAwareDrawerState,
+            drawerState = if(currentRoute == NewsDestination.ARTICLE_DETAILS_ROUTE) DrawerState(DrawerValue.Closed) else sizeAwareDrawerState,
             gesturesEnabled = !isExpandedSize
         ) {
             NewsNavGraph(

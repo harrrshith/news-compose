@@ -17,14 +17,3 @@ interface ApiService {
 
 
 }
-
-object RetrofitClientInstance{
-    fun createInstance(): ApiService{
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://newsapi.org/v2/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        return retrofit.create(ApiService::class.java)
-    }
-}

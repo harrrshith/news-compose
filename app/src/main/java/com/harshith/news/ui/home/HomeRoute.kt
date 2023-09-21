@@ -7,17 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.harshith.news.model.news.Article
 
 @Composable
 fun HomeRoute(
-    homeViewModel: HomeViewModel,
+    homeViewModel: HomeViewModel = hiltViewModel(),
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
     navigateToArticleDetail: (String) -> Unit,
     snackbarHostState: SnackbarHostState = remember {
         SnackbarHostState()
-    }
+    },
 ){
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     HomeRoute(
@@ -25,6 +27,7 @@ fun HomeRoute(
         isExpandedScreen = isExpandedScreen,
         onToggleFavourite = { homeViewModel.toggleFavourites(it) },
         onSelectPosts = { navigateToArticleDetail(it) },
+        onSelectPostsInLargeScreen = { homeViewModel.selectArticle(it) },
         onRefreshPosts = {  },
         onErrorDismiss = { },
         onInteractWithFeed = { homeViewModel.interactWithFeed() },
@@ -42,6 +45,7 @@ fun HomeRoute(
     isExpandedScreen: Boolean,
     onToggleFavourite: (String) -> Unit,
     onSelectPosts: (String) -> Unit,
+    onSelectPostsInLargeScreen: (String) -> Unit,
     onRefreshPosts: () -> Unit,
     onErrorDismiss: (Long) -> Unit,
     onInteractWithFeed: () -> Unit,
@@ -50,11 +54,12 @@ fun HomeRoute(
     openDrawer: () -> Unit,
     snackbarHostState: SnackbarHostState
 ){
+
     val homeLazyListState = rememberLazyListState()
     val articleDetailsLazyListState = when(uiState){
-        is HomeUiState.HasPosts -> uiState.newsFeed?.popularNews!!
+        is HomeUiState.HasPosts -> uiState.newsFeed?.allFeedNews
         is HomeUiState.NoPosts -> emptyList()
-    }.associate { article ->
+    }?.associate { article ->
         key(article.uuid){
             article.title to rememberLazyListState()
         }
@@ -66,14 +71,14 @@ fun HomeRoute(
                 uiState = uiState,
                 showTopAppBar = !isExpandedScreen,
                 onToggleFavourite = onToggleFavourite,
-                onSelectPosts = onSelectPosts,
+                onSelectPosts = onSelectPostsInLargeScreen,
                 onRefreshPosts = { onRefreshPosts() },
                 onErrorDismiss = onErrorDismiss,
                 onInteractWithList = { onInteractWithFeed() },
                 onInteractWithDetail = onInteractWidthArticleDetails,
                 openDrawer = { openDrawer() },
                 homeListLazyListState = homeLazyListState,
-                articleDetailsLazyListStates = articleDetailsLazyListState,
+                articleDetailsLazyListStates = articleDetailsLazyListState!!,
                 snackbarHostState = snackbarHostState,
                 onSearchInputChanged = onSearchInputChange
             )

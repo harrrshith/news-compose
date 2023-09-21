@@ -52,7 +52,6 @@ fun PostCardTop(
             style = typography.titleLarge,
             modifier = modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
         )
-        Log.e("Response", "${article.author}")
 
         Text(
             text = article.author ?: "",

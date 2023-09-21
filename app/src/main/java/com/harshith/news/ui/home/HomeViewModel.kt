@@ -4,12 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.harshith.news.data.local.entities.NewsArticleEntity
 import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.network.model.NetworkNewsArticle
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
+import com.harshith.news.util.toNewsArticleEntity
 import com.harshith.news.util.toUiArticleResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,6 +20,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.random.Random
 
 sealed interface HomeUiState{
     val isLoading: Boolean
@@ -75,12 +80,15 @@ data class NewsFeed(
     val recommendedNews: List<Article>,
     val popularNews: List<Article>,
     val recentNews: List<Article>
-)
+){
+    val allFeedNews: List<Article> = listOf(highlightedNews) + recommendedNews + popularNews + recentNews
+}
 
-class HomeViewModel(
-    private val newsRepository: NewsRepository,
-    preSelectedPostId: String?
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
+    private val preSelectedPostId: String = ""
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true,
@@ -141,23 +149,25 @@ class HomeViewModel(
 
            when(val indiaHeadlines = indiaHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
-                   //Log.e("ResponseIndia", "${indiaHeadlines.data.articles}")
                    indiaResponse = indiaHeadlines.data.articles
+                   var indiaNewsResponseEntity : List<NewsArticleEntity> = emptyList()
+                   indiaNewsResponseEntity = indiaHeadlines.data.articles.map {
+                       it.toNewsArticleEntity("india")
+                   }
+                   Log.e("IndiaNewsResponseEntity", indiaNewsResponseEntity.toString())
                }
                is NetworkResult.Error -> Log.e("ResponseIndia", "${indiaHeadlines.statusCode} & ${indiaHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseIndia", "${indiaHeadlines.e}")
            }
-
-           when(val usHeadlines = usHeadLinesDeferred.await()){
+            when(val usHeadlines = usHeadLinesDeferred.await()){
                is NetworkResult.Success -> {
-                   //Log.e("ResponseUs", "${usHeadlines.data.articles}")
                    usResponse = usHeadlines.data.articles
                }
                is NetworkResult.Error -> Log.e("ResponseUs", "${usHeadlines.statusCode} & ${usHeadlines.message}")
                is NetworkResult.Exception -> Log.e("ResponseUs", "${usHeadlines.e}")
-           }
+            }
             val newsFeed = NewsFeed(
-                highlightedNews = indiaResponse[0].toUiArticleResponse(),
+                highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)].toUiArticleResponse(),
                 recommendedNews = indiaResponse.map { it.toUiArticleResponse() },
                 popularNews = usResponse.map { it.toUiArticleResponse() },
                 recentNews = usResponse.map { it.toUiArticleResponse() }
@@ -176,6 +186,7 @@ class HomeViewModel(
     }
 
     companion object{
+        /*
         fun provideFactory(
             newsRepository: NewsRepository,
             preSelectedPostId: String? = null
@@ -184,6 +195,7 @@ class HomeViewModel(
                 return HomeViewModel(newsRepository ,preSelectedPostId) as T
             }
         }
+         */
     }
 
 }

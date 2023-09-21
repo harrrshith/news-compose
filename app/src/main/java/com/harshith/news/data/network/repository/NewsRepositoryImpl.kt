@@ -2,15 +2,14 @@ package com.harshith.news.data.network.repository
 
 import com.harshith.news.data.network.ApiService
 import com.harshith.news.data.network.NetworkResult
-import com.harshith.news.data.network.RetrofitClientInstance
 import com.harshith.news.data.network.handleApi
 import com.harshith.news.data.network.model.NetworkNewsResponse
+import javax.inject.Inject
 
-class NewsRepositoryImpl(private val apiService: ApiService = RetrofitClientInstance.createInstance()): NewsRepository {
+class NewsRepositoryImpl @Inject constructor(private val apiService: ApiService): NewsRepository {
     override suspend fun fetchAllNews(): NetworkResult<NetworkNewsResponse> {
         TODO("Not yet implemented")
     }
-
     override suspend fun fetchTopHeadlines(country: String): NetworkResult<NetworkNewsResponse> {
         return handleApi { apiService.getTopHeadlines(country)}
     }

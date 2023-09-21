@@ -116,7 +116,7 @@ fun HomeFeedWithArticleDetailsScreen(
     onInteractWithDetail: (String) -> Unit,
     openDrawer: () -> Unit,
     homeListLazyListState: LazyListState,
-    articleDetailsLazyListStates: Map<String?,LazyListState>,
+    articleDetailsLazyListStates: Map<String?,LazyListState?>,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onSearchInputChanged: (String) -> Unit
@@ -157,7 +157,7 @@ fun HomeFeedWithArticleDetailsScreen(
                 }
                 key(newsDetail) {
                     LazyColumn(
-                        state = detailLazyListState,
+                        state = detailLazyListState!!,
                         contentPadding = contentPadding,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)

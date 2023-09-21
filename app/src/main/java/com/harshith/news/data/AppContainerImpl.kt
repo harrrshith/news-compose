@@ -10,19 +10,11 @@ import com.harshith.news.data.posts.impl.FakePostsRepository
 
 
 interface AppContainer{
-    val postRepository: PostRepository
     val interestsRepository: InterestsRepository
-    val newsRepository: NewsRepository
 }
 class AppContainerImpl: AppContainer {
-    override val postRepository: PostRepository by lazy {
-        FakePostsRepository()
-    }
     override val interestsRepository: InterestsRepository by lazy {
         FakeInterestsRepository()
-    }
-    override val newsRepository: NewsRepository by lazy{
-        NewsRepositoryImpl()
     }
 
 }
