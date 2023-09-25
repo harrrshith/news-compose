@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.harshith.news.R
+import com.harshith.news.data.previewData.article
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
@@ -202,6 +203,7 @@ fun PreviewPostCard(){
                     "",
                     "Harshith",
                     "",
+                    "",
                     "description",
                     "publishedAt",
                     Source(
@@ -225,20 +227,7 @@ fun PreviewPostCardHistory(){
     NewsTheme {
         Surface {
             PostCardHistory(
-                article = Article(
-                    "",
-                    "Harshith",
-                    "",
-                    "description",
-                    "publishedAt",
-                    Source(
-                        "",
-                        ""
-                    ),
-                    "title",
-                    "url",
-                    "urlToImage"
-                ),
+                article = article
             ){}
         }
     }

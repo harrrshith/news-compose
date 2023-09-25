@@ -84,6 +84,7 @@ fun Preview(){
             PostCardPopular(
                 article = Article(
                     "",
+                    "",
                     "Author",
                     "content",
                     "description",

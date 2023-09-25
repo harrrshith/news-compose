@@ -6,6 +6,7 @@ import com.harshith.news.model.news.Source
 
 val article: Article = Article(
     uuid = "123456789",
+    category = "in",
     author = "Harshith Kumar",
     content = "The Navigation component provides support for Jetpack Compose applications. You can navigate between composables while taking advantage of the Navigation component’s infrastructure and features.",
     description = "The Navigation component provides support for Jetpack Compose applications. You can navigate between composables while taking advantage of the Navigation component’s infrastructure and features.",

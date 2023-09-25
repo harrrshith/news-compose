@@ -2,18 +2,12 @@ package com.harshith.news.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.harshith.news.data.local.entities.NewsArticleEntity
-import com.harshith.news.data.network.NetworkResult
-import com.harshith.news.data.network.model.NetworkNewsArticle
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
-import com.harshith.news.util.toNewsArticleEntity
-import com.harshith.news.util.toUiArticleResponse
+import com.harshith.news.util.toNewsArticle
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -107,7 +101,8 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getSomeResponse()
+        getIndiaNews()
+        getUsaNews()
     }
 
     fun toggleFavourites(postId: String?){
@@ -140,39 +135,19 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-    private fun getSomeResponse(){
-        var indiaResponse: List<NetworkNewsArticle> = emptyList()
-        var usResponse: List<NetworkNewsArticle> = emptyList()
+    private fun getIndiaNews(){
+        var indiaResponse: List<Article> = emptyList()
         viewModelScope.launch {
-            val indiaHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("in") }
-            val usHeadLinesDeferred = async { newsRepository.fetchTopHeadlines("us") }
-
-           when(val indiaHeadlines = indiaHeadLinesDeferred.await()){
-               is NetworkResult.Success -> {
-                   indiaResponse = indiaHeadlines.data.articles
-                   var indiaNewsResponseEntity : List<NewsArticleEntity> = emptyList()
-                   indiaNewsResponseEntity = indiaHeadlines.data.articles.map {
-                       it.toNewsArticleEntity("india")
-                   }
-                   Log.e("IndiaNewsResponseEntity", indiaNewsResponseEntity.toString())
-               }
-               is NetworkResult.Error -> Log.e("ResponseIndia", "${indiaHeadlines.statusCode} & ${indiaHeadlines.message}")
-               is NetworkResult.Exception -> Log.e("ResponseIndia", "${indiaHeadlines.e}")
-           }
-            when(val usHeadlines = usHeadLinesDeferred.await()){
-               is NetworkResult.Success -> {
-                   usResponse = usHeadlines.data.articles
-               }
-               is NetworkResult.Error -> Log.e("ResponseUs", "${usHeadlines.statusCode} & ${usHeadlines.message}")
-               is NetworkResult.Exception -> Log.e("ResponseUs", "${usHeadlines.e}")
+            newsRepository.fetchTopHeadlines("in").collect{ newsEntity ->
+                indiaResponse = newsEntity.map { it.toNewsArticle() }
             }
+            Log.d("Response", "${indiaResponse[0]}")
             val newsFeed = NewsFeed(
-                highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)].toUiArticleResponse(),
-                recommendedNews = indiaResponse.map { it.toUiArticleResponse() },
-                popularNews = usResponse.map { it.toUiArticleResponse() },
-                recentNews = usResponse.map { it.toUiArticleResponse() }
+                highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)],
+                recommendedNews = indiaResponse,
+                popularNews = emptyList(),
+                recentNews = emptyList()
             )
-            //Needs changes in implementation. After MVP
 
            viewModelState.update {
                it.copy(
@@ -182,7 +157,30 @@ class HomeViewModel @Inject constructor(
                )
            }
        }
+    }
 
+    private fun getUsaNews(){
+        var usaResponse: List<Article> = emptyList()
+        viewModelScope.launch {
+            newsRepository.fetchTopHeadlines("us").collect{ newsEntity ->
+                usaResponse = newsEntity.map { it.toNewsArticle() }
+            }
+            Log.e("Response", "${usaResponse[0]}")
+            val newsFeed = NewsFeed(
+                highlightedNews = usaResponse[Random.nextInt(0, usaResponse.size)],
+                recommendedNews = emptyList(),
+                popularNews =usaResponse,
+                recentNews = usaResponse
+            )
+
+            viewModelState.update {
+                it.copy(
+                    newsFeed = newsFeed,
+                    isLoading = false,
+                    isArticleOpen = false
+                )
+            }
+        }
     }
 
     companion object{
