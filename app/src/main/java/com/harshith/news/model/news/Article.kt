@@ -1,7 +1,5 @@
 package com.harshith.news.model.news
 
-import java.util.UUID
-
 data class Article(
     val uuid: String,
     val category: String,

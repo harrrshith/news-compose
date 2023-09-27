@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface NewsRepository {
+    var indiaNewsResponse:  Flow<List<NewsArticleEntity>>
     suspend fun fetchAllNews(): NetworkResult<NetworkNewsResponse>
     suspend fun fetchTopHeadlines(country: String): Flow<List<NewsArticleEntity>>
     suspend fun fetchEntertainment(category: String): NetworkResult<NetworkNewsResponse>

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.model.news.Article
+import com.harshith.news.util.Constants
 import com.harshith.news.util.parseTime
 
 @Composable
@@ -39,7 +40,7 @@ fun PostCardTop(
             .clip(MaterialTheme.shapes.medium)
 
         AsyncImage(
-            model = article.urlToImage ?: R.drawable.image_post,
+            model = article.urlToImage ?: Constants.PLACEHOLDER_IMAGE,
             contentDescription = null,
             modifier = imageModifier,
             contentScale = ContentScale.Crop

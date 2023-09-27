@@ -7,28 +7,9 @@ import com.harshith.news.data.network.model.NetworkNewsSource
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 
-//fun NetworkNewsSource.toUiSourceResponse(): Source{
-//    return Source(
-//        id = this.id,
-//        name = this.name
-//    )
-//}
-//fun NetworkNewsArticle.toUiArticleResponse(): Article{
-//    return Article(
-//        author = this.author,
-//        content = this.content,
-//        description = this.description,
-//        publishedAt = this.publishedAt,
-//        source = this.source.toUiSourceResponse(),
-//        title = this.title,
-//        url = this.url,
-//        urlToImage = this.urlToImage
-//    )
-//}
-
 fun NetworkNewsArticle.toNewsArticleEntity(category: String): NewsArticleEntity{
     return NewsArticleEntity(
-        category = category,
+        myCategory = category,
         author = this.author,
         content = this.content,
         description = this.description,
@@ -49,9 +30,9 @@ fun NetworkNewsSource.toNewsSourceEntity(): NewsSourceEntity{
 
 fun NewsArticleEntity.toNewsArticle(): Article{
     return Article(
-        uuid = this.id,
+        uuid = this.uuid,
         author = this.author,
-        category = this.category,
+        category = this.myCategory,
         content = this.content,
         description = this.description,
         publishedAt = this.publishedAt,

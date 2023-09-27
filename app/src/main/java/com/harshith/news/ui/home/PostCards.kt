@@ -41,6 +41,7 @@ import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
+import com.harshith.news.util.Constants
 import com.harshith.news.util.parseTime
 
 @Composable
@@ -94,7 +95,7 @@ fun PostImage(
     modifier: Modifier = Modifier
 ){
     AsyncImage(
-        model = article.urlToImage ?: R.drawable.image_post,
+        model = article.urlToImage ?: Constants.PLACEHOLDER_IMAGE,
         contentDescription = null,
         contentScale = ContentScale.Fit,
         modifier = modifier

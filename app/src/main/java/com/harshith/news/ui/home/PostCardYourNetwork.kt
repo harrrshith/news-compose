@@ -22,6 +22,7 @@ import com.harshith.news.R
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.util.Constants
 import com.harshith.news.util.parseTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +39,7 @@ fun PostCardPopular(
     ) {
         Column {
             AsyncImage(
-                model = article.urlToImage ?: R.drawable.image_post_thumb,
+                model = article.urlToImage ?: Constants.PLACEHOLDER_IMAGE,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

@@ -1,5 +1,9 @@
 package com.harshith.news.di
 
+import android.content.Context
+import androidx.room.Room
+import com.harshith.news.data.local.NewsArticleDatabase
+import com.harshith.news.data.local.dao.NewsArticleDao
 import com.harshith.news.data.network.ApiService
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.data.network.repository.NewsRepositoryImpl
@@ -7,6 +11,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -35,6 +40,23 @@ object NetworkModule{
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule{
+    @Provides
+    @Singleton
+    fun providesDatabase(
+        @ApplicationContext context: Context
+    ): NewsArticleDatabase = Room.databaseBuilder(
+        context,
+        NewsArticleDatabase::class.java,
+        "news_database"
+    ).build()
+
+    @Provides
+    fun providesNewsDao(newDatabase: NewsArticleDatabase): NewsArticleDao = newDatabase.newsArticleDao()
 }
 
 /*

@@ -66,6 +66,7 @@ import com.harshith.news.model.Post
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.util.Constants
 import com.harshith.news.util.parseTime
 
 private val defaultSpacerSize = 16.dp
@@ -107,7 +108,7 @@ fun PostHeaderImage(article: Article){
         .clip(shape = MaterialTheme.shapes.medium)
 
     AsyncImage(
-        model = article.urlToImage ?: R.drawable.image_post,
+        model = article.urlToImage ?: Constants.PLACEHOLDER_IMAGE,
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.Crop

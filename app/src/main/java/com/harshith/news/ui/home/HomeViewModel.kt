@@ -2,14 +2,17 @@ package com.harshith.news.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.network.repository.NewsRepository
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.toNewsArticle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -101,8 +104,9 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getIndiaNews()
-        getUsaNews()
+        viewModelScope.launch {
+            getIndiaNews()
+        }
     }
 
     fun toggleFavourites(postId: String?){
@@ -135,65 +139,37 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-    private fun getIndiaNews(){
+    private suspend fun getIndiaNews(){
         var indiaResponse: List<Article> = emptyList()
-        viewModelScope.launch {
-            newsRepository.fetchTopHeadlines("in").collect{ newsEntity ->
-                indiaResponse = newsEntity.map { it.toNewsArticle() }
-            }
-            Log.d("Response", "${indiaResponse[0]}")
-            val newsFeed = NewsFeed(
-                highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)],
-                recommendedNews = indiaResponse,
-                popularNews = emptyList(),
-                recentNews = emptyList()
+        var usResponse: List<Article> = emptyList()
+
+        newsRepository.fetchTopHeadlines("in").collect{newsEntity ->
+            Log.e("ResponseNewsEntity", "$newsEntity")
+            indiaResponse = newsEntity.map { it.toNewsArticle() }
+        }
+        newsRepository.indiaNewsResponse.collect{newsEntity ->
+            Log.e("ResponseNew", "$newsEntity")
+            indiaResponse = newsEntity.map { it.toNewsArticle() }
+        }
+
+        newsRepository.fetchTopHeadlines("us").collect{newsEntity ->
+            Log.e("ResponseNewsEntity", "$newsEntity")
+            usResponse = newsEntity.map { it.toNewsArticle() }
+        }
+
+        val newsFeed = NewsFeed(
+            highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)],
+            recommendedNews = indiaResponse,
+            popularNews = usResponse,
+            recentNews = usResponse
+        )
+
+        viewModelState.update {
+            it.copy(
+                newsFeed = newsFeed,
+                isLoading = false,
+                isArticleOpen = false
             )
-
-           viewModelState.update {
-               it.copy(
-                   newsFeed = newsFeed,
-                   isLoading = false,
-                   isArticleOpen = false
-               )
-           }
-       }
-    }
-
-    private fun getUsaNews(){
-        var usaResponse: List<Article> = emptyList()
-        viewModelScope.launch {
-            newsRepository.fetchTopHeadlines("us").collect{ newsEntity ->
-                usaResponse = newsEntity.map { it.toNewsArticle() }
-            }
-            Log.e("Response", "${usaResponse[0]}")
-            val newsFeed = NewsFeed(
-                highlightedNews = usaResponse[Random.nextInt(0, usaResponse.size)],
-                recommendedNews = emptyList(),
-                popularNews =usaResponse,
-                recentNews = usaResponse
-            )
-
-            viewModelState.update {
-                it.copy(
-                    newsFeed = newsFeed,
-                    isLoading = false,
-                    isArticleOpen = false
-                )
-            }
         }
     }
-
-    companion object{
-        /*
-        fun provideFactory(
-            newsRepository: NewsRepository,
-            preSelectedPostId: String? = null
-        ): ViewModelProvider.Factory = object: ViewModelProvider.Factory{
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HomeViewModel(newsRepository ,preSelectedPostId) as T
-            }
-        }
-         */
-    }
-
 }
