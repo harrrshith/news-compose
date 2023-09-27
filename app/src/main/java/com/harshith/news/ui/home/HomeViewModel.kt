@@ -147,10 +147,6 @@ class HomeViewModel @Inject constructor(
             Log.e("ResponseNewsEntity", "$newsEntity")
             indiaResponse = newsEntity.map { it.toNewsArticle() }
         }
-        newsRepository.indiaNewsResponse.collect{newsEntity ->
-            Log.e("ResponseNew", "$newsEntity")
-            indiaResponse = newsEntity.map { it.toNewsArticle() }
-        }
 
         newsRepository.fetchTopHeadlines("us").collect{newsEntity ->
             Log.e("ResponseNewsEntity", "$newsEntity")

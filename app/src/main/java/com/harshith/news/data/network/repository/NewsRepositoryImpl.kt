@@ -18,20 +18,14 @@ class NewsRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val newsArticleDao: NewsArticleDao,
 ): NewsRepository {
-    override var indiaNewsResponse: Flow<List<NewsArticleEntity>> = flow {
-        val indiaNewsResponse = apiService.getTopHeadlines("in").body()?.articles?.map { it.toNewsArticleEntity("in") }!!
-        emit(indiaNewsResponse)
-    }
-
-
     override suspend fun fetchAllNews(): NetworkResult<NetworkNewsResponse> {
         TODO("Not yet implemented")
     }
     override suspend fun fetchTopHeadlines(country: String): Flow<List<NewsArticleEntity>> = flow{
         val news = apiService.getTopHeadlines(country).body()?.articles?.map { it.toNewsArticleEntity(country) }!!
         CoroutineScope(Dispatchers.IO).launch {
-            //newsArticleDao.deleteAllNews()
-           // newsArticleDao.addNewsArticles(news)
+            newsArticleDao.deleteAllNews()
+            newsArticleDao.addNewsArticles(news)
             val article = newsArticleDao.getANewsArticle(news[0].uuid)
             Log.e("Response", "$article")
             Log.e("ResponseNews", "${newsArticleDao.getAllNewsArticles()}")
