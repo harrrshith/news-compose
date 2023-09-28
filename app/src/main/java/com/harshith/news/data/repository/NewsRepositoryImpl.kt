@@ -1,4 +1,4 @@
-package com.harshith.news.data.network.repository
+package com.harshith.news.data.repository
 
 import android.util.Log
 import com.harshith.news.data.local.dao.NewsArticleDao
@@ -24,13 +24,13 @@ class NewsRepositoryImpl @Inject constructor(
     override suspend fun fetchTopHeadlines(country: String): Flow<List<NewsArticleEntity>> = flow{
         val news = apiService.getTopHeadlines(country).body()?.articles?.map { it.toNewsArticleEntity(country) }!!
         CoroutineScope(Dispatchers.IO).launch {
-            newsArticleDao.deleteAllNews()
+            if(country == "in"){
+                newsArticleDao.deleteAllNews() // small workaround. Changing later!!
+            }
             newsArticleDao.addNewsArticles(news)
-            val article = newsArticleDao.getANewsArticle(news[0].uuid)
-            Log.e("Response", "$article")
-            Log.e("ResponseNews", "${newsArticleDao.getAllNewsArticles()}")
         }
-        emit(newsArticleDao.getAllNewsArticles())
+        Log.e("ResponseNewResponse", "${newsArticleDao.getAllNewsArticles()}")
+        emit(news)
     }
 
     override suspend fun fetchEntertainment(category: String): NetworkResult<NetworkNewsResponse> {

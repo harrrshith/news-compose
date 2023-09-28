@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.harshith.news.data.network.repository.NewsRepository
+import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.news.Article
 import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.toNewsArticle
@@ -149,7 +149,6 @@ class HomeViewModel @Inject constructor(
         }
 
         newsRepository.fetchTopHeadlines("us").collect{newsEntity ->
-            Log.e("ResponseNewsEntity", "$newsEntity")
             usResponse = newsEntity.map { it.toNewsArticle() }
         }
 

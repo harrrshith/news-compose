@@ -5,8 +5,8 @@ import androidx.room.Room
 import com.harshith.news.data.local.NewsArticleDatabase
 import com.harshith.news.data.local.dao.NewsArticleDao
 import com.harshith.news.data.network.ApiService
-import com.harshith.news.data.network.repository.NewsRepository
-import com.harshith.news.data.network.repository.NewsRepositoryImpl
+import com.harshith.news.data.repository.NewsRepository
+import com.harshith.news.data.repository.NewsRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

@@ -1,4 +1,4 @@
-package com.harshith.news.data.network.repository
+package com.harshith.news.data.repository
 
 import com.harshith.news.data.local.entities.NewsArticleEntity
 import com.harshith.news.data.network.NetworkResult
