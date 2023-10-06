@@ -25,7 +25,7 @@ fun NewsNavGraph(
     isExpandedScreen: Boolean,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    openDrawer: () -> Unit = {},
+    openDrawer: () -> Unit,
     navigationToDetail: (String) -> Unit,
     startDestination: String = NewsDestination.HOME
 ){

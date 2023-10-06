@@ -1,5 +1,7 @@
 package com.harshith.news.model.news
 
+import androidx.room.Embedded
+
 data class Article(
     val uuid: String,
     val category: String,

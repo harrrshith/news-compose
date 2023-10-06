@@ -2,22 +2,34 @@ package com.harshith.news.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.harshith.news.data.local.entities.NewsArticleEntity
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.news.Article
+import com.harshith.news.util.Constants
 import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.toNewsArticle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 import kotlin.random.Random
 
 sealed interface HomeUiState{
@@ -111,7 +123,7 @@ class HomeViewModel @Inject constructor(
 
     fun toggleFavourites(postId: String?){
         viewModelScope.launch {
-            newsRepository.toggleFavourite(postId)
+            //newsRepository.toggleFavourite(postId)
         }
     }
 
@@ -139,32 +151,36 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-    private suspend fun getIndiaNews(){
-        var indiaResponse: List<Article> = emptyList()
-        var usResponse: List<Article> = emptyList()
-
-        newsRepository.fetchTopHeadlines("in").collect{newsEntity ->
-            Log.e("ResponseNewsEntity", "$newsEntity")
-            indiaResponse = newsEntity.map { it.toNewsArticle() }
-        }
-
-        newsRepository.fetchTopHeadlines("us").collect{newsEntity ->
-            usResponse = newsEntity.map { it.toNewsArticle() }
-        }
-
-        val newsFeed = NewsFeed(
-            highlightedNews = indiaResponse[Random.nextInt(0, indiaResponse.size)],
-            recommendedNews = indiaResponse,
-            popularNews = usResponse,
-            recentNews = usResponse
+    private suspend fun getIndiaNews() = withContext(Dispatchers.IO) {
+        val indiaNews = newsRepository.fetchIndiaNews(Constants.INDIA_NEWS)
+        val usaNews = newsRepository.fetchUsaNews(Constants.USA_NEWS)
+        val count = newsRepository.getDatabaseCount()
+        Log.e("Response", "$count")
+        combine(
+            indiaNews,
+            usaNews
+        ) { _indiaNews, _usaNews ->
+            if(count > 0){
+                viewModelState.update {
+                    it.copy(
+                        newsFeed = NewsFeed(
+                            highlightedNews = _indiaNews[Random.nextInt(0, _indiaNews.size)].toNewsArticle(),
+                            recommendedNews = _indiaNews.map { it.toNewsArticle() },
+                            popularNews = _usaNews.map { it.toNewsArticle() },
+                            recentNews = _usaNews.map { it.toNewsArticle() }
+                        )
+                    )
+                }
+            }
+        }.stateIn(
+            scope = CoroutineScope(Dispatchers.IO),
+            started = SharingStarted.Eagerly,
+            initialValue = viewModelState.update {
+                it.copy(
+                    isLoading = false
+                )
+            }
         )
-
-        viewModelState.update {
-            it.copy(
-                newsFeed = newsFeed,
-                isLoading = false,
-                isArticleOpen = false
-            )
-        }
+        newsRepository.fetchAllNews()
     }
 }
