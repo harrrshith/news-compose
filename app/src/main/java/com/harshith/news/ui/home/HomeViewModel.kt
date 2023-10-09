@@ -155,7 +155,6 @@ class HomeViewModel @Inject constructor(
         val indiaNews = newsRepository.fetchIndiaNews(Constants.INDIA_NEWS)
         val usaNews = newsRepository.fetchUsaNews(Constants.USA_NEWS)
         val count = newsRepository.getDatabaseCount()
-        Log.e("Response", "$count")
         combine(
             indiaNews,
             usaNews

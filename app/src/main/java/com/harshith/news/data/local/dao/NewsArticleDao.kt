@@ -22,7 +22,7 @@ interface NewsArticleDao{
     @Query("SELECT * FROM news_database WHERE myCategory='${Constants.USA_NEWS}'")
     fun observerUsaCategory(): Flow<List<NewsArticleEntity>>
 
-    @Query("SELECT * FROM news_database WHERE id=:uuid")
+    @Query("SELECT * FROM news_database WHERE uuid=:uuid")
     fun getANewsArticle(uuid: String): NewsArticleEntity
 
     @Query("SELECT * FROM news_database")

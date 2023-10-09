@@ -3,6 +3,7 @@ package com.harshith.news.ui.article
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -46,10 +47,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.R
 import com.harshith.news.data.Result
 import com.harshith.news.data.posts.BlockingFakePostRepository
 import com.harshith.news.data.posts.post1
+import com.harshith.news.data.previewData.article
 import com.harshith.news.model.Post
 import com.harshith.news.model.news.Article
 import com.harshith.news.model.news.Source
@@ -62,23 +66,24 @@ import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ArticleScreen(
-    text: String,
     isExpandedScreen: Boolean,
     onBack: () -> Unit,
     isFavourite: Boolean,
     onToggleFavourite: () -> Unit,
     modifier: Modifier = Modifier,
-    lazyListState: LazyListState = rememberLazyListState()
+    lazyListState: LazyListState = rememberLazyListState(),
+    articleViewModel: ArticleViewModel = hiltViewModel(),
 ){
+    val uiState by articleViewModel.uiState.collectAsStateWithLifecycle()
     var showUnimplementedActionDialog by rememberSaveable{ mutableStateOf(false)}
     if(showUnimplementedActionDialog){
         FunctionalityNotAvailablePopup{showUnimplementedActionDialog = false}
     }
-    /**
+
     Row(modifier.fillMaxSize()) {
         val context = LocalContext.current
         ArticleScreenContent(
-            article = article,
+            article = uiState.article!!,
             navigationIconContent = {
                 if(!isExpandedScreen){
                     IconButton(onClick = onBack) {
@@ -95,7 +100,7 @@ fun ArticleScreen(
                     BottomAppBar(
                         actions = {
                             FavouriteButton(onClick = {showUnimplementedActionDialog = true})
-                            BookMarkButton(isBookmarked = isFavourite, onClick = onToggleFavourite)
+                            BookMarkButton(isBookmarked = uiState.isFavourite, onClick = onToggleFavourite)
                             ShareButton(onClick = { sharePost(article, context) })
                             TextSettingsButton(onClick = {showUnimplementedActionDialog = true})
                         }
@@ -104,10 +109,6 @@ fun ArticleScreen(
             },
             lazyListState = lazyListState
         )
-    }
-     */
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        Text(text = text)
     }
 }
 
@@ -199,13 +200,7 @@ fun sharePost(article: Article, context: Context){
 fun PreviewArticleScreen(){
     NewsTheme {
         Surface {
-            ArticleScreen(
-                text = "Hello",
-                isExpandedScreen = false,
-                onBack = { },
-                isFavourite = true,
-                onToggleFavourite = { }
-            )
+            ArticleScreenContent(article = article)
         }
     }
 }
@@ -220,20 +215,3 @@ fun PreviewTopAppBar(){
             scrollBehaviour = TopAppBarDefaults.enterAlwaysScrollBehavior())
     }
 }
-
-/**
-article = Article(
-                "",
-                "Author",
-                "content",
-                "description",
-                "publishedAt",
-                Source(
-                    "",
-                    ""
-                ),
-                stringResource(id = R.string.lorem_title),
-                "url",
-                ""
-            ),
- */

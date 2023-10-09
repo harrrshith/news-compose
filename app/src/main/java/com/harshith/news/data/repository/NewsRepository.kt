@@ -11,7 +11,8 @@ interface NewsRepository {
     fun fetchIndiaNews(category: String): Flow<List<NewsArticleEntity>>
     fun fetchUsaNews(category: String): Flow<List<NewsArticleEntity>>
     suspend fun fetchAllNews()
-
     fun getDatabaseCount(): Int
+
+    fun getAnArticle(postId: String) : NewsArticleEntity
 
 }

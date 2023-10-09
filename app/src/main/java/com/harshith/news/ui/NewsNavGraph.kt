@@ -11,12 +11,10 @@ import androidx.navigation.navDeepLink
 import com.harshith.news.NewsApplication.Companion.NEWS_APP_URI
 import com.harshith.news.data.AppContainer
 import com.harshith.news.ui.article.ArticleScreen
+import com.harshith.news.ui.article.ArticleViewModel
 import com.harshith.news.ui.home.HomeRoute
-import com.harshith.news.ui.home.HomeViewModel
 import com.harshith.news.ui.interests.InterestsRoute
 import com.harshith.news.ui.interests.InterestsViewModel
-import dagger.multibindings.IntKey
-import javax.inject.Inject
 
 const val POST_ID = "postId"
 @Composable
@@ -42,12 +40,6 @@ fun NewsNavGraph(
                 }
             )
         ){navBackStackEntry ->
-//            val homeViewModel: HomeViewModel = viewModel(
-//                factory = HomeViewModel.provideFactory(
-//                    newsRepository = appContainer.newsRepository,
-//                    preSelectedPostId = navBackStackEntry.arguments?.getString(POST_ID)
-//                )
-//            )
             HomeRoute(
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer,
@@ -66,13 +58,14 @@ fun NewsNavGraph(
                 openDrawer = openDrawer
             )
         }
-        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{id}"){navBackStackEntry ->
+        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
             ArticleScreen(
-                text = navBackStackEntry.arguments?.getString("id") ?: "",
                 isExpandedScreen = isExpandedScreen,
                 onBack = { navController.popBackStack() },
                 isFavourite = true,
-                onToggleFavourite = { })
+                onToggleFavourite = { },
+                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
+            )
         }
     }
 }
