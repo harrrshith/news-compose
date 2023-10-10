@@ -407,7 +407,7 @@ fun PostListSimpleSelection(
         items(articles.size){index ->
             PostCardSimple(
                 article = articles[index],
-                navigateToArticle = {  },
+                navigateToArticle = { navigateToArticle(it) },
                 isFavourite = false,
                 onToggleFavourite = { }
             )

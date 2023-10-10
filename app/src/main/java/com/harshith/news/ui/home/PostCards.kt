@@ -40,7 +40,6 @@ import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.util.Constants
-import com.harshith.news.util.parseTime
 
 @Composable
 fun PostCardSimple(
@@ -54,7 +53,7 @@ fun PostCardSimple(
     Row(
         modifier = Modifier
             .widthIn(min = 200.dp, max = configuration.screenWidthDp.dp)
-            .clickable(onClick = { })
+            .clickable(onClick = { navigateToArticle(article.uuid) })
             .semantics {
                 customActions = listOf(
                     CustomAccessibilityAction(
@@ -67,7 +66,9 @@ fun PostCardSimple(
     ) {
         PostImage(
             article = article,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 12.dp)
+                .size(100.dp, 80.dp)
         )
         Column(
             modifier = Modifier
@@ -95,9 +96,8 @@ fun PostImage(
     AsyncImage(
         model = article.urlToImage ?: Constants.PLACEHOLDER_IMAGE,
         contentDescription = null,
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.FillBounds,
         modifier = modifier
-            .size(80.dp, 60.dp)
             .clip(MaterialTheme.shapes.small),
     )
 }
@@ -114,25 +114,6 @@ fun PostTitle(
 }
 
 @Composable
-fun AuthorReadTime(
-    article: Article,
-    modifier: Modifier = Modifier
-){
-    Row(modifier) {
-        Text(
-            text = stringResource(
-                id = R.string.post_min_read,
-                formatArgs = arrayOf(
-                    article.author ?: "",
-                    parseTime(isoString = article.publishedAt!!)
-                )
-            ),
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-
-@Composable
 fun PostCardHistory(
     article: Article,
     navigateToArticle: (String) -> Unit
@@ -144,12 +125,14 @@ fun PostCardHistory(
     Row(
         modifier = Modifier
             .widthIn(min = 200.dp, max = configuration.screenWidthDp.dp)
-            .clickable(onClick = { }),
+            .clickable(onClick = { navigateToArticle(article.uuid) }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         PostImage(
             article = article,
-            modifier = Modifier.padding(8.dp, 4.dp)
+            modifier = Modifier
+                .padding(8.dp, 12.dp)
+                .size(80.dp, 50.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
             PostTitle(article = article)
