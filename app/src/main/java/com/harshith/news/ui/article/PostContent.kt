@@ -58,14 +58,29 @@ fun LazyListScope.postContentItems(article: Article){
     item {
         PostHeaderImage(article = article)
         Spacer(modifier = Modifier.height(defaultSpacerSize))
-        Text(text = article.title ?: "", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        article.description?.let {description ->
-            Text(text = description, style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.height(defaultSpacerSize))
-        }
     }
-    item { PostMetaData(authorName = article.author!!, publishedData = article.publishedAt!!, modifier = Modifier.padding(bottom = 24.dp))}
+    item {
+        Text(
+            text = article.title ?: "",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer (modifier = Modifier.height(defaultSpacerSize))
+    }
+    item {
+        Text(
+            text = article.content ?: "",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(defaultSpacerSize))
+    }
+    item {
+        PostMetaData(
+            authorName = article.author ?: "",
+            publishedData = article.publishedAt  ?: "",
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+        Spacer(modifier = Modifier.height(defaultSpacerSize))
+    }
 }
 
 @Composable

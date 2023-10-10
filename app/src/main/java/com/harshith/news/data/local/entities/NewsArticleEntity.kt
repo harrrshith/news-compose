@@ -29,7 +29,6 @@ data class NewsArticleEntity(
 }
 
 data class NewsSourceEntity(
-    @PrimaryKey
     val id: String?,
     val name: String?
 )

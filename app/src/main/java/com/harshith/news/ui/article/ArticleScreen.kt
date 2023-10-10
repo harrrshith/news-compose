@@ -1,15 +1,9 @@
 package com.harshith.news.ui.article
 
 import android.content.Context
-import android.os.Build
-import android.os.Bundle
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -36,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,24 +38,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.R
-import com.harshith.news.data.Result
-import com.harshith.news.data.posts.BlockingFakePostRepository
-import com.harshith.news.data.posts.post1
 import com.harshith.news.data.previewData.article
-import com.harshith.news.model.Post
 import com.harshith.news.model.news.Article
-import com.harshith.news.model.news.Source
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
 import com.harshith.news.ui.utils.TextSettingsButton
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun ArticleScreen(
@@ -83,7 +68,7 @@ fun ArticleScreen(
     Row(modifier.fillMaxSize()) {
         val context = LocalContext.current
         ArticleScreenContent(
-            article = uiState.article!!,
+            article = uiState.article,
             navigationIconContent = {
                 if(!isExpandedScreen){
                     IconButton(onClick = onBack) {
@@ -126,7 +111,7 @@ fun ArticleScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = article.title ?: "",
+                title = getName(article) ?: "",
                 navigationIconContent = navigationIconContent,
                 scrollBehaviour = scrollBehavior
             )
@@ -143,6 +128,10 @@ fun ArticleScreenContent(
     }
 }
 
+private fun getName(article: Article): String{
+    return article.source?.name!!.split(":")[0]
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
@@ -151,22 +140,13 @@ fun TopAppBar(
     navigationIconContent: @Composable ()-> Unit = {},
     scrollBehaviour: TopAppBarScrollBehavior?
 ){
-    CenterAlignedTopAppBar(
+    androidx.compose.material3.TopAppBar(
         title = {
-            Row {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_android),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(36.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.published_in, title),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.published_in, title),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(start = 8.dp)
+            )
         },
         navigationIcon = navigationIconContent,
         scrollBehavior = scrollBehaviour,
