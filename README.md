@@ -1,2 +1,2 @@
 # news-compose
-WIP
+Ok! Changing these again
