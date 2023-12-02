@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.harshith.news.data.local.entities.NewsArticleEntity
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.news.Article
+import com.harshith.news.model.newsdata.NewsArticle
 import com.harshith.news.util.Constants
 import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.toNewsArticle
@@ -32,99 +33,41 @@ import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 import kotlin.random.Random
 
-sealed interface HomeUiState{
-    val isLoading: Boolean
-    val errorMessage: List<ErrorMessage>
-    val searchInput: String
-
-    data class NoPosts(
-        override val isLoading: Boolean,
-        override val errorMessage: List<ErrorMessage>,
-        override val searchInput: String
-    ): HomeUiState
-
-    data class HasPosts(
-        val newsFeed: NewsFeed?,
-        val selectedPost: Boolean,
-        val isArticleOpen: Boolean,
-        val favourites: Set<String>,
-        override val isLoading: Boolean,
-        override val errorMessage: List<ErrorMessage>,
-        override val searchInput: String
-    ): HomeUiState
-
-}
-
 private data class HomeViewModelState(
-    val newsFeed: NewsFeed? = null,
+    val newsArticle: NewsArticle? = null,
     val selectedPostId: String? = null,
     val isArticleOpen: Boolean = false,
     val favourites: Set<String> = emptySet(),
     val isLoading: Boolean = false,
     val errorMessage: List<ErrorMessage> = emptyList(),
     val searchInput: String = ""
-){
-    fun toUiState(): HomeUiState =
-        if(newsFeed == null){
-            HomeUiState.NoPosts(
-                isLoading = isLoading,
-                errorMessage = errorMessage,
-                searchInput = searchInput
-            )
-        }else{
-            HomeUiState.HasPosts(
-                newsFeed = newsFeed,
-                selectedPost = false,
-                isArticleOpen = false,
-                favourites = favourites,
-                isLoading = isLoading,
-                errorMessage = errorMessage,
-                searchInput = searchInput
-            )
-        }
-}
-
-data class NewsFeed(
-    val highlightedNews: Article,
-    val recommendedNews: List<Article>,
-    val popularNews: List<Article>,
-    val recentNews: List<Article>
-){
-    val allFeedNews: List<Article> = listOf(highlightedNews) + recommendedNews + popularNews + recentNews
-}
+)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
-    private val preSelectedPostId: String = ""
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
-            isLoading = true,
-            selectedPostId = preSelectedPostId,
-            isArticleOpen = false
+            isLoading = true
         )
     )
 
-    val uiState = viewModelState
-        .map( HomeViewModelState::toUiState)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            viewModelState.value.toUiState()
-        )
+    val uiState = viewModelState.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        viewModelState.value.isLoading
+    )
 
 
     init {
         viewModelScope.launch {
-            getIndiaNews()
+
         }
     }
 
     fun toggleFavourites(postId: String?){
-        viewModelScope.launch {
-            //newsRepository.toggleFavourite(postId)
-        }
+
     }
 
     fun selectArticle(postId: String?){
@@ -132,54 +75,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSearchInputChanged(searchInput: String){
-        viewModelState.update {
-            it.copy(searchInput = searchInput)
-        }
+
     }
 
     fun interactWithFeed(){
-        viewModelState.update {
-            it.copy(isArticleOpen = false)
-        }
+
     }
 
     fun interactWithArticleDetails(postId: String?){
-        viewModelState.update {
-            it.copy(
-                selectedPostId = postId,
-                isArticleOpen = true
-            )
-        }
+
     }
     private suspend fun getIndiaNews() = withContext(Dispatchers.IO) {
-        val indiaNews = newsRepository.fetchIndiaNews(Constants.INDIA_NEWS)
-        val usaNews = newsRepository.fetchUsaNews(Constants.USA_NEWS)
-        val count = newsRepository.getDatabaseCount()
-        combine(
-            indiaNews,
-            usaNews
-        ) { _indiaNews, _usaNews ->
-            if(count > 0){
-                viewModelState.update {
-                    it.copy(
-                        newsFeed = NewsFeed(
-                            highlightedNews = _indiaNews[Random.nextInt(0, _indiaNews.size)].toNewsArticle(),
-                            recommendedNews = _indiaNews.map { it.toNewsArticle() },
-                            popularNews = _usaNews.map { it.toNewsArticle() },
-                            recentNews = _usaNews.map { it.toNewsArticle() }
-                        )
-                    )
-                }
-            }
-        }.stateIn(
-            scope = CoroutineScope(Dispatchers.IO),
-            started = SharingStarted.Eagerly,
-            initialValue = viewModelState.update {
-                it.copy(
-                    isLoading = false
-                )
-            }
-        )
-        newsRepository.fetchAllNews()
+
     }
 }
