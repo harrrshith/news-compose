@@ -101,650 +101,187 @@ import com.harshith.news.ui.utils.TextSettingsButton
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
-
-@OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnrememberedMutableState")
-@Composable
-fun HomeFeedWithArticleDetailsScreen(
-    uiState: HomeUiState,
-    showTopAppBar: Boolean,
-    onToggleFavourite: (String) -> Unit,
-    onSelectPosts: (String) -> Unit,
-    onRefreshPosts: () -> Unit,
-    onErrorDismiss: (Long) -> Unit,
-    onInteractWithList: () -> Unit,
-    onInteractWithDetail: (String) -> Unit,
-    openDrawer: () -> Unit,
-    homeListLazyListState: LazyListState,
-    articleDetailsLazyListStates: Map<String?,LazyListState?>,
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    onSearchInputChanged: (String) -> Unit
-    ){
-    HomeScreenWithList(
-        uiState = uiState,
-        showTopAppBar = showTopAppBar,
-        onRefreshPosts = { onRefreshPosts() },
-        onErrorDismiss = onErrorDismiss,
-        openDrawer = { openDrawer() },
-        snackbarHostState = snackbarHostState,
-        modifier = modifier
-    ){hasPostsUiState, contentModifier ->
-        val contentPadding = rememberContentPaddingForScreen(additionalTop = 16.dp)
-        Row(contentModifier) {
-            PostList(
-                newsFeed = hasPostsUiState.newsFeed!!,
-                favourites = hasPostsUiState.favourites,
-                showExpandedSearch = !showTopAppBar,
-                onArticleTapped = onSelectPosts,
-                onToggleFavourite = onToggleFavourite,
-                onSearchInputChanged = onSearchInputChanged,
-                contentPadding = contentPadding,
-                modifier = Modifier
-                    .width(334.dp)
-                    .notifyInput { onInteractWithList() }
-                    .imePadding(),
-                state = homeListLazyListState,
-                searchInput = hasPostsUiState.searchInput
-            )
-            Crossfade(
-                targetState = hasPostsUiState.selectedPost,
-                label = "",
-                animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)
-            ) { newsDetail ->
-                val detailLazyListState by derivedStateOf {
-                    articleDetailsLazyListStates.getValue("")
-                }
-                key(newsDetail) {
-                    LazyColumn(
-                        state = detailLazyListState!!,
-                        contentPadding = contentPadding,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxSize()
-                            .notifyInput {
-                                onInteractWithDetail("")
-                            }
-                            .imePadding(),
-                    ){
-                        stickyHeader {
-                            val context = LocalContext.current
-                            PostTopBar(
-                                isFavourite = hasPostsUiState.favourites.contains(""),
-                                onToggleFavourite = { onToggleFavourite("") },
-                                onSharePost = { sharePost(article, context) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(Alignment.End)
-                            )
-                        }
-                        postContentItems(article)
-                    }
-                }
-            }
-        }
-    }
-}
+//fun HomeFeedWithArticleDetailsScreen(
+//    showTopAppBar: Boolean,
+//    onToggleFavourite: (String) -> Unit,
+//    onSelectPosts: (String) -> Unit,
+//    onRefreshPosts: () -> Unit,
+//    onErrorDismiss: (Long) -> Unit,
+//    onInteractWithList: () -> Unit,
+//    onInteractWithDetail: (String) -> Unit,
+//    openDrawer: () -> Unit,
+//    homeListLazyListState: LazyListState,
+//    articleDetailsLazyListStates: Map<String?,LazyListState?>,
+//    snackbarHostState: SnackbarHostState,
+//    modifier: Modifier = Modifier,
+//    onSearchInputChanged: (String) -> Unit
+//    ){
+//    HomeScreenWithList(
+//        showTopAppBar = showTopAppBar,
+//        onRefreshPosts = { onRefreshPosts() },
+//        onErrorDismiss = onErrorDismiss,
+//        openDrawer = { openDrawer() },
+//        snackbarHostState = snackbarHostState,
+//        modifier = modifier
+//    ){
+//        val contentPadding = rememberContentPaddingForScreen(additionalTop = 16.dp)
+//        Row(contentModifier) {
+//            PostList(
+//                newsFeed = hasPostsUiState.newsFeed!!,
+//                favourites = hasPostsUiState.favourites,
+//                showExpandedSearch = !showTopAppBar,
+//                onArticleTapped = onSelectPosts,
+//                onToggleFavourite = onToggleFavourite,
+//                onSearchInputChanged = onSearchInputChanged,
+//                contentPadding = contentPadding,
+//                modifier = Modifier
+//                    .width(334.dp)
+//                    .notifyInput { onInteractWithList() }
+//                    .imePadding(),
+//                state = homeListLazyListState,
+//                searchInput = hasPostsUiState.searchInput
+//            )
+//            Crossfade(
+//                targetState = hasPostsUiState.selectedPost,
+//                label = "",
+//                animationSpec = tween(durationMillis = 2000, easing = FastOutLinearInEasing)
+//            ) { newsDetail ->
+//                val detailLazyListState by derivedStateOf {
+//                    articleDetailsLazyListStates.getValue("")
+//                }
+//                key(newsDetail) {
+//                    LazyColumn(
+//                        state = detailLazyListState!!,
+//                        contentPadding = contentPadding,
+//                        modifier = Modifier
+//                            .padding(horizontal = 16.dp)
+//                            .fillMaxSize()
+//                            .notifyInput {
+//                                onInteractWithDetail("")
+//                            }
+//                            .imePadding(),
+//                    ){
+//                        stickyHeader {
+//                            val context = LocalContext.current
+//                            PostTopBar(
+//                                isFavourite = hasPostsUiState.favourites.contains(""),
+//                                onToggleFavourite = { onToggleFavourite("") },
+//                                onSharePost = { sharePost(article, context) },
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .wrapContentWidth(Alignment.End)
+//                            )
+//                        }
+//                        postContentItems(article)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun HomeFeedScreen(
-    uiState: HomeUiState,
     showTopAppBar: Boolean,
     onToggleFavourite: (String) -> Unit,
     onSelectPosts: (String) -> Unit,
-    onRefreshPosts: () -> Unit,
-    onErrorDismiss: (Long) -> Unit,
     openDrawer: () -> Unit,
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    searchInput: String = "",
-    onSearchInputChanged: (String) -> Unit
 ){
     HomeScreenWithList(
-        uiState = uiState,
         showTopAppBar = showTopAppBar,
-        onRefreshPosts = { onRefreshPosts() },
-        onErrorDismiss = onErrorDismiss,
         openDrawer = { openDrawer() },
         snackbarHostState = snackbarHostState,
-        modifier = modifier
-    ) {hasPostsUiState, contentModifier ->
-        PostList(
-            newsFeed = hasPostsUiState.newsFeed!!,
-            favourites = hasPostsUiState.favourites,
-            showExpandedSearch = !showTopAppBar,
-            onArticleTapped = onSelectPosts,
-            onToggleFavourite = onToggleFavourite,
-            modifier = contentModifier,
-            contentPadding = rememberContentPaddingForScreen(
-                additionalTop = if(showTopAppBar) 0.dp else 8.dp,
-                excludeTop = showTopAppBar
-            ),
-            state = homeListLazyListState,
-            searchInput = searchInput,
-            onSearchInputChanged = onSearchInputChanged,
-
-        )
-    }
+    )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenWithList(
-    uiState: HomeUiState,
     showTopAppBar: Boolean,
-    onRefreshPosts: () -> Unit,
-    onErrorDismiss: (Long) -> Unit,
     openDrawer: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    hasPostsContent: @Composable (
-        uiState: HomeUiState.HasPosts,
-        modifier: Modifier
-    ) -> Unit
 ){
-    val topAppBarState = rememberTopAppBarState()
-    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
-    Scaffold(
-        topBar = {
-            if(showTopAppBar){
-                HomeTopAppBar(
-                    openDrawer = openDrawer,
-                    topAppBarState = topAppBarState
-                )
-            }
-        },
-        modifier = modifier
-
-    ){innerPadding ->
-        val contentModifier = modifier
-            .padding(innerPadding)
-            .nestedScroll(scrollBehaviour.nestedScrollConnection)
-        LoadingContent(
-            empty = when (uiState) {
-                    is HomeUiState.HasPosts -> false
-                    is HomeUiState.NoPosts -> uiState.isLoading
-            },
-            emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = { onRefreshPosts() },
-            content =  {
-                when(uiState){
-                    is HomeUiState.HasPosts -> hasPostsContent(uiState, contentModifier)
-                    is HomeUiState.NoPosts -> {
-                        if(uiState.errorMessage.isEmpty()){
-                            TextButton(
-                                onClick = { onRefreshPosts() },
-                                modifier.fillMaxSize()
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.click_here),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }else{
-                            Box(
-                                modifier = contentModifier.fillMaxSize() 
-                            ){}
-                        }
-                    }
-                }
-            }
-        )
-    }
-    /**
-     * When the viewModelState emits the error then this block of executes.
-     * LaunchedEffect is used to call the snackbar inside the composable
-     */
-    if(uiState.errorMessage.isNotEmpty()){
-        val errorMessage = remember(uiState){
-            uiState.errorMessage[0]
-        }
-        val errorMessageText: String = stringResource(errorMessage.messageId)
-        val retryTextMessage = stringResource(id = R.string.retry)
-
-        val onRefreshPostsState by rememberUpdatedState(newValue = onRefreshPosts)
-        val onErrorDismissState by rememberUpdatedState(newValue = onErrorDismiss)
-
-        LaunchedEffect(errorMessageText, retryTextMessage, snackbarHostState){
-            val snackBarResult = snackbarHostState.showSnackbar(
-                message = errorMessageText,
-                actionLabel = retryTextMessage
-            )
-            if(snackBarResult == SnackbarResult.ActionPerformed){
-                onRefreshPostsState()
-            }
-            onErrorDismissState(errorMessage.id)
-        }
-    }
-}
-
-@Composable
-fun PostList(
-    newsFeed: NewsFeed,
-    favourites: Set<String>,
-    showExpandedSearch: Boolean,
-    onArticleTapped: (postId: String) -> Unit,
-    onToggleFavourite: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    state: LazyListState = LazyListState(),
-    searchInput: String = "",
-    onSearchInputChanged: (String) -> Unit
-) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = contentPadding,
-        state = state
-    ){
-        if(showExpandedSearch){
-            item {
-                HomeSearch(
-                    Modifier.padding(horizontal = 16.dp),
-                    searchInput = searchInput,
-                    onSearchInputChanged = onSearchInputChanged
-                )
-            }
-        }
-        item { PostListTopSelection( newsFeed.highlightedNews, onArticleTapped) }
-        if(newsFeed.recommendedNews.isNotEmpty()){
-            item {
-                PostListSimpleSelection(
-                    articles = newsFeed.recommendedNews,
-                    navigateToArticle = onArticleTapped,
-                    favourites = favourites,
-                    onToggleFavourite = onToggleFavourite
-                )
-            }
-        }
-
-        if(newsFeed.popularNews.isNotEmpty()){
-            item { PostListPopularSection(articles = newsFeed.popularNews, navigateToArticle = onArticleTapped) }
-        }
-
-        if(newsFeed.recentNews.isNotEmpty()){
-            item { PostListHistorySection(articles = newsFeed.recentNews, navigateToArticle = onArticleTapped) }
-        }
-    }
-}
-
-@Composable //First Section
-fun PostListTopSelection(
-    article: Article,
-    navigateToArticle: (String) -> Unit
-){
-    Text(
-        text = stringResource(id = R.string.top_stories_for_you),
-        modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-        style = MaterialTheme.typography.titleMedium
-    )
-    PostCardTop(
-        article = article,
-        modifier = Modifier.clickable(onClick = { navigateToArticle(article.uuid) })
-    )
-    PostListDivider()
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable // Second Section
-fun PostListSimpleSelection(
-    articles: List<Article>,
-    navigateToArticle: (String) -> Unit,
-    favourites: Set<String>,
-    onToggleFavourite: (String) -> Unit
-){
-    val state = rememberLazyGridState()
-    val snappingLayout = remember(state) { SnapLayoutInfoProvider(state) }
-    val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
-
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(3),
-        modifier = Modifier.heightIn(min = 250.dp, max=250.dp),
-        state = state,
-        flingBehavior = flingBehavior
-    ){
-        items(articles.size){index ->
-            PostCardSimple(
-                article = articles[index],
-                navigateToArticle = { navigateToArticle(it) },
-                isFavourite = false,
-                onToggleFavourite = { }
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PostListPopularSection(
-    articles: List<Article>,
-    navigateToArticle: (String) -> Unit
-){
-    val state = rememberLazyListState()
-    val snappingLayout = remember(state) { SnapLayoutInfoProvider(state) }
-    val flingBehavior = rememberSnapFlingBehavior(snappingLayout)
-    Column {
-        Text(
-            text = stringResource(id = R.string.popular_on_news),
-            modifier =  Modifier.padding(16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            state = state,
-            flingBehavior = flingBehavior
-        ){
-            items(articles){ article ->
-                PostCardPopular(
-                    article,
-                    navigateToArticle
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        PostListDivider()
-    }
-}
-
-@Composable
-fun PostListHistorySection(
-    articles: List<Article>,
-    navigateToArticle: (String) -> Unit
-){
-    Column {
-        Text(
-            text = stringResource(id = R.string.you_may_also_like).uppercase(),
-            modifier =  Modifier.padding(16.dp, 4.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
-        articles.forEach { article ->
-            PostCardHistory(
-                article,
-                navigateToArticle
-            )
-            PostListDivider()
-        }
-    }
-}
-
-@Composable
-fun PostTopBar(
-    isFavourite: Boolean,
-    onToggleFavourite: () -> Unit,
-    onSharePost: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(
-            Dp.Hairline,
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-        ),
-        modifier = modifier.padding(0.dp, 0.dp, 16.dp, 0.dp)
-    ) {
-        Row(modifier = Modifier.padding(16.dp, 0.dp)) {
-            FavouriteButton(onClick = {} )
-            BookMarkButton(isBookmarked = isFavourite, onClick = { onToggleFavourite() })
-            ShareButton(onClick = onSharePost)
-            TextSettingsButton(onClick = {})
-        }
-    }
-}
-
-@Composable
-fun PostListDivider(){
-    Divider(
-        modifier = Modifier.padding(horizontal = 14.dp),
-        color = MaterialTheme.colorScheme.onSurface.copy(0.05f)
-    )
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HomeTopAppBar(
-    modifier: Modifier = Modifier,
-    openDrawer: () -> Unit,
-    topAppBarState: TopAppBarState,
-    scrollBehaviour: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState),
-){
-    val title = stringResource(id = R.string.app_name)
-    CenterAlignedTopAppBar(
-        title = {
-            Image(
-                painter = painterResource(id = R.drawable.ic_news_title),
-                contentDescription = title,
-                contentScale = ContentScale.Inside,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { openDrawer() }) {
-                Icon(
-                    Icons.Default.Menu,
-                    contentDescription = stringResource(id = R.string.menu),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    Icons.Filled.Search,
-                    null,
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        },
-        scrollBehavior = scrollBehaviour,
-    modifier = modifier
-    )
-}
-
-@Composable
-private fun LoadingContent(
-    empty: Boolean,
-    emptyContent: @Composable () -> Unit,
-    loading: Boolean,
-    onRefresh: () -> Unit,
-    content: @Composable () -> Unit
-){
-    if(empty){
-        emptyContent()
-    }else{
-        content()
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun HomeSearch(
-    modifier: Modifier = Modifier,
-    searchInput: String = "",
-    onSearchInputChanged: (String) -> Unit
-){
-    val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
-    val keyBoardController = LocalSoftwareKeyboardController.current
-
-    OutlinedTextField(
-        value = searchInput,
-        onValueChange = onSearchInputChanged,
-        placeholder = { Text(text = stringResource(id = R.string.search_articles)) },
-        leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
-        modifier = modifier
-            .fillMaxWidth()
-            .interceptKey(Key.Enter) {
-                submitSearch(onSearchInputChanged, context)
-                keyBoardController?.hide()
-                focusManager.clearFocus(force = true)
-            },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                submitSearch(onSearchInputChanged, context)
-                keyBoardController?.hide()
-            }
-        )
-    )
-}
-
-@Composable
-fun FullScreenLoading(){
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ){
-        CircularProgressIndicator()
+        Text(text = "Started!!")
     }
-
+//    val topAppBarState = rememberTopAppBarState()
+//    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
+//    Scaffold(
+//        topBar = {
+//            if(showTopAppBar){
+//                HomeTopAppBar(
+//                    openDrawer = openDrawer,
+//                    topAppBarState = topAppBarState
+//                )
+//            }
+//        },
+//        modifier = modifier
+//
+//    ){innerPadding ->
+//        val contentModifier = modifier
+//            .padding(innerPadding)
+//            .nestedScroll(scrollBehaviour.nestedScrollConnection)
+//        LoadingContent(
+//            empty = when (uiState) {
+//                    is HomeUiState.HasPosts -> false
+//                    is HomeUiState.NoPosts -> uiState.isLoading
+//            },
+//            emptyContent = { FullScreenLoading() },
+//            loading = uiState.isLoading,
+//            onRefresh = { onRefreshPosts() },
+//            content =  {
+//                when(uiState){
+//                    is HomeUiState.HasPosts -> hasPostsContent(uiState, contentModifier)
+//                    is HomeUiState.NoPosts -> {
+//                        if(uiState.errorMessage.isEmpty()){
+//                            TextButton(
+//                                onClick = { onRefreshPosts() },
+//                                modifier.fillMaxSize()
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.click_here),
+//                                    textAlign = TextAlign.Center
+//                                )
+//                            }
+//                        }else{
+//                            Box(
+//                                modifier = contentModifier.fillMaxSize()
+//                            ){}
+//                        }
+//                    }
+//                }
+//            }
+//        )
+//    }
+//    /**
+//     * When the viewModelState emits the error then this block of executes.
+//     * LaunchedEffect is used to call the snackbar inside the composable
+//     */
+//    if(uiState.errorMessage.isNotEmpty()){
+//        val errorMessage = remember(uiState){
+//            uiState.errorMessage[0]
+//        }
+//        val errorMessageText: String = stringResource(errorMessage.messageId)
+//        val retryTextMessage = stringResource(id = R.string.retry)
+//
+//        val onRefreshPostsState by rememberUpdatedState(newValue = onRefreshPosts)
+//        val onErrorDismissState by rememberUpdatedState(newValue = onErrorDismiss)
+//
+//        LaunchedEffect(errorMessageText, retryTextMessage, snackbarHostState){
+//            val snackBarResult = snackbarHostState.showSnackbar(
+//                message = errorMessageText,
+//                actionLabel = retryTextMessage
+//            )
+//            if(snackBarResult == SnackbarResult.ActionPerformed){
+//                onRefreshPostsState()
+//            }
+//            onErrorDismissState(errorMessage.id)
+//        }
+//    }
 }
 
-private fun Modifier.notifyInput(block: () -> Unit): Modifier =
-    composed {
-        val blockState = rememberUpdatedState(newValue = block)
-        pointerInput(Unit){
-            while (currentCoroutineContext().isActive){
-                awaitPointerEventScope {
-                    awaitPointerEvent(PointerEventPass.Initial)
-                    blockState.value()
-                }
-            }
-        }
-    }
-
-private fun submitSearch(
-    onSearchInputChanged: (String) -> Unit,
-    context: Context
-){
-
-}
-
-@Preview("Home list drawer screen")
-@Preview("Home list drawer screen (dark)", uiMode = UI_MODE_NIGHT_YES)
-@Preview("Home list drawer screen (big font)", fontScale = 1.5f)
-@Composable
-fun PreviewHomeListDrawerScreen(){
-    NewsTheme {
-        HomeFeedScreen(
-            uiState = HomeUiState.HasPosts(
-                newsFeed = NewsFeed(
-                    article,
-                    listOf(article, article, article, article),
-                    listOf(article, article, article),
-                    listOf(article, article, article, article, article, article, article)
-                ),
-                selectedPost = true,
-                isArticleOpen = false,
-                favourites = emptySet(),
-                isLoading = false,
-                errorMessage = emptyList(),
-                searchInput = ""
-            ),
-            showTopAppBar = true,
-            onToggleFavourite = {},
-            onSelectPosts = {},
-            onRefreshPosts = {},
-            onErrorDismiss = {},
-            openDrawer = {},
-            homeListLazyListState = rememberLazyListState(),
-            snackbarHostState = SnackbarHostState(),
-            onSearchInputChanged ={}
-        )
-    }
-}
-
-/*
-@Preview("Home List nav rail Screen", device = Devices.NEXUS_7_2013)
-@Preview(
-    "Home list nav rail screen (dark)",
-    uiMode = UI_MODE_NIGHT_YES,
-    device = Devices.NEXUS_7_2013
-)
-@Preview("Home list nav rail screen (big font)", fontScale = 1.5f, device = Devices.NEXUS_7_2013)
-@Composable
-fun PreviewNavListHomeRail(){
-    val postsFeed = runBlocking {
-        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
-    }
-    NewsTheme {
-        HomeFeedScreen(
-            uiState = HomeUiState.HasPosts(
-                postsFeed = posts,
-                selectedPost = postsFeed.highlightedPost,
-                isArticleOpen = false,
-                favourites = emptySet(),
-                isLoading = false,
-                errorMessage = emptyList(),
-                searchInput = ""
-            ),
-            showTopAppBar = true,
-            onToggleFavourite = {},
-            onSelectPosts = {},
-            onRefreshPosts = {},
-            onErrorDismiss = {},
-            openDrawer = {},
-            homeListLazyListState = rememberLazyListState(),
-            snackbarHostState = SnackbarHostState(),
-            onSearchInputChanged ={}
-        )
-    }
-}
-
-@Preview("Home List details screen", device = Devices.PIXEL_C)
-@Preview("Home list detail screen (dark)", uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_C)
-@Preview("Home list detail screen (big font)", fontScale = 1.5f, device = Devices.PIXEL_C)
-@Composable
-fun PreviewHomeListSimpleSelection(){
-    val postsFeed = runBlocking {
-        (BlockingFakePostRepository().getPostsFeed() as Result.Success).data
-    }
-    NewsTheme {
-        HomeFeedWithArticleDetailsScreen(
-            uiState = HomeUiState.HasPosts(
-                postsFeed = posts,
-                selectedPost = postsFeed.highlightedPost,
-                isArticleOpen = false,
-                favourites = emptySet(),
-                isLoading = false,
-                errorMessage = emptyList(),
-                searchInput = ""
-            ),
-            showTopAppBar = true,
-            onToggleFavourite = {},
-            onSelectPosts = {},
-            onRefreshPosts = {},
-            onErrorDismiss = {},
-            onInteractWithList = {},
-            onInteractWithDetail = {},
-            openDrawer = {},
-            homeListLazyListState = rememberLazyListState(),
-            articleDetailsLazyListStates = posts
-                .allPosts.associate {
-                    key(it.id) {
-                        it.id to rememberLazyListState()
-                    }
-            },
-            snackbarHostState = SnackbarHostState(),
-            onSearchInputChanged = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPostListTopSelection(){
-    NewsTheme {
-        Surface {
-            PostListTopSelection(
-                post = post1,
-                navigateToArticle = {}
-            )
-        }
-    }
-}
-*/
 
