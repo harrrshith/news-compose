@@ -15,6 +15,9 @@ import com.harshith.news.R
 private val Montserrat = FontFamily(
     Font( R.font.montserrat_medium)
 )
+ private val caprasimo = FontFamily(
+     Font(R.font.caprasimo_regular)
+ )
 
 val defaultTextStyle = TextStyle(
     fontFamily = Montserrat,
@@ -27,6 +30,7 @@ val defaultTextStyle = TextStyle(
 
 val newsTypography = Typography(
     displayLarge = defaultTextStyle.copy(
+        fontFamily = caprasimo,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         fontWeight = FontWeight.W900,

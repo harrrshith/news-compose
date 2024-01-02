@@ -1,8 +1,11 @@
 package com.harshith.news.ui.home
+//For the initial scope I'm thinking of keeping news related to India. Categories - Sports, Tech, Cinema, Politics, and some other.
+
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.repository.NewsRepository
+import com.harshith.news.model.news.Article
 import com.harshith.news.model.newsdata.NewsArticle
 import com.harshith.news.util.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,16 +16,41 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+sealed interface HomeUiState{
+    val isLoading: Boolean
+    val errorMessage: List<ErrorMessage>
+
+    data class NoNews(
+        override val isLoading: Boolean,
+        override val errorMessage: List<ErrorMessage>
+    ): HomeUiState
+
+    data class HasNews(
+        override val isLoading: Boolean,
+        override val errorMessage: List<ErrorMessage>,
+        val newsFeed: List<NewsArticle>?,
+    ): HomeUiState
+}
 
 data class HomeViewModelState(
-    val newsArticle: NewsArticle? = null,
-    val selectedPostId: String? = null,
-    val isArticleOpen: Boolean = false,
-    val favourites: Set<String> = emptySet(),
     val isLoading: Boolean = false,
-    val errorMessage: List<ErrorMessage> = emptyList(),
-    val searchInput: String = ""
-)
+    val newsFeed: List<NewsArticle>? = null,
+    val errorMessage: List<ErrorMessage> = emptyList()
+){
+    fun toUiState(): HomeUiState =
+        if (newsFeed == null) {
+            HomeUiState.NoNews(
+                isLoading = isLoading,
+                errorMessage = errorMessage
+            )
+        }else{
+            HomeUiState.HasNews(
+                isLoading = isLoading,
+                newsFeed = newsFeed,
+                errorMessage = errorMessage
+            )
+        }
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(

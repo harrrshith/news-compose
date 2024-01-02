@@ -26,7 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
 import com.harshith.news.ui.theme.NewsTheme
-
+//App drawer should contain
+// 1. Home - where all the news are displayed
+// 2. Saved - where you can read the news article later
+// 3. A toggle for light and dark mode.
 @Composable
 fun AppDrawer(
     currentRoute: String,

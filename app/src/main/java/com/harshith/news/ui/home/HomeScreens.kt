@@ -1,5 +1,5 @@
 package com.harshith.news.ui.home
-
+//Home screen will have a appbar which will be obviously material with all those animations.
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -94,6 +94,7 @@ import com.harshith.news.ui.article.sharePost
 import com.harshith.news.ui.modifier.interceptKey
 import com.harshith.news.ui.rememberContentPaddingForScreen
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.ui.theme.defaultTextStyle
 import com.harshith.news.ui.utils.BookMarkButton
 import com.harshith.news.ui.utils.FavouriteButton
 import com.harshith.news.ui.utils.ShareButton
@@ -206,7 +207,10 @@ private fun HomeScreenWithList(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
-        Text(text = "Started!!")
+        Column {
+            Text(text = "Hello World", style = MaterialTheme.typography.displayLarge)
+            Text(text = "Hello World", style = MaterialTheme.typography.headlineMedium)
+        }
     }
 //    val topAppBarState = rememberTopAppBarState()
 //    val scrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
