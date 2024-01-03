@@ -1,11 +1,5 @@
 package com.harshith.news.model.newsdata
 
-data class NewsDataResponse(
-    val nextPage: String?,
-    val results: List<NewsArticle>?,
-    val status: String?,
-    val totalResults: Int?
-)
 data class NewsArticle(
     val articleId: String,
     val category: List<String?>?,
