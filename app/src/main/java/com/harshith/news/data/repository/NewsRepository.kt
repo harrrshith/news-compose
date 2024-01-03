@@ -8,11 +8,5 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface NewsRepository {
-    fun fetchIndiaNews(category: String): Flow<List<NewsArticleEntity>>
-    fun fetchUsaNews(category: String): Flow<List<NewsArticleEntity>>
-    suspend fun fetchAllNews()
-    fun getDatabaseCount(): Int
-
-    fun getAnArticle(postId: String) : NewsArticleEntity
-
+    suspend fun fetchIndiaNews(country: String, language: String): NetworkNewsResponse
 }

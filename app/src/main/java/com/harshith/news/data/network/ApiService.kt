@@ -11,9 +11,12 @@ import retrofit2.http.Query
 
 //"https://newsapi.org/v2/top-headlines?country=in"
 interface ApiService {
-    @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("top-headlines")
-    suspend fun getTopHeadlines(@Query("country") country: String): Response<NetworkNewsResponse>
+    @Headers("X-ACCESS-KEY:${BuildConfig.API_KEY}")
+    @GET("api/1/news")
+    suspend fun fetchIndiaNews(
+        @Query("country") country: String,
+        @Query("language") language: String
+    ): Response<NetworkNewsResponse>
 
 
 }

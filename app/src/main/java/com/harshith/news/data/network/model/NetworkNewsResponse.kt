@@ -59,7 +59,7 @@ data class NetworkNewsArticle(
     val content: String?,
     @SerializedName("country")
     val country: List<String?>?,
-    @SerializedName("country")
+    @SerializedName("creator")
     val creator: List<String?>?,
     @SerializedName("description")
     val description: String?,

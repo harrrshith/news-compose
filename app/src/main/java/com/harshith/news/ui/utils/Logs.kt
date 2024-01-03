@@ -11,8 +11,3 @@ fun String.logW(message: String) = Log.w(this, message)
 fun String.logI(message: String) = Log.i(this, message)
 
 fun String.logWtf(message: String) = Log.wtf(this, message)
-
-fun main(){
-    val TAG = "HomeRoute"
-    TAG.logE("Seeing this message")
-}

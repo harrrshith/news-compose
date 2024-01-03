@@ -5,8 +5,8 @@ package com.harshith.news.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.repository.NewsRepository
-import com.harshith.news.model.news.Article
 import com.harshith.news.model.newsdata.NewsArticle
+import com.harshith.news.ui.utils.logV
 import com.harshith.news.util.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 sealed interface HomeUiState{
     val isLoading: Boolean
     val errorMessage: List<ErrorMessage>
@@ -71,7 +72,8 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-
+            val response = newsRepository.fetchIndiaNews("in", "en")
+            "MyResponse".logV("$response")
         }
     }
 

@@ -32,7 +32,7 @@ object NetworkModule{
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("https://newsapi.org/v2/")
+        .baseUrl("https://newsdata.io/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
