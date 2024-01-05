@@ -1,4 +1,4 @@
-package com.harshith.news.model.newsdata
+package com.harshith.news.model
 
 data class NewsArticle(
     val articleId: String,

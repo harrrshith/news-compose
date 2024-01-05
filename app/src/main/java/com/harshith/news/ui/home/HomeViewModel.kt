@@ -5,14 +5,17 @@ package com.harshith.news.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.repository.NewsRepository
-import com.harshith.news.model.newsdata.NewsArticle
+import com.harshith.news.model.NewsFeed
 import com.harshith.news.ui.utils.logV
 import com.harshith.news.util.ErrorMessage
+import com.harshith.news.util.toNewsArticle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,13 +32,13 @@ sealed interface HomeUiState{
     data class HasNews(
         override val isLoading: Boolean,
         override val errorMessage: List<ErrorMessage>,
-        val newsFeed: List<NewsArticle>?,
+        val newsFeed: NewsFeed?,
     ): HomeUiState
 }
 
 data class HomeViewModelState(
     val isLoading: Boolean = false,
-    val newsFeed: List<NewsArticle>? = null,
+    val newsFeed: NewsFeed? = null,
     val errorMessage: List<ErrorMessage> = emptyList()
 ){
     fun toUiState(): HomeUiState =
@@ -63,17 +66,27 @@ class HomeViewModel @Inject constructor(
         )
     )
 
-    val uiState = viewModelState.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        viewModelState.value.isLoading
-    )
+    val uiState = viewModelState
+        .map(HomeViewModelState::toUiState)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            viewModelState.value.toUiState()
+        )
 
 
     init {
         viewModelScope.launch {
-            val response = newsRepository.fetchIndiaNews("in", "en")
-            "MyResponse".logV("$response")
+            val homeFeedNews = newsRepository.fetchIndiaNews(
+                "in",
+                "en").results?.map { homeFeedNews -> homeFeedNews.toNewsArticle() }
+            "MyResponse".logV("$homeFeedNews")
+            viewModelState.update { it.copy(
+                isLoading = false,
+                newsFeed = NewsFeed(
+                    homeFeedNews = homeFeedNews
+                )
+            ) }
         }
     }
 
