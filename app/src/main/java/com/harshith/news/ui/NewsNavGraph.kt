@@ -10,8 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.harshith.news.NewsApplication.Companion.NEWS_APP_URI
 import com.harshith.news.data.AppContainer
-import com.harshith.news.ui.article.ArticleScreen
-import com.harshith.news.ui.article.ArticleViewModel
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.interests.InterestsRoute
 import com.harshith.news.ui.interests.InterestsViewModel
@@ -58,14 +56,14 @@ fun NewsNavGraph(
                 openDrawer = openDrawer
             )
         }
-        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
-            ArticleScreen(
-                isExpandedScreen = isExpandedScreen,
-                onBack = { navController.popBackStack() },
-                isFavourite = true,
-                onToggleFavourite = { },
-                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
-            )
-        }
+//        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
+//            ArticleScreen(
+//                isExpandedScreen = isExpandedScreen,
+//                onBack = { navController.popBackStack() },
+//                isFavourite = true,
+//                onToggleFavourite = { },
+//                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
+//            )
+//        }
     }
 }

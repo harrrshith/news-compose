@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.NewsFeed
 import com.harshith.news.util.logE
+import com.harshith.news.util.logV
 
 const val TAG = "HOME_ROUTE"
 @Composable
@@ -55,6 +56,7 @@ private fun HomeFeed(
     newsFeed: List<NewsArticle>?,
 
 ){
+    TAG.logV("$newsFeed")
     newsFeed?.let { newsArticles ->
         LazyColumn(modifier){
             items(newsArticles.size){

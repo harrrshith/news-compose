@@ -87,10 +87,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.R
-import com.harshith.news.data.previewData.article
-import com.harshith.news.model.news.Article
-import com.harshith.news.ui.article.postContentItems
-import com.harshith.news.ui.article.sharePost
 import com.harshith.news.ui.modifier.interceptKey
 import com.harshith.news.ui.rememberContentPaddingForScreen
 import com.harshith.news.ui.theme.NewsTheme

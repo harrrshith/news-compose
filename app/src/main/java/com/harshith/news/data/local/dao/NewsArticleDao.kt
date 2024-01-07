@@ -2,11 +2,8 @@ package com.harshith.news.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 import com.harshith.news.data.local.entities.NewsArticleEntity
-import com.harshith.news.model.news.Article
 import com.harshith.news.util.Constants
 import kotlinx.coroutines.flow.Flow
 

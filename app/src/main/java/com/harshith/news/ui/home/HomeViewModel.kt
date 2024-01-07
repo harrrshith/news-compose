@@ -8,6 +8,7 @@ import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.NewsFeed
 import com.harshith.news.util.logV
 import com.harshith.news.util.ErrorMessage
+import com.harshith.news.util.logE
 import com.harshith.news.util.toNewArticleList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,7 @@ data class HomeViewModelState(
 class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
+    private val TAG = "HomeViewModel"
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true
@@ -80,11 +82,13 @@ class HomeViewModel @Inject constructor(
 
 
     init {
+        TAG.logV("Hello")
         viewModelScope.launch {
+            TAG.logE("Hello")
             val homeFeedNews = newsRepository.fetchIndiaNews(
                 "in",
                 "en").results?.toNewArticleList()
-            "MyResponse".logV("$homeFeedNews")
+            TAG.logE("$homeFeedNews")
             viewModelState.update { it.copy(
                 isLoading = false,
                 newsFeed = NewsFeed(
