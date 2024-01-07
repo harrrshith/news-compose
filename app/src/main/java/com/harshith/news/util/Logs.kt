@@ -1,4 +1,4 @@
-package com.harshith.news.ui.utils
+package com.harshith.news.util
 
 import android.util.Log
 

@@ -21,3 +21,23 @@ fun NetworkNewsArticle.toNewsArticle() = NewsArticle(
     title = this.title,
     videoUrl = this.videoUrl
 )
+
+fun List<NetworkNewsArticle>.toNewArticleList() = map { networkNewsArticle ->
+    NewsArticle(
+        articleId = networkNewsArticle.articleId,
+        category = networkNewsArticle.category,
+        content = networkNewsArticle.content,
+        country = networkNewsArticle.country,
+        creator = networkNewsArticle.creator,
+        description = networkNewsArticle.description,
+        imageUrl = networkNewsArticle.imageUrl,
+        keywords = networkNewsArticle.keywords,
+        language = networkNewsArticle.language,
+        link = networkNewsArticle.link,
+        pubDate = networkNewsArticle.pubDate,
+        sourceId = networkNewsArticle.sourceId,
+        sourcePriority = networkNewsArticle.sourcePriority,
+        title = networkNewsArticle.title,
+        videoUrl = networkNewsArticle.videoUrl
+    )
+}

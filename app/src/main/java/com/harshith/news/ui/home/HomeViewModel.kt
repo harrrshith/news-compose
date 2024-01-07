@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.NewsFeed
-import com.harshith.news.ui.utils.logV
+import com.harshith.news.util.logV
 import com.harshith.news.util.ErrorMessage
-import com.harshith.news.util.toNewsArticle
+import com.harshith.news.util.toNewArticleList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 sealed interface HomeUiState{
     val isLoading: Boolean
@@ -65,6 +66,9 @@ class HomeViewModel @Inject constructor(
             isLoading = true
         )
     )
+    fun printClassName(){
+        HomeViewModel::class.java.simpleName
+    }
 
     val uiState = viewModelState
         .map(HomeViewModelState::toUiState)
@@ -79,7 +83,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val homeFeedNews = newsRepository.fetchIndiaNews(
                 "in",
-                "en").results?.map { homeFeedNews -> homeFeedNews.toNewsArticle() }
+                "en").results?.toNewArticleList()
             "MyResponse".logV("$homeFeedNews")
             viewModelState.update { it.copy(
                 isLoading = false,
