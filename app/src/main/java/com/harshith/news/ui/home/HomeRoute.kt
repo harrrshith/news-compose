@@ -1,15 +1,21 @@
 package com.harshith.news.ui.home
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.harshith.news.model.NewsArticle
@@ -42,10 +48,7 @@ fun HomeRoute(
 //    )
     HomeFeed(
         modifier = Modifier.fillMaxSize(),
-        newsFeed = when(uiState){
-            is HomeUiState.HasNews -> (uiState as HomeUiState.HasNews).newsFeed?.homeFeedNews!!
-            is HomeUiState.NoNews -> emptyList()
-        }
+        uiState = uiState
     )
 
 }
@@ -53,18 +56,24 @@ fun HomeRoute(
 @Composable
 private fun HomeFeed(
     modifier: Modifier,
-    newsFeed: List<NewsArticle>?,
+    uiState: HomeUiState,
 
 ){
-    TAG.logV("$newsFeed")
-    newsFeed?.let { newsArticles ->
+    val newsFeed  = when(uiState){
+        is HomeUiState.HasNews -> uiState.newsFeed
+        is HomeUiState.NoNews -> uiState.newsFeed
+    }
+
+    newsFeed?.let {newsArticle ->
         LazyColumn(modifier){
-            items(newsArticles.size){
-                Text(text = newsArticles[it].title ?: "No Title")
+            items(newsArticle.homeFeedNews?.size!!){
+                Text(text = newsArticle.homeFeedNews[it].title ?: "No Title", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.padding(vertical = 4.dp))
             }
         }
-
-    }?: Text(text = "No News Found")
+    } ?: Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Text(text = "No News Found")
+    }
 }
 
 @Composable

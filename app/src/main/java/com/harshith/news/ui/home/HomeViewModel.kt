@@ -21,23 +21,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
-sealed interface HomeUiState{
-    val isLoading: Boolean
-    val errorMessage: List<ErrorMessage>
-
-    data class NoNews(
-        override val isLoading: Boolean,
-        override val errorMessage: List<ErrorMessage>
-    ): HomeUiState
-
-    data class HasNews(
-        override val isLoading: Boolean,
-        override val errorMessage: List<ErrorMessage>,
-        val newsFeed: NewsFeed?,
-    ): HomeUiState
-}
-
 data class HomeViewModelState(
     val isLoading: Boolean = false,
     val newsFeed: NewsFeed? = null,
@@ -47,7 +30,8 @@ data class HomeViewModelState(
         if (newsFeed == null) {
             HomeUiState.NoNews(
                 isLoading = isLoading,
-                errorMessage = errorMessage
+                errorMessage = errorMessage,
+                newsFeed = NewsFeed(emptyList())
             )
         }else{
             HomeUiState.HasNews(
@@ -82,13 +66,10 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        TAG.logV("Hello")
         viewModelScope.launch {
-            TAG.logE("Hello")
             val homeFeedNews = newsRepository.fetchIndiaNews(
                 "in",
                 "en").results?.toNewArticleList()
-            TAG.logE("$homeFeedNews")
             viewModelState.update { it.copy(
                 isLoading = false,
                 newsFeed = NewsFeed(

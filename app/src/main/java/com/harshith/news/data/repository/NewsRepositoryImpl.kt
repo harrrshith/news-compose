@@ -12,10 +12,7 @@ class NewsRepositoryImpl @Inject constructor(
     private val newsArticleDao: NewsArticleDao,
 ): NewsRepository {
     override suspend fun fetchIndiaNews(country: String, language: String): NetworkNewsResponse {
-        "PRINT".logE("Hello")
-        val result = apiService.fetchIndiaNews(country, language).body()!!
-        "RESULT".logV("$result")
-        return result
+        return apiService.fetchIndiaNews(country, language).body()!!
     }
 
 }
