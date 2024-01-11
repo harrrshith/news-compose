@@ -35,49 +35,23 @@ fun HomeRoute(
     },
 ){
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
-//    HomeRoute(
-//        isExpandedScreen = isExpandedScreen,
-//        onToggleFavourite = { homeViewModel.toggleFavourites(it) },
-//        onSelectPosts = { navigateToArticleDetail(it) },
-//        onSelectPostsInLargeScreen = { homeViewModel.selectArticle(it) },
-//        onInteractWithFeed = { homeViewModel.interactWithFeed() },
-//        onInteractWidthArticleDetails = { homeViewModel.interactWithArticleDetails(it) },
-//        onSearchInputChange = { homeViewModel.onSearchInputChanged(it) },
-//        openDrawer = { openDrawer() },
-//        snackbarHostState = snackbarHostState
-//    )
-    HomeFeed(
-        modifier = Modifier.fillMaxSize(),
-        uiState = uiState
+    HomeRoute(
+        uiState = uiState,
+        isExpandedScreen = isExpandedScreen,
+        onToggleFavourite = { homeViewModel.toggleFavourites(it) },
+        onSelectPosts = { navigateToArticleDetail(it) },
+        onSelectPostsInLargeScreen = { homeViewModel.selectArticle(it) },
+        onInteractWithFeed = { homeViewModel.interactWithFeed() },
+        onInteractWidthArticleDetails = { homeViewModel.interactWithArticleDetails(it) },
+        onSearchInputChange = { homeViewModel.onSearchInputChanged(it) },
+        openDrawer = { openDrawer() },
+        snackbarHostState = snackbarHostState
     )
 
 }
-
-@Composable
-private fun HomeFeed(
-    modifier: Modifier,
-    uiState: HomeUiState,
-
-){
-    val newsFeed  = when(uiState){
-        is HomeUiState.HasNews -> uiState.newsFeed
-        is HomeUiState.NoNews -> uiState.newsFeed
-    }
-
-    newsFeed?.let {newsArticle ->
-        LazyColumn(modifier){
-            items(newsArticle.homeFeedNews?.size!!){
-                Text(text = newsArticle.homeFeedNews[it].title ?: "No Title", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            }
-        }
-    } ?: Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Text(text = "No News Found")
-    }
-}
-
 @Composable
 fun HomeRoute(
+    uiState: HomeUiState,
     isExpandedScreen: Boolean,
     onToggleFavourite: (String) -> Unit,
     onSelectPosts: (String) -> Unit,
@@ -89,30 +63,32 @@ fun HomeRoute(
     snackbarHostState: SnackbarHostState
 ){
     val homeLazyListState = rememberLazyListState()
-//    HomeFeedWithArticleDetailsScreen(
-//        uiState = uiState,
-//        showTopAppBar = !isExpandedScreen,
-//        onToggleFavourite = onToggleFavourite,
-//        onSelectPosts = onSelectPostsInLargeScreen,
-//        onRefreshPosts = { onRefreshPosts() },
-//        onErrorDismiss = onErrorDismiss,
-//        onInteractWithList = { onInteractWithFeed() },
-//        onInteractWithDetail = onInteractWidthArticleDetails,
-//        openDrawer = { openDrawer() },
-//        homeListLazyListState = homeLazyListState,
-//        articleDetailsLazyListStates = articleDetailsLazyListState!!,
-//        snackbarHostState = snackbarHostState,
-//        onSearchInputChanged = onSearchInputChange
-//    )
-    TAG.logE("Hello")
-    HomeFeedScreen(
-        showTopAppBar = !isExpandedScreen,
-        onToggleFavourite = onToggleFavourite,
-        onSelectPosts = { onSelectPosts(it)},
-        openDrawer = { openDrawer() },
-        homeListLazyListState = homeLazyListState,
-        snackbarHostState = snackbarHostState,
-    )
+    if(isExpandedScreen){
+        HomeFeedWithArticleDetailsScreen(
+            uiState = uiState,
+            showTopAppBar = false,
+            onToggleFavourite = onToggleFavourite,
+            onSelectPosts = onSelectPostsInLargeScreen,
+            onRefreshPosts = {  },
+            onInteractWithList = { onInteractWithFeed() },
+            onInteractWithDetail = onInteractWidthArticleDetails,
+            openDrawer = { openDrawer() },
+            homeListLazyListState = homeLazyListState,
+            snackbarHostState = snackbarHostState,
+            onSearchInputChanged = {onSearchInputChange(it)}
+        )
+    }
+    else{
+        HomeFeedScreen(
+            uiState = uiState,
+            showTopAppBar = true,
+            onToggleFavourite = onToggleFavourite,
+            onSelectPosts = { onSelectPosts(it)},
+            openDrawer = { openDrawer() },
+            homeListLazyListState = homeLazyListState,
+            snackbarHostState = snackbarHostState,
+        )
+    }
 }
 
 
