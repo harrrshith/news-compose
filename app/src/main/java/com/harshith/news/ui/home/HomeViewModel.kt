@@ -69,13 +69,14 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val homeFeedNews = newsRepository.fetchIndiaNews(
                 "in",
-                "en").results?.toNewArticleList()
-            viewModelState.update { it.copy(
-                isLoading = false,
-                newsFeed = NewsFeed(
-                    homeFeedNews = homeFeedNews
-                )
-            ) }
+                "en").results
+            TAG.logE("$homeFeedNews")
+//            viewModelState.update { it.copy(
+//                isLoading = false,
+//                newsFeed = NewsFeed(
+//                    homeFeedNews = homeFeedNews
+//                )
+//            ) }
         }
     }
 
