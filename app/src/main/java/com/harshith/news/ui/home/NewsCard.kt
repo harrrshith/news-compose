@@ -1,42 +1,32 @@
 package com.harshith.news.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.harshith.news.R
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticleClass
 import com.harshith.news.ui.theme.NewsTheme
@@ -52,13 +42,7 @@ fun NewsCard(
             .padding(10.dp, 8.dp)
     ) {
         Box(modifier = Modifier.wrapContentSize()){
-            Image(
-                painter = painterResource(id = R.drawable.image_post),
-                modifier = Modifier.background(Color.Black).alpha(.6f).
-                fillMaxWidth(),
-                contentDescription = "",
-                contentScale = ContentScale.FillWidth
-            )
+            GradientImage(newsArticle.imageUrl)
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
@@ -70,12 +54,47 @@ fun NewsCard(
                     overflow = TextOverflow.Ellipsis,
                     color = textColor
                 )
+                Text(
+                    text = newsArticle.description ?: "",
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    color = textColor,
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp
+                )
             }
 
         }
     }
 
 }
+
+@Composable
+fun GradientImage(imageUrl: String?){
+    val brush = Brush.horizontalGradient()
+    AsyncImage(
+        model = imageUrl,
+        contentDescription = "image",
+        contentScale = ContentScale.FillBounds,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(160.dp, 180.dp)
+            .background(brush = brush)
+            .drawWithCache {
+                val gradient = Brush.verticalGradient(
+                    colors = listOf(Color.Black, Color.Transparent),
+                    startY = size.height / 3,
+                    endY = size.height
+                )
+                onDrawWithContent {
+                    drawContent()
+                    drawRect(gradient, blendMode = BlendMode.Multiply)
+                }
+            }
+    )
+
+}
+
 
 @Composable
 fun PublisherAndTime(creator: String?, publishDate: String?){

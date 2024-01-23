@@ -6,16 +6,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.util.logI
 
 @Composable
@@ -55,27 +59,18 @@ fun HomeFeedScreen(
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
 ){
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Hello")
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        Text(text = "Portrait")
+    val newsFeed = when(uiState){
+        is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
+        is HomeUiState.NoNews -> emptyList()
     }
-//    val newsFeed = when(uiState){
-//        is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
-//        is HomeUiState.NoNews -> emptyList()
-//    }
-//    TAG.logI("$newsFeed")
-//    newsFeed?.let {
-//        LazyColumn{
-//            items(newsFeed.size){index ->
-//                NewsCard(newsArticle = newsFeed[index])
-//            }
-//        }
-//    }
+    TAG.logI("$newsFeed")
+    newsFeed?.let {
+        LazyColumn{
+            items(newsFeed.size){index ->
+                NewsCard(newsArticle = newsFeed[index])
+            }
+        }
+    }
 }
 
 @Composable
@@ -94,5 +89,4 @@ private fun HomeScreenWithList(
         }
     }
 }
-
 

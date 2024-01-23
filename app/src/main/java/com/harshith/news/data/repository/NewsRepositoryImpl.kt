@@ -16,13 +16,6 @@ class NewsRepositoryImpl @Inject constructor(
     private val newsArticleDao: NewsArticleDao,
 ): NewsRepository {
     override suspend fun fetchIndiaNews(country: String, language: String): NetworkNewsResponse {
-        try {
-            "Response".logE("DONE")
-            return apiService.fetchIndiaNews(country, language).body()!!
-        }catch (e: Exception){
-            "Response".logE("NOT DONE\n $e",)
-        }
-        "Response".logI("Hello")
         return apiService.fetchIndiaNews(country, language).body()!!
     }
 
