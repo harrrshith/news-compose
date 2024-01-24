@@ -70,8 +70,7 @@ fun NewsCard(
 }
 
 @Composable
-fun GradientImage(imageUrl: String?){
-    val brush = Brush.horizontalGradient()
+fun GradientImage(imageUrl: String?) {
     AsyncImage(
         model = imageUrl,
         contentDescription = "image",
@@ -79,20 +78,18 @@ fun GradientImage(imageUrl: String?){
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(160.dp, 180.dp)
-            .background(brush = brush)
             .drawWithCache {
-                val gradient = Brush.verticalGradient(
-                    colors = listOf(Color.Black, Color.Transparent),
-                    startY = size.height / 3,
-                    endY = size.height
-                )
-                onDrawWithContent {
-                    drawContent()
-                    drawRect(gradient, blendMode = BlendMode.Multiply)
-                }
+            val gradient = Brush.verticalGradient(
+                colors = listOf(Color.Black, Color.Transparent),
+                startY = size.height,
+                endY = size.height / 3
+            )
+            onDrawWithContent {
+                drawContent()
+                drawRect(gradient, blendMode = BlendMode.Multiply)
             }
+        }
     )
-
 }
 
 

@@ -3,6 +3,7 @@ package com.harshith.news.ui.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,7 +66,12 @@ fun HomeFeedScreen(
     }
     TAG.logI("$newsFeed")
     newsFeed?.let {
-        LazyColumn{
+        LazyColumn(
+           contentPadding = PaddingValues(
+               vertical = 18.dp,
+               horizontal = 18.dp
+           )
+        ){
             items(newsFeed.size){index ->
                 NewsCard(newsArticle = newsFeed[index])
             }
