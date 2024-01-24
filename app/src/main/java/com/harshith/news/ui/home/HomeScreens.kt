@@ -1,5 +1,8 @@
 package com.harshith.news.ui.home
 //Home screen will have a appbar which will be obviously material with all those animations.
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -50,6 +54,7 @@ fun HomeFeedWithArticleDetailsScreen(
     
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeFeedScreen(
     uiState: HomeUiState,
@@ -60,17 +65,19 @@ fun HomeFeedScreen(
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
 ){
+    val flingBehavior: FlingBehavior = rememberSnapFlingBehavior(lazyListState = homeListLazyListState)
     val newsFeed = when(uiState){
         is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
         is HomeUiState.NoNews -> emptyList()
     }
-    TAG.logI("$newsFeed")
+
     newsFeed?.let {
         LazyColumn(
-           contentPadding = PaddingValues(
-               vertical = 18.dp,
-               horizontal = 18.dp
-           )
+            modifier = Modifier.padding(top = 50.dp),
+            contentPadding = PaddingValues(
+               vertical = 18.dp
+           ),
+            flingBehavior = flingBehavior
         ){
             items(newsFeed.size){index ->
                 NewsCard(newsArticle = newsFeed[index])
