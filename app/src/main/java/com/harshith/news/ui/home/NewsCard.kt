@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticleClass
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.ui.utils.getFormattedTimeStamp
 
 @Composable
 fun NewsCard(
@@ -129,7 +130,7 @@ fun PublisherAndTime(creator: String?, publishDate: String?){
         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
         publishDate?.let {
             Text(
-                text = it,
+                text = getFormattedTimeStamp(it),
                 style = MaterialTheme.typography.labelSmall,
                 color = textColor
             )
