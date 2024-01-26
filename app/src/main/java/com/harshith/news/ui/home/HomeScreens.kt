@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.NewsFeed
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.ui.utils.NewsTopAppBar
+import com.harshith.news.util.logE
 import com.harshith.news.util.logI
 
 @Composable
@@ -80,8 +82,16 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
         is HomeUiState.NoNews -> emptyList()
     }
-    newsFeed?.let { newsArticles ->
-        TopHeadlines(newsArticle = newsArticles, lazyListState = lazyListState, screenWidth = screenWidth)
+    Column {
+        if(showTopAppBar){
+            NewsTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                openDrawer
+            )
+        }
+        newsFeed?.let { newsArticles ->
+            TopHeadlines(newsArticle = newsArticles, lazyListState = lazyListState, screenWidth = screenWidth)
+        }
     }
 }
 
@@ -93,7 +103,6 @@ fun TopHeadlines(
     screenWidth: Dp
 ){
     LazyRow(
-        modifier = Modifier.padding(top = 50.dp),
         contentPadding = PaddingValues(
             vertical = 18.dp
         ),
