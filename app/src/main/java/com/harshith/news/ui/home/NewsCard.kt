@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -35,7 +37,8 @@ import com.harshith.news.ui.utils.getFormattedTimeStamp
 
 @Composable
 fun NewsCard(
-    newsArticle: NewsArticle
+    newsArticle: NewsArticle,
+    screenWidth: Dp
 ){
     val textColor = Color.White
     val cardColor = CardDefaults.cardColors(
@@ -50,7 +53,7 @@ fun NewsCard(
         Box(
             modifier = Modifier
                 .heightIn(min = 140.dp, max = 190.dp)
-                .fillMaxWidth()
+                .widthIn(min = 300.dp, max = (screenWidth - 40.dp))
         ){
             GradientImage(newsArticle.imageUrl, Modifier.fillMaxSize())
             Box(
@@ -143,7 +146,7 @@ fun PublisherAndTime(creator: String?, publishDate: String?){
 fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
-            NewsCard(newsArticleClass)
+            NewsCard(newsArticleClass, 380.dp)
         }
     }
 }
