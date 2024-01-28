@@ -1,42 +1,31 @@
 package com.harshith.news.ui.home
 //Home screen will have a appbar which will be obviously material with all those animations.
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.FlingBehavior
-import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.model.NewsFeed
-import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.NewsTopAppBar
-import com.harshith.news.util.logE
-import com.harshith.news.util.logI
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -90,7 +79,9 @@ fun HomeFeedScreen(
             )
         }
         newsFeed?.let { newsArticles ->
-            TopHeadlines(newsArticle = newsArticles, lazyListState = lazyListState, screenWidth = screenWidth)
+            if (newsArticles.isNotEmpty())
+                TopHeadlines(newsArticle = newsArticles, lazyListState = lazyListState, screenWidth = screenWidth)
+            //NewsTabs()
         }
     }
 }
@@ -102,15 +93,30 @@ fun TopHeadlines(
     lazyListState: LazyListState,
     screenWidth: Dp
 ){
+    Text(
+        text = "Top Headlines",
+        modifier = Modifier.padding(start = 12.dp, top = 8.dp),
+        style = MaterialTheme.typography.headlineSmall,
+        fontWeight = FontWeight(800)
+    )
     LazyRow(
-        contentPadding = PaddingValues(
-            vertical = 18.dp
-        ),
         state = lazyListState,
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
             NewsCard(newsArticle = newsArticle[index], screenWidth)
+        }
+    }
+}
+
+@Composable
+fun NewsTabs(
+    onSelected: () -> Unit,
+    onClick: () -> Unit
+){
+    Tab(selected = true, onClick = { /*TODO*/ }){
+        Column {
+
         }
     }
 }
