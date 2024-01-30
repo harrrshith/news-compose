@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHostState
@@ -28,6 +31,8 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -72,6 +77,7 @@ fun HomeFeedWithArticleDetailsScreen(
     
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeFeedScreen(
     uiState: HomeUiState,
@@ -90,6 +96,12 @@ fun HomeFeedScreen(
         is HomeUiState.NoNews -> emptyList()
     }
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "Others")
+    val tabIndex = remember {
+        mutableIntStateOf(0)
+    }
+    val pageState = rememberPagerState {
+        tabTitles.size
+    }
     Column {
         if(showTopAppBar){
             NewsTopAppBar(
@@ -99,12 +111,27 @@ fun HomeFeedScreen(
         }
         newsFeed?.let { newsArticles ->
             if (newsArticles.isNotEmpty())
-                TopHeadlines(newsArticle = newsArticles, lazyListState = lazyListState, screenWidth = screenWidth)
+                TopHeadlines(
+                    newsArticle = newsArticles,
+                    lazyListState = lazyListState,
+                    screenWidth = screenWidth
+                )
             NewsTabs(
-                tabTitles,
-                Modifier
+                tabTitles = tabTitles,
+                modifier = Modifier
                     .padding(top = 8.dp)
-                    .shadow(0.dp)
+                    .shadow(0.dp),
+                tabIndex = tabIndex,
+                pagerState = pageState
+            )
+            NewsPager(
+                state = pageState,
+                tabIndex = tabIndex,
+                titles = tabTitles,
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+
             )
         }
     }
@@ -133,22 +160,25 @@ fun TopHeadlines(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NewsTabs(
     tabTitles: List<String>,
-    modifier: Modifier
+    modifier: Modifier,
+    tabIndex: MutableIntState,
+    pagerState: PagerState
 ){
-    var tabIndex by remember {
-        mutableIntStateOf(0)
+    LaunchedEffect(tabIndex.intValue){
+        pagerState.animateScrollToPage(tabIndex.intValue)
     }
     ScrollableTabRow(
-        selectedTabIndex = tabIndex,
-        edgePadding = 0.dp,
+        selectedTabIndex = tabIndex.intValue,
+        edgePadding = 8.dp,
         modifier = modifier,
         indicator = { tabPositions ->
         TabRowDefaults.Indicator(
             modifier = Modifier
-                .tabIndicatorOffset(tabPositions[tabIndex])
+                .tabIndicatorOffset(tabPositions[tabIndex.intValue])
                 .alpha(.1f)
                 .clip(MaterialTheme.shapes.extraLarge),
             height = 50.dp,
@@ -159,17 +189,33 @@ fun NewsTabs(
     ){
         tabTitles.forEachIndexed { index, tabItem ->
             Tab(
-                selected = tabIndex == index,
-                onClick = { tabIndex = index },
+                selected = tabIndex.intValue == index,
+                onClick = { tabIndex.intValue = index },
                 modifier = Modifier
                     .height(50.dp)
                     .padding(horizontal = 4.dp)
             ) {
-                Text(text = tabItem)
+                Text(text = tabItem, modifier = Modifier.padding(horizontal = 2.dp))
             }
         }
     }
 
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun NewsPager(
+    state: PagerState,
+    tabIndex: MutableIntState,
+    titles: List<String>,
+    modifier: Modifier
+){
+    LaunchedEffect(state.currentPage){
+        tabIndex.intValue = state.currentPage
+    }
+    HorizontalPager(state = state, modifier = modifier) {
+        Text(text = titles[state.currentPage])
+    }
 }
 @Composable
 private fun HomeScreenWithList(

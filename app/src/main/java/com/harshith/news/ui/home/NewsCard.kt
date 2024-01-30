@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
@@ -67,6 +68,7 @@ fun NewsCard(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .clip(MaterialTheme.shapes.extraLarge)
+                            .alpha(.6f)
                     ) {
                         Text(text = it, fontSize = 12.sp, modifier = Modifier.padding(8.dp))
                     }
