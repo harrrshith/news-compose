@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,12 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHostState
@@ -102,7 +107,7 @@ fun HomeFeedScreen(
     val pageState = rememberPagerState {
         tabTitles.size
     }
-    Column {
+    Column() {
         if(showTopAppBar){
             NewsTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
@@ -127,8 +132,8 @@ fun HomeFeedScreen(
             NewsPager(
                 state = pageState,
                 tabIndex = tabIndex,
-                titles = tabTitles,
-                Modifier
+                newsArticle = newsFeed,
+                modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
 
@@ -155,7 +160,7 @@ fun TopHeadlines(
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
-            NewsCard(newsArticle = newsArticle[index], screenWidth)
+            NewsCardHorizontal(newsArticle = newsArticle[index], screenWidth)
         }
     }
 }
@@ -207,16 +212,23 @@ fun NewsTabs(
 fun NewsPager(
     state: PagerState,
     tabIndex: MutableIntState,
-    titles: List<String>,
+    newsArticle: List<NewsArticle>,
     modifier: Modifier
 ){
     LaunchedEffect(state.currentPage){
         tabIndex.intValue = state.currentPage
     }
     HorizontalPager(state = state, modifier = modifier) {
-        Text(text = titles[state.currentPage])
+        LazyColumn(
+            modifier = Modifier.padding(top = 4.dp)
+        ){
+            items(newsArticle.size){
+                NewsCardVertical(newsArticle = newsArticle[it])
+            }
+        }
     }
 }
+
 @Composable
 private fun HomeScreenWithList(
     showTopAppBar: Boolean,

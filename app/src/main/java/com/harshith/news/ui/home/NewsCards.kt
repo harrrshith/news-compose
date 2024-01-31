@@ -1,13 +1,16 @@
 package com.harshith.news.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
@@ -37,7 +40,7 @@ import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
 
 @Composable
-fun NewsCard(
+fun NewsCardHorizontal(
     newsArticle: NewsArticle,
     screenWidth: Dp
 ){
@@ -68,9 +71,14 @@ fun NewsCard(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .clip(MaterialTheme.shapes.extraLarge)
-                            .alpha(.6f)
+                            .alpha(.8f)
                     ) {
-                        Text(text = it, fontSize = 12.sp, modifier = Modifier.padding(8.dp))
+                        Text(
+                            text = it.uppercase(),
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(8.dp),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
                 Column(
@@ -91,6 +99,46 @@ fun NewsCard(
         }
     }
 
+}
+
+@Composable
+fun NewsCardVertical(
+    newsArticle: NewsArticle
+){
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+    ) {
+        GradientImage(
+            imageUrl = newsArticle.imageUrl,
+            modifier = Modifier
+                .height(100.dp)
+                .width(120.dp)
+                .clip(MaterialTheme.shapes.large)
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 8.dp),
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            newsArticle.category?.get(0)?.let {
+                Text(
+                    text = it.uppercase(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+            newsArticle.title?.let {
+                Text(
+                    text = it,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            PublisherAndTime(creator = newsArticle.sourceId, publishDate = newsArticle.pubDate, textColor = Color.Black)
+        }
+    }
 }
 
 @Composable
@@ -116,14 +164,13 @@ fun GradientImage(imageUrl: String?, modifier: Modifier) {
 
 
 @Composable
-fun PublisherAndTime(creator: String?, publishDate: String?){
+fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = Color.White){
     return Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val textColor = Color.White
         creator?.let {
             Text(
                 text = it.uppercase(),
@@ -148,7 +195,10 @@ fun PublisherAndTime(creator: String?, publishDate: String?){
 fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
-            NewsCard(newsArticleClass, 380.dp)
+            Column {
+                NewsCardHorizontal(newsArticleClass, 380.dp)
+                NewsCardVertical(newsArticleClass)
+            }
         }
     }
 }
