@@ -1,24 +1,18 @@
 package com.harshith.news.ui.home
 //Home screen will have a appbar which will be obviously material with all those animations.
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,28 +21,27 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabPosition
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
@@ -56,9 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.model.NewsFeed
 import com.harshith.news.ui.utils.NewsTopAppBar
-import com.harshith.news.util.logE
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -98,9 +89,10 @@ fun HomeFeedScreen(
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
 ){
-    val verticalLazyListState = rememberLazyListState()
+    val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
     val newsFeed = when(uiState){
         is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
         is HomeUiState.NoNews -> emptyList()
@@ -112,45 +104,42 @@ fun HomeFeedScreen(
     val pageState = rememberPagerState {
         tabTitles.size
     }
-    LazyColumn(
-        state = verticalLazyListState
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
     ) {
-            item {
-                if(showTopAppBar){
-                    NewsTopAppBar(
-                        modifier = Modifier.fillMaxWidth(),
-                        openDrawer
-                    )
-                }
-                newsFeed?.let { newsArticles ->
-                    if (newsArticles.isNotEmpty())
-                        TopHeadlines(
-                            newsArticle = newsArticles,
-                            lazyListState = rememberLazyListState(),
-                            screenWidth = screenWidth
-                        )
-            }
+        if(showTopAppBar){
+            NewsTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                openDrawer
+            )
         }
-        stickyHeader{
+        newsFeed?.let { newsArticles ->
+            if (newsArticles.isNotEmpty())
+                TopHeadlines(
+                    newsArticle = newsArticles,
+                    lazyListState = rememberLazyListState(),
+                    screenWidth = screenWidth
+                )
+        }
+        Column(modifier = Modifier.height(screenHeight + 100.dp)) {
             NewsTabs(
                 tabTitles = tabTitles,
-                if(verticalLazyListState.firstVisibleItemScrollOffset < 600){
-                    Modifier
-                        .padding(top = 8.dp)
-                        .shadow(0.dp)
-                }else{
-                    Modifier
-                        .padding(vertical = 30.dp)
-                        .shadow(0.dp)
-                },
+                Modifier
+                    .padding(top = 8.dp)
+                    .shadow(0.dp),
                 tabIndex = tabIndex,
                 pagerState = pageState
             )
-        }
-        newsFeed?.let {newsArticles ->
-            items(newsArticles.size){index ->
-                NewsCardVertical(newsArticle = newsArticles[index])
-            }
+
+            NewsPager(
+                state = pageState,
+                tabIndex = tabIndex,
+                newsArticles = newsFeed!!,
+                modifier = Modifier,
+                scrollState = scrollState
+            )
         }
     }
 }
@@ -198,7 +187,8 @@ fun NewsTabs(
             modifier = Modifier
                 .tabIndicatorOffset(tabPositions[tabIndex.intValue])
                 .alpha(.1f)
-                .clip(MaterialTheme.shapes.extraLarge),
+                .clip(MaterialTheme.shapes.extraLarge)
+            ,
             height = 50.dp,
         )},
         divider = {
@@ -220,30 +210,57 @@ fun NewsTabs(
 
 }
 
-//@OptIn(ExperimentalFoundationApi::class)
-//@Composable
-//fun LazyListScope.NewsPager(
-//    state: PagerState,
-//    tabIndex: MutableIntState,
-//    newsArticle: NewsFeed,
-//    modifier: Modifier
-//){
-//    LaunchedEffect(state.currentPage){
-//        tabIndex.intValue = state.currentPage
-//    }
-//    HorizontalPager(state = state, modifier = modifier) {
-//        LazyColumn(
-//            modifier = Modifier.padding(top = 4.dp)
-//        ){
-//            newsArticle.homeFeedNews?.let {newsArticles ->
-//                items(newsArticles.size){index ->
-//                NewsCardVertical(newsArticle = newsArticle[index])
-//                }
-//            }
-//
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun NewsPager(
+    state: PagerState,
+    tabIndex: MutableIntState,
+    newsArticles: List<NewsArticle>?,
+    modifier: Modifier,
+    scrollState: ScrollState
+){
+    LaunchedEffect(state.currentPage){
+        tabIndex.intValue = state.currentPage
+    }
+    HorizontalPager(
+        state = state,
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(
+                remember {
+                    object : NestedScrollConnection {
+                        override fun onPreScroll(
+                            available: Offset,
+                            source: NestedScrollSource
+                        ): Offset {
+                            return if (available.y > 0)
+                                Offset.Zero else Offset(
+                                x = 0f,
+                                y = -scrollState.dispatchRawDelta(-available.y)
+                            )
+                        }
+                    }
+                }
+            )
+    ) {
+//        when(page){
+//            0 -> LazyNewsColumn(newsArticles)
 //        }
-//    }
-//}
+        LazyNewsColumn(newsArticles = newsArticles)
+    }
+}
+
+@Composable
+fun LazyNewsColumn(newsArticles: List<NewsArticle>?){
+    LazyColumn(modifier = Modifier.fillMaxSize()){
+        newsArticles?.let {
+            items(newsArticles.size){index ->
+                NewsCardVertical(newsArticle = newsArticles[index])
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun HomeScreenWithList(
