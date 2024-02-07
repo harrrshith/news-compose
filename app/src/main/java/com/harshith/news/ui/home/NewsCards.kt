@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,9 +62,9 @@ fun NewsCardHorizontal(
         Box(
             modifier = Modifier
                 .heightIn(min = 140.dp, max = 190.dp)
-                .widthIn(min = 300.dp, max = (screenWidth - 40.dp))
+                .aspectRatio(18f / 9f)
         ){
-            GradientImage(newsArticle.imageUrl, Modifier.fillMaxSize())
+            GradientImage(newsArticle.imageUrl, Modifier.aspectRatio(18f / 9f))
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -70,7 +75,7 @@ fun NewsCardHorizontal(
                         colors = cardColor,
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .clip(MaterialTheme.shapes.extraLarge)
+                            .clip(CircleShape)
                             .alpha(.8f)
                     ) {
                         Text(
@@ -112,7 +117,7 @@ fun NewsCardVertical(
             imageUrl = newsArticle.imageUrl,
             modifier = Modifier
                 .height(100.dp)
-                .width(120.dp)
+                .aspectRatio(10f / 7f)
                 .clip(MaterialTheme.shapes.large)
         )
         Column(
@@ -149,10 +154,11 @@ fun GradientImage(imageUrl: String?, modifier: Modifier) {
         contentScale = ContentScale.FillBounds,
         modifier = modifier
             .drawWithCache {
-                val gradient = Brush.verticalGradient(
+                val gradient = Brush.linearGradient(
                     colors = listOf(Color.Black, Color.Transparent),
-                    startY = size.height,
-                    endY = size.height / 3
+                    start = Offset(-100f, 600f),
+                    end = Offset(-80f, 0f),
+                    tileMode = TileMode.Clamp
                 )
                 onDrawWithContent {
                     drawContent()
