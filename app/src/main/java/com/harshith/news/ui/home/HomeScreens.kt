@@ -21,7 +21,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHostState
@@ -44,7 +43,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -104,6 +102,14 @@ fun HomeFeedScreen(
     val pageState = rememberPagerState {
         tabTitles.size
     }
+    val nestedScrollConnection = object : NestedScrollConnection{
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            return if( available.y > 0 ) Offset.Zero else Offset(
+                x = 0f,
+                y = -scrollState.dispatchRawDelta(-available.y)
+            )
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -132,11 +138,11 @@ fun HomeFeedScreen(
                 tabIndex = tabIndex,
                 pagerState = pageState
             )
-
             NewsPager(
                 state = pageState,
                 tabIndex = tabIndex,
                 newsArticles = newsFeed!!,
+                tabTitles = tabTitles,
                 modifier = Modifier,
                 scrollState = scrollState
             )
@@ -216,6 +222,7 @@ fun NewsPager(
     state: PagerState,
     tabIndex: MutableIntState,
     newsArticles: List<NewsArticle>?,
+    tabTitles: List<String>,
     modifier: Modifier,
     scrollState: ScrollState
 ){
@@ -242,11 +249,16 @@ fun NewsPager(
                     }
                 }
             )
-    ) {
-//        when(page){
-//            0 -> LazyNewsColumn(newsArticles)
-//        }
-        LazyNewsColumn(newsArticles = newsArticles)
+    ) {page ->
+        // use the same login to get the news from the different categories.
+        when(page){
+            page -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                    Text(text = tabTitles[page])
+                }
+            }
+        }
+//        LazyNewsColumn(newsArticles = newsArticles)
     }
 }
 
@@ -260,7 +272,6 @@ fun LazyNewsColumn(newsArticles: List<NewsArticle>?){
         }
     }
 }
-
 
 @Composable
 private fun HomeScreenWithList(

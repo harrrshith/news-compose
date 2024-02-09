@@ -9,7 +9,9 @@ data class NewsFeed(
     val indiaTechNews: List<NewsArticle>? = emptyList(),
     val indiaPoliticsNews: List<NewsArticle>? = emptyList(),
     //THe plan is to add more and more content to newsFeed
-)
+){
+    val allNews = homeFeedNews?.plus(indiaTechNews)?.plus(indiaPoliticsNews)?.plus(indiaSportsNews)
+}
 
 val newsResponseString = """
     {
