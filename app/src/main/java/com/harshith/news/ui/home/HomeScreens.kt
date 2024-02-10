@@ -102,14 +102,7 @@ fun HomeFeedScreen(
     val pageState = rememberPagerState {
         tabTitles.size
     }
-    val nestedScrollConnection = object : NestedScrollConnection{
-        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-            return if( available.y > 0 ) Offset.Zero else Offset(
-                x = 0f,
-                y = -scrollState.dispatchRawDelta(-available.y)
-            )
-        }
-    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

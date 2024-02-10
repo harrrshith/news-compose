@@ -5,6 +5,7 @@ package com.harshith.news.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.repository.NewsRepository
+import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.NewsFeed
 import com.harshith.news.util.logV
 import com.harshith.news.util.ErrorMessage
@@ -12,6 +13,8 @@ import com.harshith.news.util.logE
 import com.harshith.news.util.toNewArticleList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -68,15 +71,15 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val homeFeedNews = newsRepository.fetchIndiaNews(
-                "in",
-                "en").results!!.toNewArticleList()
-            TAG.logE("$homeFeedNews")
+                "in").results!!.toNewArticleList()
             viewModelState.update { it.copy(
                 isLoading = false,
                 newsFeed = NewsFeed(
                     homeFeedNews = homeFeedNews
                 )
             ) }
+            //"Sports", "Technology", "Entertainment", "Politics", "Others"
+            getAllNews()
         }
     }
 
@@ -101,5 +104,22 @@ class HomeViewModel @Inject constructor(
     }
     private suspend fun getIndiaNews() = withContext(Dispatchers.IO) {
 
+    }
+
+    private suspend fun getAllNews(){
+        coroutineScope {
+            val firstDeferred = async { newsRepository.fetchFirstNewsCategory("sports") }
+            val ff = firstDeferred.await()
+            TAG.logE("$ff")
+            val secondDeferred = async { newsRepository.fetchSecondNewsCategory("technology") }
+            TAG.logE("${secondDeferred.await()}")
+            val thirdDeferred = async { newsRepository.fetchThirdNewsCategory("entertainment") }
+            TAG.logE("${thirdDeferred.await()}")
+            val fourthDeferred = async { newsRepository.fetchFourthNewsCategory("politics") }
+            TAG.logE("${fourthDeferred.await()}")
+            val fifthDeferred = async { newsRepository.fetchFifthNewsCategory("other") }
+            TAG.logE("${fifthDeferred.await()}")
+
+        }
     }
 }

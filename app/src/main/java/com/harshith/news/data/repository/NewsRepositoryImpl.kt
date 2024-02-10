@@ -9,8 +9,29 @@ class NewsRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val newsArticleDao: NewsArticleDao,
 ): NewsRepository {
-    override suspend fun fetchIndiaNews(country: String, language: String): NetworkNewsResponse {
-        return apiService.fetchIndiaNews(country, language).body()!!
+    override suspend fun fetchIndiaNews(country: String): NetworkNewsResponse {
+        return apiService.fetchIndiaNews(country).body()!!
     }
+
+    override suspend fun fetchFirstNewsCategory(category: String): NetworkNewsResponse {
+        return apiService.fetchNewsFirstNewsCategory(category = category).body()!!
+    }
+
+    override suspend fun fetchSecondNewsCategory(category: String): NetworkNewsResponse {
+        return apiService.fetchNewsSecondNewsCategory(category = category).body()!!
+    }
+
+    override suspend fun fetchThirdNewsCategory(category: String): NetworkNewsResponse {
+        return apiService.fetchNewsThirdNewsCategory(category = category).body()!!
+    }
+
+    override suspend fun fetchFourthNewsCategory(category: String): NetworkNewsResponse {
+        return apiService.fetchNewsFourthNewsCategory(category = category).body()!!
+    }
+
+    override suspend fun fetchFifthNewsCategory(category: String): NetworkNewsResponse {
+        return apiService.fetchNewsFifthNewsCategory(category = category).body()!!
+    }
+
 
 }
