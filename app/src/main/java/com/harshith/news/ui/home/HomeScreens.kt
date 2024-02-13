@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -48,6 +49,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.utils.NewsTopAppBar
+import com.harshith.news.util.logE
+import com.harshith.news.util.logI
+import com.harshith.news.util.logV
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -80,6 +86,7 @@ fun HomeFeedWithArticleDetailsScreen(
 @Composable
 fun HomeFeedScreen(
     uiState: HomeUiState,
+    viewModel: HomeViewModel,
     showTopAppBar: Boolean,
     onToggleFavourite: (String) -> Unit,
     onSelectPosts: (String) -> Unit,
@@ -92,7 +99,7 @@ fun HomeFeedScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val newsFeed = when(uiState){
-        is HomeUiState.HasNews -> uiState.newsFeed?.homeFeedNews
+        is HomeUiState.HasNews -> uiState.horizontalNewsFeed
         is HomeUiState.NoNews -> emptyList()
     }
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "Others")
@@ -134,8 +141,8 @@ fun HomeFeedScreen(
             NewsPager(
                 state = pageState,
                 tabIndex = tabIndex,
-                newsArticles = newsFeed!!,
                 tabTitles = tabTitles,
+                getNewsFromSource = { },
                 modifier = Modifier,
                 scrollState = scrollState
             )
@@ -214,7 +221,7 @@ fun NewsTabs(
 fun NewsPager(
     state: PagerState,
     tabIndex: MutableIntState,
-    newsArticles: List<NewsArticle>?,
+    getNewsFromSource: (String) -> Unit,
     tabTitles: List<String>,
     modifier: Modifier,
     scrollState: ScrollState
@@ -246,6 +253,8 @@ fun NewsPager(
         // use the same login to get the news from the different categories.
         when(page){
             page -> {
+                val newsArticle = getNewsFromSource(tabTitles[page])
+                TAG.logE("$newsArticle")
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
                     Text(text = tabTitles[page])
                 }

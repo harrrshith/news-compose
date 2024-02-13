@@ -37,6 +37,7 @@ fun HomeRoute(
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     HomeRoute(
         uiState = uiState,
+        viewModel = homeViewModel,
         isExpandedScreen = isExpandedScreen,
         onToggleFavourite = { homeViewModel.toggleFavourites(it) },
         onSelectPosts = { navigateToArticleDetail(it) },
@@ -52,6 +53,7 @@ fun HomeRoute(
 @Composable
 fun HomeRoute(
     uiState: HomeUiState,
+    viewModel: HomeViewModel,
     isExpandedScreen: Boolean,
     onToggleFavourite: (String) -> Unit,
     onSelectPosts: (String) -> Unit,
@@ -81,6 +83,7 @@ fun HomeRoute(
     else{
         HomeFeedScreen(
             uiState = uiState,
+            viewModel = viewModel,
             showTopAppBar = true,
             onToggleFavourite = onToggleFavourite,
             onSelectPosts = { onSelectPosts(it)},

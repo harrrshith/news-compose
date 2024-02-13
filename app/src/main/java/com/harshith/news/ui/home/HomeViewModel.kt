@@ -4,6 +4,7 @@ package com.harshith.news.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.NewsFeed
@@ -15,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -26,21 +28,25 @@ import javax.inject.Inject
 
 data class HomeViewModelState(
     val isLoading: Boolean = false,
-    val newsFeed: NewsFeed? = null,
-    val errorMessage: List<ErrorMessage> = emptyList()
+    val horizontalNewsFeed: List<NewsArticle>? = null,
+    val verticalNewsFeed: List<NewsArticle>? = null,
+    val errorMessage: String = ""
 ){
     fun toUiState(): HomeUiState =
-        if (newsFeed == null) {
+        if (horizontalNewsFeed == null) {
             HomeUiState.NoNews(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
-                newsFeed = NewsFeed(emptyList())
+                verticalNewsFeed = emptyList(),
+                horizontalNewsFeed = emptyList()
             )
         }else{
+            TAG.logE("HARSHITH")
             HomeUiState.HasNews(
                 isLoading = isLoading,
-                newsFeed = newsFeed,
-                errorMessage = errorMessage
+                errorMessage = errorMessage,
+                verticalNewsFeed = verticalNewsFeed,
+                horizontalNewsFeed = horizontalNewsFeed
             )
         }
 }
@@ -50,14 +56,17 @@ class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModel"
+
+    private lateinit var firstCategory: List<NewsArticle>
+    private lateinit var secondCategory: List<NewsArticle>
+    private lateinit var thirdCategory: List<NewsArticle>
+    private lateinit var fourthCategory: List<NewsArticle>
+    private lateinit var fifthCategory: List<NewsArticle>
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true
         )
     )
-    fun printClassName(){
-        HomeViewModel::class.java.simpleName
-    }
 
     val uiState = viewModelState
         .map(HomeViewModelState::toUiState)
@@ -70,17 +79,22 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val homeFeedNews = newsRepository.fetchIndiaNews(
-                "in").results!!.toNewArticleList()
-            viewModelState.update { it.copy(
-                isLoading = false,
-                newsFeed = NewsFeed(
-                    homeFeedNews = homeFeedNews
-                )
-            ) }
-            //"Sports", "Technology", "Entertainment", "Politics", "Others"
-            getAllNews()
+            when(val homeFeedNews = newsRepository.fetchIndiaNews("in")){
+                is NetworkResult.Success -> {
+                    viewModelState.update { it.copy(
+                        isLoading = false,
+                        horizontalNewsFeed = homeFeedNews.data.results?.toNewArticleList()
+                    ) }
+                }
+                is NetworkResult.Error -> {
+
+                }
+                is NetworkResult.Exception -> {
+
+                }
+            }
         }
+
     }
 
     fun toggleFavourites(postId: String?){
@@ -102,24 +116,35 @@ class HomeViewModel @Inject constructor(
     fun interactWithArticleDetails(postId: String?){
 
     }
-    private suspend fun getIndiaNews() = withContext(Dispatchers.IO) {
 
-    }
+    suspend fun getNewsFromSource(category: String){
+//        delay(5000L)
+//        when (category){
+//            "Sports" -> viewModelState.update { it.copy(
+//                isLoading = false,
+//                verticalNewsFeed = firstCategory
+//            )}
+//
+//            "Technology" -> viewModelState.update { it.copy(
+//                isLoading = false,
+//                verticalNewsFeed = secondCategory
+//            )}
+//
+//            "Entertainment" -> viewModelState.update { it.copy(
+//                isLoading = false,
+//                verticalNewsFeed = thirdCategory
+//            )}
+//
+//            "Politics" -> viewModelState.update { it.copy(
+//                isLoading = false,
+//                verticalNewsFeed = fourthCategory
+//            )}
+//
+//            "Others" -> viewModelState.update { it.copy(
+//                isLoading = false,
+//                verticalNewsFeed = fifthCategory
+//            )}
+//        }
 
-    private suspend fun getAllNews(){
-        coroutineScope {
-            val firstDeferred = async { newsRepository.fetchFirstNewsCategory("sports") }
-            val ff = firstDeferred.await()
-            TAG.logE("$ff")
-            val secondDeferred = async { newsRepository.fetchSecondNewsCategory("technology") }
-            TAG.logE("${secondDeferred.await()}")
-            val thirdDeferred = async { newsRepository.fetchThirdNewsCategory("entertainment") }
-            TAG.logE("${thirdDeferred.await()}")
-            val fourthDeferred = async { newsRepository.fetchFourthNewsCategory("politics") }
-            TAG.logE("${fourthDeferred.await()}")
-            val fifthDeferred = async { newsRepository.fetchFifthNewsCategory("other") }
-            TAG.logE("${fifthDeferred.await()}")
-
-        }
     }
 }

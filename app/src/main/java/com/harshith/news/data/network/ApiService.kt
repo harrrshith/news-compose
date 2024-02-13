@@ -2,6 +2,7 @@ package com.harshith.news.data.network
 
 import com.harshith.news.BuildConfig
 import com.harshith.news.data.network.model.NetworkNewsResponse
+import com.harshith.news.model.NewsArticle
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
