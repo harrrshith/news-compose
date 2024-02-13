@@ -102,6 +102,11 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.horizontalNewsFeed
         is HomeUiState.NoNews -> emptyList()
     }
+    val verticaNewsFeed = when(uiState){
+        is HomeUiState.HasNews -> uiState.verticalNewsFeed
+        is HomeUiState.NoNews -> emptyList()
+    }
+    "VERTICAL".logE("$verticaNewsFeed")
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "Others")
     val tabIndex = remember {
         mutableIntStateOf(0)
@@ -142,7 +147,7 @@ fun HomeFeedScreen(
                 state = pageState,
                 tabIndex = tabIndex,
                 tabTitles = tabTitles,
-                getNewsFromSource = { },
+                newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState
             )
@@ -221,7 +226,7 @@ fun NewsTabs(
 fun NewsPager(
     state: PagerState,
     tabIndex: MutableIntState,
-    getNewsFromSource: (String) -> Unit,
+    newsArticles: List<NewsArticle>?,
     tabTitles: List<String>,
     modifier: Modifier,
     scrollState: ScrollState
@@ -249,18 +254,9 @@ fun NewsPager(
                     }
                 }
             )
-    ) {page ->
+    ) {
         // use the same login to get the news from the different categories.
-        when(page){
-            page -> {
-                val newsArticle = getNewsFromSource(tabTitles[page])
-                TAG.logE("$newsArticle")
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                    Text(text = tabTitles[page])
-                }
-            }
-        }
-//        LazyNewsColumn(newsArticles = newsArticles)
+        LazyNewsColumn(newsArticles = newsArticles)
     }
 }
 

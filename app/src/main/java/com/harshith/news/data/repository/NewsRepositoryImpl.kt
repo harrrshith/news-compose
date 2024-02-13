@@ -18,8 +18,8 @@ class NewsRepositoryImpl @Inject constructor(
         return handleApi { apiService.fetchIndiaNews(country = country)}
     }
 
-    override suspend fun fetchFirstNewsCategory(category: String): NetworkNewsResponse {
-        return apiService.fetchNewsFirstNewsCategory(category = category).body()!!
+    override suspend fun fetchFirstNewsCategory(category: String): NetworkResult<NetworkNewsResponse> {
+        return handleApi { apiService.fetchNewsFirstNewsCategory(category = category) }
     }
 
     override suspend fun fetchSecondNewsCategory(category: String): NetworkNewsResponse {

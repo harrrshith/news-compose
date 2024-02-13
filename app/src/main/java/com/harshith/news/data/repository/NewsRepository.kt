@@ -8,7 +8,7 @@ import com.harshith.news.model.NewsArticle
 interface NewsRepository {
     suspend fun fetchIndiaNews(country: String): NetworkResult<NetworkNewsResponse>
 
-    suspend fun fetchFirstNewsCategory(category: String): NetworkNewsResponse
+    suspend fun fetchFirstNewsCategory(category: String): NetworkResult<NetworkNewsResponse>
 
     suspend fun fetchSecondNewsCategory(category: String): NetworkNewsResponse
 

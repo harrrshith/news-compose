@@ -93,6 +93,7 @@ class HomeViewModel @Inject constructor(
 
                 }
             }
+            getCategorisedNews()
         }
 
     }
@@ -117,34 +118,20 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    suspend fun getNewsFromSource(category: String){
-//        delay(5000L)
-//        when (category){
-//            "Sports" -> viewModelState.update { it.copy(
-//                isLoading = false,
-//                verticalNewsFeed = firstCategory
-//            )}
-//
-//            "Technology" -> viewModelState.update { it.copy(
-//                isLoading = false,
-//                verticalNewsFeed = secondCategory
-//            )}
-//
-//            "Entertainment" -> viewModelState.update { it.copy(
-//                isLoading = false,
-//                verticalNewsFeed = thirdCategory
-//            )}
-//
-//            "Politics" -> viewModelState.update { it.copy(
-//                isLoading = false,
-//                verticalNewsFeed = fourthCategory
-//            )}
-//
-//            "Others" -> viewModelState.update { it.copy(
-//                isLoading = false,
-//                verticalNewsFeed = fifthCategory
-//            )}
-//        }
+    suspend fun getCategorisedNews(){
+//        "Sports", "Technology", "Entertainment", "Politics", "Others"
+        when(val category1 = newsRepository.fetchFirstNewsCategory("sports")){
+            is NetworkResult.Success -> {
+                viewModelState.update {it.copy(
+                    verticalNewsFeed = category1.data.results?.toNewArticleList()
+                ) }
+            }
+            is NetworkResult.Error -> {
 
+            }
+            is NetworkResult.Exception -> {
+
+            }
+        }
     }
 }
