@@ -93,6 +93,7 @@ fun HomeFeedScreen(
     openDrawer: () -> Unit,
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
+    getNewsByCategory: (String) -> Unit
 ){
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
@@ -149,7 +150,8 @@ fun HomeFeedScreen(
                 tabTitles = tabTitles,
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
-                scrollState = scrollState
+                scrollState = scrollState,
+                getNewsByCategory = getNewsByCategory
             )
         }
     }
@@ -229,7 +231,8 @@ fun NewsPager(
     newsArticles: List<NewsArticle>?,
     tabTitles: List<String>,
     modifier: Modifier,
-    scrollState: ScrollState
+    scrollState: ScrollState,
+    getNewsByCategory: (String) -> Unit
 ){
     LaunchedEffect(state.currentPage){
         tabIndex.intValue = state.currentPage
@@ -254,8 +257,9 @@ fun NewsPager(
                     }
                 }
             )
-    ) {
+    ) {page ->
         // use the same login to get the news from the different categories.
+        getNewsByCategory(tabTitles[page])
         LazyNewsColumn(newsArticles = newsArticles)
     }
 }

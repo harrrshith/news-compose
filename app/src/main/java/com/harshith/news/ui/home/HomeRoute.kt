@@ -46,7 +46,8 @@ fun HomeRoute(
         onInteractWidthArticleDetails = { homeViewModel.interactWithArticleDetails(it) },
         onSearchInputChange = { homeViewModel.onSearchInputChanged(it) },
         openDrawer = { openDrawer() },
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        getNewsByCategory = { homeViewModel.getNewsByCategory(it) }
     )
 
 }
@@ -62,7 +63,8 @@ fun HomeRoute(
     onInteractWidthArticleDetails: (String) -> Unit,
     onSearchInputChange: (String) -> Unit,
     openDrawer: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    getNewsByCategory: (String) -> Unit
 ){
     val homeLazyListState = rememberLazyListState()
     if(isExpandedScreen){
@@ -90,6 +92,7 @@ fun HomeRoute(
             openDrawer = { openDrawer() },
             homeListLazyListState = homeLazyListState,
             snackbarHostState = snackbarHostState,
+            getNewsByCategory = getNewsByCategory
         )
     }
 }

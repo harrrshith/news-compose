@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 data class HomeViewModelState(
     val isLoading: Boolean = false,
@@ -41,7 +42,6 @@ data class HomeViewModelState(
                 horizontalNewsFeed = emptyList()
             )
         }else{
-            TAG.logE("HARSHITH")
             HomeUiState.HasNews(
                 isLoading = isLoading,
                 errorMessage = errorMessage,
@@ -56,12 +56,6 @@ class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModel"
-
-    private lateinit var firstCategory: List<NewsArticle>
-    private lateinit var secondCategory: List<NewsArticle>
-    private lateinit var thirdCategory: List<NewsArticle>
-    private lateinit var fourthCategory: List<NewsArticle>
-    private lateinit var fifthCategory: List<NewsArticle>
     private val viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true
@@ -90,10 +84,9 @@ class HomeViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Exception -> {
-
+                    TAG.logE("Exception")
                 }
             }
-            getCategorisedNews()
         }
 
     }
@@ -118,19 +111,85 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    suspend fun getCategorisedNews(){
+    fun getNewsByCategory(category: String){
 //        "Sports", "Technology", "Entertainment", "Politics", "Others"
-        when(val category1 = newsRepository.fetchFirstNewsCategory("sports")){
-            is NetworkResult.Success -> {
-                viewModelState.update {it.copy(
-                    verticalNewsFeed = category1.data.results?.toNewArticleList()
-                ) }
-            }
-            is NetworkResult.Error -> {
+        viewModelScope.launch {
+            when(category){
+                "Sports" -> {
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("sports")){
+                        is NetworkResult.Success -> {
+                            viewModelState.update {it.copy(
+                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                            ) }
+                        }
+                        is NetworkResult.Error -> {
 
-            }
-            is NetworkResult.Exception -> {
+                        }
+                        is NetworkResult.Exception -> {
 
+                        }
+                    }
+                }
+                "Technology" -> {
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("technology")){
+                        is NetworkResult.Success -> {
+                            viewModelState.update {it.copy(
+                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                            ) }
+                        }
+                        is NetworkResult.Error -> {
+
+                        }
+                        is NetworkResult.Exception -> {
+
+                        }
+                    }
+                }
+                "Entertainment" -> {
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("entertainment")){
+                        is NetworkResult.Success -> {
+                            viewModelState.update {it.copy(
+                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                            ) }
+                        }
+                        is NetworkResult.Error -> {
+
+                        }
+                        is NetworkResult.Exception -> {
+
+                        }
+                    }
+                }
+                "Politics" -> {
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("politics")){
+                        is NetworkResult.Success -> {
+                            viewModelState.update {it.copy(
+                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                            ) }
+                        }
+                        is NetworkResult.Error -> {
+
+                        }
+                        is NetworkResult.Exception -> {
+
+                        }
+                    }
+                }
+                "Others" -> {
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("others")){
+                        is NetworkResult.Success -> {
+                            viewModelState.update {it.copy(
+                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                            ) }
+                        }
+                        is NetworkResult.Error -> {
+
+                        }
+                        is NetworkResult.Exception -> {
+
+                        }
+                    }
+                }
             }
         }
     }
