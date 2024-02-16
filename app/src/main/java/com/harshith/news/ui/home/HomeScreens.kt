@@ -2,7 +2,9 @@ package com.harshith.news.ui.home
 //Home screen will have a appbar which will be obviously material with all those animations.
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +35,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -49,11 +50,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.utils.NewsTopAppBar
-import com.harshith.news.util.logE
-import com.harshith.news.util.logI
-import com.harshith.news.util.logV
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -107,7 +103,6 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.verticalNewsFeed
         is HomeUiState.NoNews -> emptyList()
     }
-    "VERTICAL".logE("$verticaNewsFeed")
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "Others")
     val tabIndex = remember {
         mutableIntStateOf(0)
@@ -142,7 +137,8 @@ fun HomeFeedScreen(
                     .padding(top = 8.dp)
                     .shadow(0.dp),
                 tabIndex = tabIndex,
-                pagerState = pageState
+                pagerState = pageState,
+                getNewsByCategory = getNewsByCategory
             )
             NewsPager(
                 state = pageState,
@@ -151,7 +147,6 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
-                getNewsByCategory = getNewsByCategory
             )
         }
     }
@@ -186,7 +181,8 @@ fun NewsTabs(
     tabTitles: List<String>,
     modifier: Modifier,
     tabIndex: MutableIntState,
-    pagerState: PagerState
+    pagerState: PagerState,
+    getNewsByCategory: (String) -> Unit
 ){
     LaunchedEffect(tabIndex.intValue){
         pagerState.animateScrollToPage(tabIndex.intValue)
@@ -211,10 +207,17 @@ fun NewsTabs(
         tabTitles.forEachIndexed { index, tabItem ->
             Tab(
                 selected = tabIndex.intValue == index,
-                onClick = { tabIndex.intValue = index },
+                onClick = { getNewsByCategory(tabTitles[index]) ;tabIndex.intValue = index },
                 modifier = Modifier
                     .height(50.dp)
                     .padding(horizontal = 4.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        },
+                        onClick = {}
+                    )
             ) {
                 Text(text = tabItem, modifier = Modifier.padding(horizontal = 2.dp))
             }
@@ -231,11 +234,12 @@ fun NewsPager(
     newsArticles: List<NewsArticle>?,
     tabTitles: List<String>,
     modifier: Modifier,
-    scrollState: ScrollState,
-    getNewsByCategory: (String) -> Unit
+    scrollState: ScrollState
 ){
-    LaunchedEffect(state.currentPage){
-        tabIndex.intValue = state.currentPage
+    LaunchedEffect(state.currentPage, state.isScrollInProgress){
+        if(!state.isScrollInProgress){
+            tabIndex.intValue = state.currentPage
+        }
     }
     HorizontalPager(
         state = state,
@@ -256,10 +260,10 @@ fun NewsPager(
                         }
                     }
                 }
-            )
-    ) {page ->
+            ),
+        userScrollEnabled = false
+    ) {
         // use the same login to get the news from the different categories.
-        getNewsByCategory(tabTitles[page])
         LazyNewsColumn(newsArticles = newsArticles)
     }
 }

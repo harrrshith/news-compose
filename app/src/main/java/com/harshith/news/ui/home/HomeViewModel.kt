@@ -7,25 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.network.NetworkResult
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.model.NewsFeed
-import com.harshith.news.util.logV
-import com.harshith.news.util.ErrorMessage
 import com.harshith.news.util.logE
 import com.harshith.news.util.toNewArticleList
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 data class HomeViewModelState(
     val isLoading: Boolean = false,
@@ -88,7 +79,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-
+        getNewsByCategory("Sports")
     }
 
     fun toggleFavourites(postId: String?){
@@ -176,7 +167,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 "Others" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("others")){
+                    when(val newsResponse = newsRepository.fetchNewsByCategory("other")){
                         is NetworkResult.Success -> {
                             viewModelState.update {it.copy(
                                 verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
