@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.utils.NewsTopAppBar
+import com.harshith.news.util.logE
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -93,7 +95,6 @@ fun HomeFeedScreen(
 ){
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val newsFeed = when(uiState){
         is HomeUiState.HasNews -> uiState.horizontalNewsFeed
@@ -127,18 +128,13 @@ fun HomeFeedScreen(
                 TopHeadlines(
                     newsArticle = newsArticles,
                     lazyListState = rememberLazyListState(),
-                    screenWidth = screenWidth
                 )
         }
         Column(modifier = Modifier.height(screenHeight + 100.dp)) {
             NewsTabs(
                 tabTitles = tabTitles,
-                Modifier
-                    .padding(top = 8.dp)
-                    .shadow(0.dp),
                 tabIndex = tabIndex,
                 pagerState = pageState,
-                getNewsByCategory = getNewsByCategory
             )
             NewsPager(
                 state = pageState,
@@ -147,6 +143,7 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
+                getNewsByCategory = getNewsByCategory
             )
         }
     }
@@ -156,8 +153,7 @@ fun HomeFeedScreen(
 @Composable
 fun TopHeadlines(
     newsArticle: List<NewsArticle>,
-    lazyListState: LazyListState,
-    screenWidth: Dp
+    lazyListState: LazyListState
 ){
     Text(
         text = "Top Headlines",
@@ -170,7 +166,7 @@ fun TopHeadlines(
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
-            NewsCardHorizontal(newsArticle = newsArticle[index], screenWidth)
+            NewsCardHorizontal(newsArticle = newsArticle[index])
         }
     }
 }
@@ -179,10 +175,8 @@ fun TopHeadlines(
 @Composable
 fun NewsTabs(
     tabTitles: List<String>,
-    modifier: Modifier,
     tabIndex: MutableIntState,
     pagerState: PagerState,
-    getNewsByCategory: (String) -> Unit
 ){
     LaunchedEffect(tabIndex.intValue){
         pagerState.animateScrollToPage(tabIndex.intValue)
@@ -190,34 +184,22 @@ fun NewsTabs(
     ScrollableTabRow(
         selectedTabIndex = tabIndex.intValue,
         edgePadding = 8.dp,
-        modifier = modifier,
+        modifier = Modifier.height(70.dp),
         indicator = { tabPositions ->
-        TabRowDefaults.Indicator(
-            modifier = Modifier
-                .tabIndicatorOffset(tabPositions[tabIndex.intValue])
-                .alpha(.1f)
-                .clip(MaterialTheme.shapes.extraLarge)
-            ,
-            height = 50.dp,
-        )},
-        divider = {
-
-        }
+            TabRowDefaults(tabPositions[tabIndex.intValue])
+        },
+        divider = {},
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
     ){
         tabTitles.forEachIndexed { index, tabItem ->
             Tab(
                 selected = tabIndex.intValue == index,
-                onClick = { getNewsByCategory(tabTitles[index]) ;tabIndex.intValue = index },
+                onClick = { tabIndex.intValue = index },
                 modifier = Modifier
                     .height(50.dp)
-                    .padding(horizontal = 4.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        },
-                        onClick = {}
-                    )
+                    .padding(horizontal = 4.dp),
+
             ) {
                 Text(text = tabItem, modifier = Modifier.padding(horizontal = 2.dp))
             }
@@ -234,8 +216,10 @@ fun NewsPager(
     newsArticles: List<NewsArticle>?,
     tabTitles: List<String>,
     modifier: Modifier,
-    scrollState: ScrollState
+    scrollState: ScrollState,
+    getNewsByCategory: (String) -> Unit
 ){
+    var prevPage = -1
     LaunchedEffect(state.currentPage, state.isScrollInProgress){
         if(!state.isScrollInProgress){
             tabIndex.intValue = state.currentPage
@@ -261,8 +245,16 @@ fun NewsPager(
                     }
                 }
             ),
-        userScrollEnabled = false
+        userScrollEnabled = true
     ) {
+        if(!state.isScrollInProgress &&
+            tabIndex.intValue == state.currentPage &&
+            prevPage != state.currentPage
+            ){
+            prevPage =  state.currentPage
+            getNewsByCategory(tabTitles[state.currentPage])
+        }
+
         // use the same login to get the news from the different categories.
         LazyNewsColumn(newsArticles = newsArticles)
     }
@@ -277,6 +269,19 @@ fun LazyNewsColumn(newsArticles: List<NewsArticle>?){
             }
         }
     }
+}
+
+@Composable
+fun TabRowDefaults(tabPosition: TabPosition){
+    return TabRowDefaults.Indicator(
+        modifier = Modifier
+            .tabIndicatorOffset(tabPosition)
+            .alpha(.1f)
+            .clip(MaterialTheme.shapes.extraLarge)
+        ,
+        height = 50.dp,
+        color = MaterialTheme.colorScheme.onPrimary
+    )
 }
 
 @Composable

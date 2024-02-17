@@ -46,8 +46,7 @@ import com.harshith.news.ui.utils.getFormattedTimeStamp
 
 @Composable
 fun NewsCardHorizontal(
-    newsArticle: NewsArticle,
-    screenWidth: Dp
+    newsArticle: NewsArticle
 ){
     val textColor = Color.White
     val cardColor = CardDefaults.cardColors(
@@ -61,7 +60,7 @@ fun NewsCardHorizontal(
     ) {
         Box(
             modifier = Modifier
-                .heightIn(min = 140.dp, max = 190.dp)
+                .fillMaxWidth()
                 .aspectRatio(18f / 9f)
         ){
             GradientImage(newsArticle.imageUrl, Modifier.aspectRatio(18f / 9f))
@@ -183,6 +182,8 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
                 style = MaterialTheme.typography.headlineSmall,
                 color = textColor,
                 fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
             )
         }
         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -190,7 +191,8 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
             Text(
                 text = getFormattedTimeStamp(it),
                 style = MaterialTheme.typography.labelSmall,
-                color = textColor
+                color = textColor,
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -202,7 +204,7 @@ fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticleClass, 380.dp)
+                NewsCardHorizontal(newsArticleClass)
                 NewsCardVertical(newsArticleClass)
             }
         }

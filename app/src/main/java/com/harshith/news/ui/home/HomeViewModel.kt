@@ -79,7 +79,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-        getNewsByCategory("Sports")
     }
 
     fun toggleFavourites(postId: String?){
@@ -102,80 +101,104 @@ class HomeViewModel @Inject constructor(
 
     }
 
-    fun getNewsByCategory(category: String){
+    fun getNewsByCategory(category: String) {
 //        "Sports", "Technology", "Entertainment", "Politics", "Others"
         viewModelScope.launch {
-            when(category){
+            when (category) {
                 "Sports" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("sports")){
+                    when (val newsResponse = newsRepository.fetchNewsByCategory("sports")) {
                         is NetworkResult.Success -> {
-                            viewModelState.update {it.copy(
-                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                            ) }
+                            viewModelState.update {
+                                it.copy(
+                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                                )
+                            }
                         }
+
                         is NetworkResult.Error -> {
 
                         }
+
                         is NetworkResult.Exception -> {
 
                         }
                     }
                 }
+
                 "Technology" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("technology")){
+                    when (val newsResponse = newsRepository.fetchNewsByCategory("technology")) {
                         is NetworkResult.Success -> {
-                            viewModelState.update {it.copy(
-                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                            ) }
+                            viewModelState.update {
+                                it.copy(
+                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                                )
+                            }
                         }
+
                         is NetworkResult.Error -> {
 
                         }
+
                         is NetworkResult.Exception -> {
 
                         }
                     }
                 }
+
                 "Entertainment" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("entertainment")){
+                    when (val newsResponse = newsRepository.fetchNewsByCategory("entertainment")) {
                         is NetworkResult.Success -> {
-                            viewModelState.update {it.copy(
-                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                            ) }
+                            viewModelState.update {
+                                it.copy(
+                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                                )
+                            }
                         }
+
                         is NetworkResult.Error -> {
 
                         }
+
                         is NetworkResult.Exception -> {
 
                         }
                     }
                 }
+
                 "Politics" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("politics")){
+                    when (val newsResponse = newsRepository.fetchNewsByCategory("politics")) {
                         is NetworkResult.Success -> {
-                            viewModelState.update {it.copy(
-                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                            ) }
+                            viewModelState.update {
+                                it.copy(
+                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                                )
+                            }
                         }
+
                         is NetworkResult.Error -> {
 
                         }
+
                         is NetworkResult.Exception -> {
 
                         }
                     }
                 }
+
                 "Others" -> {
-                    when(val newsResponse = newsRepository.fetchNewsByCategory("other")){
+                    when (val newsResponse = newsRepository.fetchNewsByCategory("other")) {
                         is NetworkResult.Success -> {
-                            viewModelState.update {it.copy(
-                                verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                            ) }
+                            viewModelState.update {
+                                it.copy(
+                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
+                                )
+                            }
                         }
+
                         is NetworkResult.Error -> {
 
                         }
+
                         is NetworkResult.Exception -> {
 
                         }

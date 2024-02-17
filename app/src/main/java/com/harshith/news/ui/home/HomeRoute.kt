@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,7 @@ import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.NewsFeed
 import com.harshith.news.util.logE
 import com.harshith.news.util.logV
+import kotlinx.coroutines.launch
 
 const val TAG = "HOME_ROUTE"
 @Composable
@@ -35,6 +37,7 @@ fun HomeRoute(
     },
 ){
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
     HomeRoute(
         uiState = uiState,
         viewModel = homeViewModel,
