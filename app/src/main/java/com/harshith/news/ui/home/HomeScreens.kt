@@ -5,6 +5,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -96,6 +98,7 @@ fun HomeFeedScreen(
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
     val newsFeed = when(uiState){
         is HomeUiState.HasNews -> uiState.horizontalNewsFeed
         is HomeUiState.NoNews -> emptyList()
@@ -128,6 +131,7 @@ fun HomeFeedScreen(
                 TopHeadlines(
                     newsArticle = newsArticles,
                     lazyListState = rememberLazyListState(),
+                    width = screenWidth
                 )
         }
         Column(modifier = Modifier.height(screenHeight + 100.dp)) {
@@ -153,7 +157,8 @@ fun HomeFeedScreen(
 @Composable
 fun TopHeadlines(
     newsArticle: List<NewsArticle>,
-    lazyListState: LazyListState
+    lazyListState: LazyListState,
+    width: Dp
 ){
     Text(
         text = "Top Headlines",
@@ -166,7 +171,7 @@ fun TopHeadlines(
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
-            NewsCardHorizontal(newsArticle = newsArticle[index])
+            NewsCardHorizontal(newsArticle = newsArticle[index], width = width)
         }
     }
 }
@@ -189,8 +194,8 @@ fun NewsTabs(
             TabRowDefaults(tabPositions[tabIndex.intValue])
         },
         divider = {},
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary
+        containerColor = MaterialTheme.colorScheme.onPrimary,
+        contentColor = MaterialTheme.colorScheme.primary
     ){
         tabTitles.forEachIndexed { index, tabItem ->
             Tab(
@@ -280,7 +285,7 @@ fun TabRowDefaults(tabPosition: TabPosition){
             .clip(MaterialTheme.shapes.extraLarge)
         ,
         height = 50.dp,
-        color = MaterialTheme.colorScheme.onPrimary
+        color = MaterialTheme.colorScheme.primary
     )
 }
 

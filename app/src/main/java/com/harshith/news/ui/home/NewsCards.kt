@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +44,8 @@ import com.harshith.news.ui.utils.getFormattedTimeStamp
 
 @Composable
 fun NewsCardHorizontal(
-    newsArticle: NewsArticle
+    newsArticle: NewsArticle,
+    width: Dp
 ){
     val textColor = Color.White
     val cardColor = CardDefaults.cardColors(
@@ -60,7 +59,7 @@ fun NewsCardHorizontal(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .widthIn(350.dp, width-20.dp)
                 .aspectRatio(18f / 9f)
         ){
             GradientImage(newsArticle.imageUrl, Modifier.aspectRatio(18f / 9f))
@@ -183,7 +182,8 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
                 color = textColor,
                 fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                maxLines = 1
             )
         }
         Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -204,7 +204,7 @@ fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticleClass)
+                NewsCardHorizontal(newsArticleClass, 380.dp)
                 NewsCardVertical(newsArticleClass)
             }
         }
