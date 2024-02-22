@@ -106,6 +106,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when (category) {
                 "Sports" -> {
+                    TAG.logE("Sports")
                     when (val newsResponse = newsRepository.fetchNewsByCategory("sports")) {
                         is NetworkResult.Success -> {
                             viewModelState.update {
@@ -126,6 +127,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 "Technology" -> {
+                    TAG.logE("Technology")
                     when (val newsResponse = newsRepository.fetchNewsByCategory("technology")) {
                         is NetworkResult.Success -> {
                             viewModelState.update {
@@ -146,6 +148,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 "Entertainment" -> {
+                    TAG.logE("Entertainment")
                     when (val newsResponse = newsRepository.fetchNewsByCategory("entertainment")) {
                         is NetworkResult.Success -> {
                             viewModelState.update {
@@ -166,6 +169,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 "Politics" -> {
+                    TAG.logE("Politics")
                     when (val newsResponse = newsRepository.fetchNewsByCategory("politics")) {
                         is NetworkResult.Success -> {
                             viewModelState.update {
@@ -186,6 +190,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 "Others" -> {
+                    TAG.logE("Others")
                     when (val newsResponse = newsRepository.fetchNewsByCategory("other")) {
                         is NetworkResult.Success -> {
                             viewModelState.update {

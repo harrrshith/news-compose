@@ -2,10 +2,7 @@ package com.harshith.news.ui.home
 //Home screen will have a appbar which will be obviously material with all those animations.
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,14 +32,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -53,7 +48,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.utils.NewsTopAppBar
-import com.harshith.news.util.logE
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -115,6 +109,11 @@ fun HomeFeedScreen(
         tabTitles.size
     }
 
+    LaunchedEffect(tabIndex.intValue){
+        //Change the news category on change of the tab Index
+        getNewsByCategory(tabTitles[tabIndex.intValue])
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -147,7 +146,6 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
-                getNewsByCategory = getNewsByCategory
             )
         }
     }
@@ -222,9 +220,7 @@ fun NewsPager(
     tabTitles: List<String>,
     modifier: Modifier,
     scrollState: ScrollState,
-    getNewsByCategory: (String) -> Unit
 ){
-    var prevPage = -1
     LaunchedEffect(state.currentPage, state.isScrollInProgress){
         if(!state.isScrollInProgress){
             tabIndex.intValue = state.currentPage
@@ -252,14 +248,6 @@ fun NewsPager(
             ),
         userScrollEnabled = true
     ) {
-        if(!state.isScrollInProgress &&
-            tabIndex.intValue == state.currentPage &&
-            prevPage != state.currentPage
-            ){
-            prevPage =  state.currentPage
-            getNewsByCategory(tabTitles[state.currentPage])
-        }
-
         // use the same login to get the news from the different categories.
         LazyNewsColumn(newsArticles = newsArticles)
     }
