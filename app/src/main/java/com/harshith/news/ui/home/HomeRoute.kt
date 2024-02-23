@@ -37,7 +37,6 @@ fun HomeRoute(
     },
 ){
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
     HomeRoute(
         uiState = uiState,
         viewModel = homeViewModel,

@@ -1,5 +1,6 @@
 package com.harshith.news.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
@@ -45,6 +45,7 @@ import com.harshith.news.ui.utils.getFormattedTimeStamp
 @Composable
 fun NewsCardHorizontal(
     newsArticle: NewsArticle,
+    onSelectPosts: (String) -> Unit,
     width: Dp
 ){
     val textColor = Color.White
@@ -53,7 +54,9 @@ fun NewsCardHorizontal(
         contentColor = Color.White
     )
     Card(
-        modifier = Modifier
+        modifier = Modifier.clickable(
+            onClick = { onSelectPosts(newsArticle.articleId) }
+        )
             .wrapContentSize()
             .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
@@ -204,7 +207,7 @@ fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticleClass, 380.dp)
+                NewsCardHorizontal(newsArticleClass, {}, 380.dp)
                 NewsCardVertical(newsArticleClass)
             }
         }

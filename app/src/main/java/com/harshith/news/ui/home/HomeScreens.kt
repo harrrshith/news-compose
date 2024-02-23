@@ -130,6 +130,7 @@ fun HomeFeedScreen(
                 TopHeadlines(
                     newsArticle = newsArticles,
                     lazyListState = rememberLazyListState(),
+                    onSelectPosts = onSelectPosts,
                     width = screenWidth
                 )
         }
@@ -142,7 +143,6 @@ fun HomeFeedScreen(
             NewsPager(
                 state = pageState,
                 tabIndex = tabIndex,
-                tabTitles = tabTitles,
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
@@ -156,6 +156,7 @@ fun HomeFeedScreen(
 fun TopHeadlines(
     newsArticle: List<NewsArticle>,
     lazyListState: LazyListState,
+    onSelectPosts: (String) -> Unit,
     width: Dp
 ){
     Text(
@@ -169,7 +170,7 @@ fun TopHeadlines(
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
-            NewsCardHorizontal(newsArticle = newsArticle[index], width = width)
+            NewsCardHorizontal(newsArticle = newsArticle[index], width = width, onSelectPosts = onSelectPosts)
         }
     }
 }
@@ -217,7 +218,6 @@ fun NewsPager(
     state: PagerState,
     tabIndex: MutableIntState,
     newsArticles: List<NewsArticle>?,
-    tabTitles: List<String>,
     modifier: Modifier,
     scrollState: ScrollState,
 ){
@@ -276,21 +276,3 @@ fun TabRowDefaults(tabPosition: TabPosition){
         color = MaterialTheme.colorScheme.primary
     )
 }
-
-@Composable
-private fun HomeScreenWithList(
-    showTopAppBar: Boolean,
-    openDrawer: () -> Unit,
-    snackbarHostState: SnackbarHostState,
-){
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Column {
-            Text(text = "Hello World", style = MaterialTheme.typography.displayLarge)
-            Text(text = "Hello World", style = MaterialTheme.typography.headlineMedium)
-        }
-    }
-}
-

@@ -1,5 +1,6 @@
 package com.harshith.news.ui
 
+import ArticleScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,14 +57,14 @@ fun NewsNavGraph(
                 openDrawer = openDrawer
             )
         }
-//        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
-//            ArticleScreen(
-//                isExpandedScreen = isExpandedScreen,
-//                onBack = { navController.popBackStack() },
-//                isFavourite = true,
-//                onToggleFavourite = { },
-//                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
-//            )
-//        }
+        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
+            ArticleScreen(
+                isExpandedScreen = isExpandedScreen,
+                onBack = { navController.popBackStack() },
+                isFavourite = true,
+                onToggleFavourite = { },
+                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
+            )
+        }
     }
 }
