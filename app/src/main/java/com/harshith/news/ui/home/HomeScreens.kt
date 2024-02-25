@@ -83,7 +83,7 @@ fun HomeFeedScreen(
     viewModel: HomeViewModel,
     showTopAppBar: Boolean,
     onToggleFavourite: (String) -> Unit,
-    onSelectPosts: (String) -> Unit,
+    onSelectPosts: (NewsArticle) -> Unit,
     openDrawer: () -> Unit,
     homeListLazyListState: LazyListState,
     snackbarHostState: SnackbarHostState,
@@ -156,7 +156,7 @@ fun HomeFeedScreen(
 fun TopHeadlines(
     newsArticle: List<NewsArticle>,
     lazyListState: LazyListState,
-    onSelectPosts: (String) -> Unit,
+    onSelectPosts: (NewsArticle) -> Unit,
     width: Dp
 ){
     Text(

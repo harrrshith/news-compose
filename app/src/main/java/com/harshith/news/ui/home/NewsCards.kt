@@ -45,7 +45,7 @@ import com.harshith.news.ui.utils.getFormattedTimeStamp
 @Composable
 fun NewsCardHorizontal(
     newsArticle: NewsArticle,
-    onSelectPosts: (String) -> Unit,
+    onSelectPosts: (NewsArticle) -> Unit,
     width: Dp
 ){
     val textColor = Color.White
@@ -55,7 +55,7 @@ fun NewsCardHorizontal(
     )
     Card(
         modifier = Modifier.clickable(
-            onClick = { onSelectPosts(newsArticle.articleId) }
+            onClick = { onSelectPosts(newsArticle) }
         )
             .wrapContentSize()
             .padding(horizontal = 8.dp, vertical = 8.dp)

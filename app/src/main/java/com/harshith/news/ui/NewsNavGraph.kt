@@ -5,17 +5,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.harshith.news.NewsApplication.Companion.NEWS_APP_URI
 import com.harshith.news.data.AppContainer
+import com.harshith.news.model.NewsArticle
+import com.harshith.news.model.SerializedNewsArticle
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.interests.InterestsRoute
 import com.harshith.news.ui.interests.InterestsViewModel
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
+import kotlinx.serialization.json.Json.Default.decodeFromString
 
 const val POST_ID = "postId"
+const val NEWS_ARTICLE = "newsArticle"
 @Composable
 fun NewsNavGraph(
     appContainer: AppContainer,
@@ -23,7 +31,7 @@ fun NewsNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit,
-    navigationToDetail: (String) -> Unit,
+    navigationToDetail: (NewsArticle) -> Unit,
     startDestination: String = NewsDestination.HOME
 ){
     NavHost(
@@ -31,14 +39,7 @@ fun NewsNavGraph(
         startDestination = startDestination,
         modifier = modifier
     ){
-        composable(
-            route = NewsDestination.HOME,
-            deepLinks = listOf(
-                navDeepLink {
-                    uriPattern = "$NEWS_APP_URI/${NewsDestination.HOME}?$POST_ID={$POST_ID}"
-                }
-            )
-        ){navBackStackEntry ->
+        composable(route = NewsDestination.HOME){
             HomeRoute(
                 isExpandedScreen = isExpandedScreen,
                 openDrawer = openDrawer,
@@ -57,14 +58,19 @@ fun NewsNavGraph(
                 openDrawer = openDrawer
             )
         }
-        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$POST_ID}"){ navBackStackEntry ->
+        composable("${NewsDestination.ARTICLE_DETAILS_ROUTE}/{$NEWS_ARTICLE}", arguments = listOf(
+            navArgument(NEWS_ARTICLE){
+                type = NavType.StringType
+            })
+        ){it.arguments?.getString(NEWS_ARTICLE)?.let{jsonString->
+            val newsArticle = decodeFromString<SerializedNewsArticle>(jsonString)
             ArticleScreen(
+                newsArticle = newsArticle,
                 isExpandedScreen = isExpandedScreen,
                 onBack = { navController.popBackStack() },
                 isFavourite = true,
                 onToggleFavourite = { },
-                //navigationArgs = navBackStackEntry.arguments?.getString(POST_ID),
-            )
+            )}
         }
     }
 }

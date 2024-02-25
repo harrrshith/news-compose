@@ -3,6 +3,7 @@ package com.harshith.news.util
 import com.harshith.news.data.network.model.NetworkNewsArticle
 import com.harshith.news.data.network.model.NetworkNewsResponse
 import com.harshith.news.model.NewsArticle
+import com.harshith.news.model.SerializedNewsArticle
 
 fun NetworkNewsArticle.toNewsArticle() = NewsArticle(
     articleId = this.articleId,
@@ -41,3 +42,21 @@ fun List<NetworkNewsArticle>.toNewArticleList() = map { networkNewsArticle ->
         videoUrl = networkNewsArticle.videoUrl
     )
 }
+
+fun NewsArticle.toSerializedNewsArticle() = SerializedNewsArticle(
+    articleId = this.articleId,
+    category = this.category,
+    content = this.content,
+    country = this.country,
+    creator = this.creator,
+    description = this.description,
+    imageUrl = this.imageUrl?.toEncodedUrl(),
+    keywords = this.keywords,
+    language = this.language,
+    link = this.link?.toEncodedUrl(),
+    pubDate = this.pubDate,
+    sourceId = this.sourceId,
+    sourcePriority = this.sourcePriority,
+    title = this.title,
+    videoUrl = this.videoUrl?.toEncodedUrl()
+)

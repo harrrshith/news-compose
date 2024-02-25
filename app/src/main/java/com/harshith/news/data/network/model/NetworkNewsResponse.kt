@@ -80,5 +80,5 @@ data class NetworkNewsArticle(
     @SerializedName("title")
     val title: String?,
     @SerializedName("video_url")
-    val videoUrl: Any?
+    val videoUrl: String?
 )

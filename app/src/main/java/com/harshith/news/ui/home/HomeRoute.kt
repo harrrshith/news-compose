@@ -31,7 +31,7 @@ fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
     isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
-    navigateToArticleDetail: (String) -> Unit,
+    navigateToArticleDetail: (NewsArticle) -> Unit,
     snackbarHostState: SnackbarHostState = remember {
         SnackbarHostState()
     },
@@ -59,7 +59,7 @@ fun HomeRoute(
     viewModel: HomeViewModel,
     isExpandedScreen: Boolean,
     onToggleFavourite: (String) -> Unit,
-    onSelectPosts: (String) -> Unit,
+    onSelectPosts: (NewsArticle) -> Unit,
     onSelectPostsInLargeScreen: (String) -> Unit,
     onInteractWithFeed: () -> Unit,
     onInteractWidthArticleDetails: (String) -> Unit,

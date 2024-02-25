@@ -20,6 +20,8 @@ hiltNavigationVersion = "1.2.0"
 coilVersion = "2.4.0"
 googleKspVersion = "1.9.0-1.0.12"
 roomVersion = "2.6.1"
+kotlinSerializationVersion = "1.6.3"
+kotlinxSerialization = "1.9.22"
 
 [libraries]
 androidx-ktx = { group="androidx.core", name="core-ktx", version.ref="ktx" }
@@ -50,6 +52,7 @@ coil-compose = { group="io.coil-kt", name="coil-compose", version.ref="coilVersi
 androidx-room = { group = "androidx.room", name = "room-runtime" , version.ref = "roomVersion" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion"}
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion"}
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name="kotlinx-serialization-json",  version.ref = "kotlinSerializationVersion" }
 
 [bundles]
 androidx-compose-ui = ["androidx-compose-ui", "androidx-compose-ui-graphics", "androidx-compose-ui-tooling"]
@@ -61,3 +64,4 @@ android-kotlin = { id="org.jetbrains.kotlin.android", version.ref = "kotlinVersi
 dagger-hilt = { id ="com.google.dagger.hilt.android", version.ref="hiltVersion" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "googleKspVersion" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
