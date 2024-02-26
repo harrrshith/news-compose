@@ -1,4 +1,6 @@
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,12 +25,9 @@ fun ArticleScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
 ){
-    TAG.logE("$newsArticle")
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ){
-        Text(text = "Hello", )
-    }
+   Column {
+       AppBar(Modifier.fillMaxSize())
+
+   }
 
 }

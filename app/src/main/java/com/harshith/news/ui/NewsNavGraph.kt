@@ -18,6 +18,7 @@ import com.harshith.news.model.SerializedNewsArticle
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.interests.InterestsRoute
 import com.harshith.news.ui.interests.InterestsViewModel
+import com.harshith.news.util.logE
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
 import kotlinx.serialization.json.Json.Default.decodeFromString
@@ -62,15 +63,15 @@ fun NewsNavGraph(
             navArgument(NEWS_ARTICLE){
                 type = NavType.StringType
             })
-        ){it.arguments?.getString(NEWS_ARTICLE)?.let{jsonString->
-            val newsArticle = decodeFromString<SerializedNewsArticle>(jsonString)
+        ){
             ArticleScreen(
-                newsArticle = newsArticle,
+                newsArticle = decodeFromString<SerializedNewsArticle>
+                    (it.arguments?.getString(NEWS_ARTICLE)?: ""),
                 isExpandedScreen = isExpandedScreen,
                 onBack = { navController.popBackStack() },
                 isFavourite = true,
                 onToggleFavourite = { },
-            )}
+            )
         }
     }
 }

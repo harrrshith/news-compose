@@ -5,6 +5,7 @@ package com.harshith.news.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshith.news.data.network.NetworkResult
+import com.harshith.news.data.network.model.NetworkNewsResponse
 import com.harshith.news.data.repository.NewsRepository
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.util.logE
@@ -47,7 +48,12 @@ class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModel"
-    private val viewModelState = MutableStateFlow(
+    private var categoryOne: List<NewsArticle> = emptyList()
+    private var categoryTwo: List<NewsArticle>? = emptyList()
+    private var categoryThree: List<NewsArticle>? = emptyList()
+    private var categoryFour: List<NewsArticle>? = emptyList()
+    private var categoryFive: List<NewsArticle>? = emptyList()
+    private var viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true
         )
@@ -106,110 +112,45 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when (category) {
                 "Sports" -> {
-                    TAG.logE("Sports")
-                    when (val newsResponse = newsRepository.fetchNewsByCategory("sports")) {
-                        is NetworkResult.Success -> {
-                            viewModelState.update {
-                                it.copy(
-                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-
-                        }
-
-                        is NetworkResult.Exception -> {
-
-                        }
-                    }
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("sports"))
                 }
 
                 "Technology" -> {
                     TAG.logE("Technology")
-                    when (val newsResponse = newsRepository.fetchNewsByCategory("technology")) {
-                        is NetworkResult.Success -> {
-                            viewModelState.update {
-                                it.copy(
-                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-
-                        }
-
-                        is NetworkResult.Exception -> {
-
-                        }
-                    }
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("technology"))
                 }
 
                 "Entertainment" -> {
                     TAG.logE("Entertainment")
-                    when (val newsResponse = newsRepository.fetchNewsByCategory("entertainment")) {
-                        is NetworkResult.Success -> {
-                            viewModelState.update {
-                                it.copy(
-                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-
-                        }
-
-                        is NetworkResult.Exception -> {
-
-                        }
-                    }
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("entertainment"))
                 }
 
                 "Politics" -> {
-                    TAG.logE("Politics")
-                    when (val newsResponse = newsRepository.fetchNewsByCategory("politics")) {
-                        is NetworkResult.Success -> {
-                            viewModelState.update {
-                                it.copy(
-                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-
-                        }
-
-                        is NetworkResult.Exception -> {
-
-                        }
-                    }
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("politics"))
                 }
 
                 "Others" -> {
-                    TAG.logE("Others")
-                    when (val newsResponse = newsRepository.fetchNewsByCategory("other")) {
-                        is NetworkResult.Success -> {
-                            viewModelState.update {
-                                it.copy(
-                                    verticalNewsFeed = newsResponse.data.results?.toNewArticleList()
-                                )
-                            }
-                        }
-
-                        is NetworkResult.Error -> {
-
-                        }
-
-                        is NetworkResult.Exception -> {
-
-                        }
-                    }
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("other"))
                 }
             }
+        }
+    }
+
+    private fun getNewsArticlesByCategory(result: NetworkResult<NetworkNewsResponse>) =  when(result){
+        is NetworkResult.Success -> {
+            viewModelState.update {
+                it.copy(
+                    verticalNewsFeed = result.data.results?.toNewArticleList()
+                )
+            }
+        }
+
+        is NetworkResult.Error -> {
+
+        }
+
+        is NetworkResult.Exception -> {
+
         }
     }
 }
