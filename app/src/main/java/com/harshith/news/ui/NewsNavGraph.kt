@@ -1,6 +1,6 @@
 package com.harshith.news.ui
 
-import ArticleScreen
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,17 +10,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
-import com.harshith.news.NewsApplication.Companion.NEWS_APP_URI
 import com.harshith.news.data.AppContainer
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.SerializedNewsArticle
+import com.harshith.news.ui.article.ArticleScreen
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.interests.InterestsRoute
 import com.harshith.news.ui.interests.InterestsViewModel
-import com.harshith.news.util.logE
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
 import kotlinx.serialization.json.Json.Default.decodeFromString
 
 const val POST_ID = "postId"
@@ -67,10 +63,7 @@ fun NewsNavGraph(
             ArticleScreen(
                 newsArticle = decodeFromString<SerializedNewsArticle>
                     (it.arguments?.getString(NEWS_ARTICLE)?: ""),
-                isExpandedScreen = isExpandedScreen,
-                onBack = { navController.popBackStack() },
-                isFavourite = true,
-                onToggleFavourite = { },
+                onBack = { navController.popBackStack() }
             )
         }
     }

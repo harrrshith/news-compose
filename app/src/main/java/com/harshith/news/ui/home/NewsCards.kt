@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticleClass
+import com.harshith.news.model.newsArticleClassAnother
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
 
@@ -207,8 +208,8 @@ fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticleClass, {}, 380.dp)
-                NewsCardVertical(newsArticleClass)
+                NewsCardHorizontal(newsArticleClassAnother, {}, 380.dp)
+                NewsCardVertical(newsArticleClassAnother)
             }
         }
     }

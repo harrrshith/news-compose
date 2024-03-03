@@ -26,7 +26,7 @@ val newsResponseString = """
         "description": "It will be named Prince Mohammed bin Salman Stadium for the crown prince of the oil-rich kingdom that wants to become the major player in world sports over the next decade.",
         "content": "Saudi Arabia revealed designs Monday for a high-tech stadium atop a 200-meter high cliff near Riyadh where the kingdom plans to stage games at the 2034 World Cup. The 45,000-seat venue design has a retractable roof and field, plus an LED wall with hundreds of meters (yards) of screens to create an immersive experience for fans, the Qiddiya Investment Company said in a statement. It will be named Prince Mohammed bin Salman Stadium for the crown prince of the oil-rich kingdom that wants to become the major player in world sports over the next decade. The stadium is a centrepiece of the Qiddiya City project that aims to create an entertainment, gaming and sports hub 45 kilometres (30 miles) from downtown Riyadh, the Saudi capital. The QIC is wholly owned by the Public Investment Fund, which is chaired by the crown prince. It manages about ${'$'}700 billion in Saudi sovereign wealth and includes investments in the LIV Golf project and English Premier League club Newcastle. The QIC said the new stadium is intended to become the home venue of Al-Nassr and Al-Hilal, the Riyadh clubs who last year signed Cristiano Ronaldo and Neymar, respectively. Saudi Arabia is the only bidder to host the men’s World Cup in 2034, with FIFA set to confirm its pick late this year in a confirmation vote by more than 200 national soccer federations. FIFA has said 14 stadiums will be needed for the 48-team tournament. Comments",
         "pubDate": "2024-01-15 16:47:43",
-        "image_url": "https://ss-i.thgim.com/public/incoming/po75rt/article67743282.ece/alternates/LANDSCAPE_1200/Saudi.jpg",
+        "image_url": "painterResource(id = R.drawable.image_post)",
         "sourceId": "sportstar",
         "sourceUrl": "https://sportstar.thehindu.com",
         "sourcePriority": 2972,
@@ -43,7 +43,8 @@ val newsResponseString = """
     }
 """.trimIndent()
 
-val newsArticleClass: NewsArticle = Gson().fromJson(newsResponseString, NewsArticle::class.java)
+val newsArticleClass: SerializedNewsArticle = Gson().fromJson(newsResponseString, SerializedNewsArticle::class.java)
+val newsArticleClassAnother: NewsArticle = Gson().fromJson(newsResponseString, NewsArticle::class.java)
 
 /*
 ,
