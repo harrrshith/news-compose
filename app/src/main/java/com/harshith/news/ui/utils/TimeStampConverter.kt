@@ -2,26 +2,26 @@ package com.harshith.news.ui.utils
 
 import java.sql.Timestamp
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 fun getFormattedTimeStamp(timeStamp: String): String{
-    val pattern = "yyyy-MM-dd HH:mm:ss"
-    val formatter = DateTimeFormatter.ofPattern(pattern)
-    val currentTime = Timestamp(System.currentTimeMillis()).toString().split(".")[0]
-    val currentDateFormatted = LocalDateTime.parse(currentTime, formatter)
-    val newsDateFormatted = LocalDateTime.parse(timeStamp, formatter)
-    val duration = Duration.between(newsDateFormatted, currentDateFormatted)
-    val days = duration.toDays().toInt()
-    val hours = duration.toHours().toInt()
-    val minutes = duration.toMinutes().toInt()
+    val timeFormatted = Instant.parse(timeStamp)
+    val now = Instant.now()
+    val duration = ChronoUnit.MINUTES.between(timeFormatted, now)
+    val days = duration / (60 * 24)
+    val hours = (duration % (60 * 24)) / 60
+    val minutes = duration % 60
     return when{
-        days == 0 && hours == 0 && minutes > 1 -> "$minutes minutes ago"
-        days == 0 && hours == 0 && minutes <=1-> "$minutes minute ago"
-        days == 0 && hours > 1 -> "$hours hours ago"
-        days == 0 && hours <= 1 -> "$hours hour ago"
+        days == 0L && hours == 0L && minutes > 1 -> "$minutes minutes ago"
+        days == 0L && hours == 0L && minutes <=1-> "$minutes minute ago"
+        days == 0L && hours > 1L -> "$hours hours ago"
+        days == 0L && hours <= 1L -> "$hours hour ago"
         days > 1 -> "$days days ago"
         days >= 1 -> "$days day ago"
         else -> "Just Now"
     }
 }
+

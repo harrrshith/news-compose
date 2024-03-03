@@ -3,11 +3,8 @@ package com.harshith.news.ui
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.util.toEncodedUrl
-import com.harshith.news.util.toSerializedNewsArticle
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.net.URLEncoder
 
 object NewsDestination{
     const val HOME = "home"
@@ -38,7 +35,7 @@ class NewsNavigationActions(navController: NavHostController){
     }
 
     val navigateToArticleDetail: (NewsArticle) -> Unit = {newsArticle ->
-        val encodedNewsArticle = Json.encodeToString(newsArticle.toSerializedNewsArticle())
+        val encodedNewsArticle = Json.encodeToString(newsArticle)
         navController.navigate("${NewsDestination.ARTICLE_DETAILS_ROUTE}/$encodedNewsArticle"){
             popUpTo(navController.graph.findStartDestination().id){
                 saveState = true

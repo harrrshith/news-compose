@@ -41,9 +41,7 @@ data class NetworkNewsSource(
  */
 
 data class NetworkNewsResponse(
-    @SerializedName("nextPage")
-    val nextPage: String?,
-    @SerializedName("results")
+    @SerializedName("articles")
     val results: List<NetworkNewsArticle>?,
     @SerializedName("status")
     val status: String,
@@ -51,34 +49,27 @@ data class NetworkNewsResponse(
     val totalResults: Int
 )
 data class NetworkNewsArticle(
-    @SerializedName("article_id")
-    val articleId: String,
-    @SerializedName("category")
-    val category: List<String?>?,
     @SerializedName("content")
     val content: String?,
-    @SerializedName("country")
-    val country: List<String?>?,
-    @SerializedName("creator")
-    val creator: List<String?>?,
+    @SerializedName("author")
+    val creator: String?,
     @SerializedName("description")
     val description: String?,
-    @SerializedName("image_url")
+    @SerializedName("urlToImage")
     val imageUrl: String?,
-    @SerializedName("keywords")
-    val keywords: List<String?>?,
-    @SerializedName("language")
-    val language: String?,
-    @SerializedName("link")
+    @SerializedName("url")
     val link: String?,
-    @SerializedName("pubDate")
+    @SerializedName("publishedAt")
     val pubDate: String?,
-    @SerializedName("source_id")
-    val sourceId: String?,
-    @SerializedName("source_priority")
-    val sourcePriority: Int?,
     @SerializedName("title")
     val title: String?,
-    @SerializedName("video_url")
-    val videoUrl: String?
+    @SerializedName("source")
+    val source: Source
+)
+
+data class Source(
+    @SerializedName("id")
+    val id: String?,
+    @SerializedName("name")
+    val name: String?
 )

@@ -48,11 +48,6 @@ class HomeViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModel"
-    private var categoryOne: List<NewsArticle> = emptyList()
-    private var categoryTwo: List<NewsArticle>? = emptyList()
-    private var categoryThree: List<NewsArticle>? = emptyList()
-    private var categoryFour: List<NewsArticle>? = emptyList()
-    private var categoryFive: List<NewsArticle>? = emptyList()
     private var viewModelState = MutableStateFlow(
         HomeViewModelState(
             isLoading = true
@@ -72,6 +67,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when(val homeFeedNews = newsRepository.fetchIndiaNews("in")){
                 is NetworkResult.Success -> {
+                    TAG.logE("${homeFeedNews.data.results}")
                     viewModelState.update { it.copy(
                         isLoading = false,
                         horizontalNewsFeed = homeFeedNews.data.results?.toNewArticleList()
@@ -81,7 +77,8 @@ class HomeViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Exception -> {
-                    TAG.logE("Exception")
+
+                    TAG.logE("${homeFeedNews.e}")
                 }
             }
         }

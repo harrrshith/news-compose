@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.harshith.news.data.AppContainer
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.model.SerializedNewsArticle
 import com.harshith.news.ui.article.ArticleScreen
 import com.harshith.news.ui.home.HomeRoute
 import com.harshith.news.ui.interests.InterestsRoute
@@ -61,7 +60,7 @@ fun NewsNavGraph(
             })
         ){
             ArticleScreen(
-                newsArticle = decodeFromString<SerializedNewsArticle>
+                newsArticle = decodeFromString<NewsArticle>
                     (it.arguments?.getString(NEWS_ARTICLE)?: ""),
                 onBack = { navController.popBackStack() }
             )

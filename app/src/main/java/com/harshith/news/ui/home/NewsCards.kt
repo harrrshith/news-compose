@@ -38,8 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.harshith.news.model.NewsArticle
-import com.harshith.news.model.newsArticleClass
-import com.harshith.news.model.newsArticleClassAnother
+import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
 
@@ -72,7 +71,7 @@ fun NewsCardHorizontal(
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ){
-                newsArticle.category?.get(0)?.let {
+                newsArticle.sourceName?.let {
                     Card(
                         colors = cardColor,
                         modifier = Modifier
@@ -128,7 +127,7 @@ fun NewsCardVertical(
                 .padding(start = 8.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            newsArticle.category?.get(0)?.let {
+            newsArticle.creator?.get(0)?.let {
                 Text(
                     text = it.uppercase(),
                     style = MaterialTheme.typography.bodyMedium,
@@ -179,6 +178,15 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        publishDate?.let {
+            Text(
+                text = getFormattedTimeStamp(it),
+                style = MaterialTheme.typography.labelSmall,
+                color = textColor,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
         creator?.let {
             Text(
                 text = it.uppercase(),
@@ -190,26 +198,17 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
                 maxLines = 1
             )
         }
-        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-        publishDate?.let {
-            Text(
-                text = getFormattedTimeStamp(it),
-                style = MaterialTheme.typography.labelSmall,
-                color = textColor,
-                modifier = Modifier.weight(1f)
-            )
-        }
     }
 }
 
-@Preview
+@Preview(apiLevel = 33)
 @Composable
 fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticleClassAnother, {}, 380.dp)
-                NewsCardVertical(newsArticleClassAnother)
+                NewsCardHorizontal(newsArticle , {}, 380.dp)
+                NewsCardVertical(newsArticle)
             }
         }
     }
