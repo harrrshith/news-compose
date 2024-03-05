@@ -31,16 +31,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.OriginalSize
+import coil.size.Size
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
+import com.harshith.news.util.toDecodedUrl
 
 @Composable
 fun NewsCardHorizontal(
@@ -127,7 +132,7 @@ fun NewsCardVertical(
                 .padding(start = 8.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            newsArticle.creator?.get(0)?.let {
+            newsArticle.creator?.let {
                 Text(
                     text = it.uppercase(),
                     style = MaterialTheme.typography.bodyMedium,
@@ -150,7 +155,7 @@ fun NewsCardVertical(
 @Composable
 fun GradientImage(imageUrl: String?, modifier: Modifier) {
     AsyncImage(
-        model = imageUrl,
+        model = imageUrl?.toDecodedUrl(),
         contentDescription = "image",
         contentScale = ContentScale.FillBounds,
         modifier = modifier

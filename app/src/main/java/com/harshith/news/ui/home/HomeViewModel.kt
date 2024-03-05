@@ -67,7 +67,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when(val homeFeedNews = newsRepository.fetchIndiaNews("in")){
                 is NetworkResult.Success -> {
-                    TAG.logE("${homeFeedNews.data.results}")
                     viewModelState.update { it.copy(
                         isLoading = false,
                         horizontalNewsFeed = homeFeedNews.data.results?.toNewArticleList()
@@ -113,12 +112,10 @@ class HomeViewModel @Inject constructor(
                 }
 
                 "Technology" -> {
-                    TAG.logE("Technology")
                     getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("technology"))
                 }
 
                 "Entertainment" -> {
-                    TAG.logE("Entertainment")
                     getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("entertainment"))
                 }
 
@@ -126,8 +123,8 @@ class HomeViewModel @Inject constructor(
                     getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("politics"))
                 }
 
-                "Others" -> {
-                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("other"))
+                "General" -> {
+                    getNewsArticlesByCategory(newsRepository.fetchNewsByCategory("general"))
                 }
             }
         }

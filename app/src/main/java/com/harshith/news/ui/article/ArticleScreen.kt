@@ -1,13 +1,18 @@
 package com.harshith.news.ui.article
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,10 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.harshith.news.R
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
@@ -35,6 +42,7 @@ fun ArticleScreen(
    Column(
        modifier = Modifier
            .fillMaxSize()
+           .verticalScroll(rememberScrollState())
    ) {
        AppBar(Modifier.fillMaxWidth(), onBack)
        newsArticle.imageUrl?.let {
@@ -56,6 +64,17 @@ fun ArticleScreen(
                    .padding(horizontal = 8.dp)
            )
        }
+       HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp))
+       newsArticle.description?.let {
+           Text(
+               text = it,
+               style = MaterialTheme.typography.bodyLarge,
+               textAlign = TextAlign.Justify,
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(horizontal = 8.dp)
+           )
+       }
        Spacer(modifier = Modifier.padding(vertical = 4.dp))
        newsArticle.content?.let {
            Text(
@@ -67,6 +86,7 @@ fun ArticleScreen(
                    .padding(horizontal = 8.dp)
            )
        }
+       ArticleAuthorAndPublishedOn(newsArticle.creator, newsArticle.pubDate)
    }
 }
 
@@ -97,7 +117,23 @@ fun ArticleImage(modifier: Modifier, imageUrl: String){
     )
 }
 
-@Preview(apiLevel = 33)
+@Composable
+fun ArticleAuthorAndPublishedOn(author: String?, publishedOn: String?){
+    Row(
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        author?.let {
+            Text(text = stringResource(id = R.string.author, it), modifier = Modifier.weight(1f))
+        }
+        publishedOn?.let {
+            Text(text = stringResource(id = R.string.publishedOn, it), modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+
+@Preview
 @Composable
 fun PreviewArticleScreen(){
     NewsTheme {

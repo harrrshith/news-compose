@@ -19,42 +19,11 @@ interface ApiService {
     ): Response<NetworkNewsResponse>
 
     @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("everything")
+    @GET("top-headlines")
     suspend fun fetchNewsFirstNewsCategory(
         @Query("country") country: String = "in",
         @Query("language") language: String = "en",
         @Query("category") category: String
     ): Response<NetworkNewsResponse>
 
-    @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("everything")
-    suspend fun fetchNewsSecondNewsCategory(
-        @Query("country") country: String = "in",
-        @Query("language") language: String = "en",
-        @Query("category") category: String,
-    ): Response<NetworkNewsResponse>
-
-    @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("everything")
-    suspend fun fetchNewsThirdNewsCategory(
-        @Query("country") country: String = "in",
-        @Query("language") language: String = "en",
-        @Query("category") category: String,
-    ): Response<NetworkNewsResponse>
-
-    @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("everything")
-    suspend fun fetchNewsFourthNewsCategory(
-        @Query("country") country: String = "in",
-        @Query("language") language: String = "en",
-        @Query("category") category: String,
-    ): Response<NetworkNewsResponse>
-
-    @Headers("X-Api-Key:${BuildConfig.API_KEY}")
-    @GET("everything")
-    suspend fun fetchNewsFifthNewsCategory(
-        @Query("country") country: String = "in",
-        @Query("language") language: String = "en",
-        @Query("category") category: String,
-    ): Response<NetworkNewsResponse>
 }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -101,7 +100,7 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.verticalNewsFeed
         is HomeUiState.NoNews -> emptyList()
     }
-    val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "Others")
+    val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "General")
     val tabIndex = remember {
         mutableIntStateOf(0)
     }

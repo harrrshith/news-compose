@@ -25,4 +25,6 @@
     <string name="not_implemented">Not Implemented</string>
     <string name="close">Close</string>
     <string name="lorem_title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="author">Author \n %1d</string>
+    <string name="publishedOn">Published On \n %1d</string>
 </resources>
