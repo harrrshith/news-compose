@@ -8,5 +8,5 @@ fun parseTime(isoString: String): String{
     if(isoString.isEmpty())
         return ""
     val dateTime = LocalDateTime.parse(isoString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-    return dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyy - HH:mm"))
+    return dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm"))
 }

@@ -62,6 +62,7 @@ fun NewsNavGraph(
             ArticleScreen(
                 newsArticle = decodeFromString<NewsArticle>
                     (it.arguments?.getString(NEWS_ARTICLE)?: ""),
+                isBookmarked = true,
                 onBack = { navController.popBackStack() }
             )
         }

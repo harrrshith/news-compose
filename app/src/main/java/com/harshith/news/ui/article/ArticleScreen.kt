@@ -22,49 +22,69 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.harshith.news.R
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
+import com.harshith.news.util.addRegex
+import com.harshith.news.util.parseTime
 
 const val TAG = "ArticleScreen"
 @Composable
 fun ArticleScreen(
     newsArticle: NewsArticle,
+    isBookmarked: Boolean,
     onBack: () -> Unit,
 ){
    Column(
        modifier = Modifier
            .fillMaxSize()
            .verticalScroll(rememberScrollState())
+           .padding(horizontal = 12.dp)
    ) {
-       AppBar(Modifier.fillMaxWidth(), onBack)
+       AppBar(
+           Modifier.fillMaxWidth(),
+           true,
+           onBack
+       )
+       newsArticle.title?.let {
+           Text(
+               text = it,
+               style = MaterialTheme.typography.titleLarge,
+               fontWeight = FontWeight.Bold,
+               letterSpacing = TextUnit(value = 1f, type = TextUnitType.Sp),
+               modifier = Modifier
+                   .fillMaxWidth()
+           )
+       }
+       Spacer(modifier = Modifier.padding(top = 4.dp))
+       ArticleAuthorAndPublishedOn(newsArticle.creator, newsArticle.pubDate)
+       Spacer(modifier = Modifier.padding(top = 8.dp))
        newsArticle.imageUrl?.let {
            ArticleImage(
                Modifier
                    .fillMaxWidth()
                    .aspectRatio(1.5f)
-                   .padding(horizontal = 4.dp)
                    .clip(MaterialTheme.shapes.extraLarge),
                it)
        }
-       Spacer(modifier = Modifier.padding(top = 8.dp))
-       newsArticle.title?.let {
-           Text(
-               text = it,
-               style = MaterialTheme.typography.titleLarge,
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(horizontal = 8.dp)
-           )
-       }
-       HorizontalDivider(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp))
+       Spacer(modifier = Modifier.padding(vertical = 4.dp))
        newsArticle.description?.let {
            Text(
                text = it,
@@ -72,21 +92,18 @@ fun ArticleScreen(
                textAlign = TextAlign.Justify,
                modifier = Modifier
                    .fillMaxWidth()
-                   .padding(horizontal = 8.dp)
            )
        }
        Spacer(modifier = Modifier.padding(vertical = 4.dp))
        newsArticle.content?.let {
            Text(
-               text = it,
-               style = MaterialTheme.typography.bodyMedium,
-               textAlign = TextAlign.Justify,
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(horizontal = 8.dp)
-           )
+               buildAnnotatedString {
+               append(it.addRegex())
+               withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline, color = Color.Blue)){
+                   append("read more")
+               }
+           })
        }
-       ArticleAuthorAndPublishedOn(newsArticle.creator, newsArticle.pubDate)
    }
 }
 
@@ -94,6 +111,7 @@ fun ArticleScreen(
 @Composable
 fun AppBar(
     modifier: Modifier,
+    isBookmarked: Boolean,
     onBack: () -> Unit
 ){
     TopAppBar(
@@ -102,6 +120,13 @@ fun AppBar(
         navigationIcon = {
             IconButton(onClick = { onBack() }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+            }
+        },
+        actions = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = if(isBookmarked)painterResource(id = R.drawable.ic_unbookmark) else painterResource(id = R.drawable.ic_bookmark),
+                    contentDescription = null)
             }
         }
     )
@@ -124,10 +149,18 @@ fun ArticleAuthorAndPublishedOn(author: String?, publishedOn: String?){
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         author?.let {
-            Text(text = stringResource(id = R.string.author, it), modifier = Modifier.weight(1f))
+            Text(
+                text = it,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleSmall
+            )
         }
         publishedOn?.let {
-            Text(text = stringResource(id = R.string.publishedOn, it), modifier = Modifier.weight(1f))
+            Text(
+                text = parseTime(it),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleSmall
+            )
         }
     }
 }
@@ -142,6 +175,7 @@ fun PreviewArticleScreen(){
         ) {
             ArticleScreen(
                 newsArticle = newsArticle,
+                isBookmarked = true,
                 onBack = {  },)
         }
     }
