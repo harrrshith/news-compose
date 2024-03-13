@@ -31,27 +31,25 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import coil.size.OriginalSize
-import coil.size.Size
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
 import com.harshith.news.util.toDecodedUrl
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun NewsCardHorizontal(
     newsArticle: NewsArticle,
     onSelectPosts: (NewsArticle) -> Unit,
-    width: Dp
+    width: Dp,
+    isLoading: Boolean
 ){
     val textColor = Color.White
     val cardColor = CardDefaults.cardColors(
@@ -59,11 +57,20 @@ fun NewsCardHorizontal(
         contentColor = Color.White
     )
     Card(
-        modifier = Modifier.clickable(
-            onClick = { onSelectPosts(newsArticle) }
-        )
-            .wrapContentSize()
-            .padding(horizontal = 8.dp, vertical = 8.dp)
+        modifier = if(isLoading){
+            Modifier.clickable(
+                onClick = { onSelectPosts(newsArticle) }
+            )
+                .wrapContentSize()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .shimmer()
+        }else{
+            Modifier.clickable(
+                onClick = { onSelectPosts(newsArticle) }
+            )
+                .wrapContentSize()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+        }
     ) {
         Box(
             modifier = Modifier
@@ -114,10 +121,15 @@ fun NewsCardHorizontal(
 
 @Composable
 fun NewsCardVertical(
-    newsArticle: NewsArticle
+    newsArticle: NewsArticle,
+    isLoading: Boolean
 ){
     Row(
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+        modifier = if(isLoading){
+            Modifier.padding(horizontal = 8.dp, vertical = 8.dp).shimmer()
+        }else{
+            Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+        }
     ) {
         GradientImage(
             imageUrl = newsArticle.imageUrl,
@@ -206,14 +218,14 @@ fun PublisherAndTime(creator: String?, publishDate: String?, textColor: Color = 
     }
 }
 
-@Preview(apiLevel = 33)
+@Preview
 @Composable
 fun PreviewNewsCard(){
     NewsTheme {
         Surface(Modifier.fillMaxSize()) {
             Column {
-                NewsCardHorizontal(newsArticle , {}, 380.dp)
-                NewsCardVertical(newsArticle)
+                NewsCardHorizontal(newsArticle , {}, 380.dp, false)
+                NewsCardVertical(newsArticle, false)
             }
         }
     }

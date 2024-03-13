@@ -1,4 +1,5 @@
 [versions]
+composeShimmer = "1.2.0"
 ktx = "1.12.0"
 androidGradlePlugin = "8.2.2"
 kotlinVersion = "1.9.0"
@@ -43,6 +44,7 @@ androidx-navigation-compose = { group="androidx.navigation", name="navigation-co
 androidx-viemodel-compose = { group="androidx.lifecycle", name="lifecycle-viewmodel-compose", version.ref="viewModelVersion"}
 androidx-lifecycle-compose = { group="androidx.lifecycle", name="lifecycle-runtime-compose", version.ref="lifeCycleVersion"}
 androidx-material3-window-size = { group="androidx.compose.material3", name="material3-window-size-class", version.ref="windowSizeVersion"}
+compose-shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "composeShimmer" }
 square-retrofit2 = { group="com.squareup.retrofit2", name="retrofit", version.ref="retrofitVersion"}
 retrofit-convertor-gson = { group="com.squareup.retrofit2", name="converter-gson", version.ref="retrofitVersion"}
 dagger-hilt = { group="com.google.dagger", name="hilt-android", version.ref="hiltVersion" }

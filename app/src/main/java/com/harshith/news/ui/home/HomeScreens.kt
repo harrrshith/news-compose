@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,6 +48,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.utils.NewsTopAppBar
+import com.harshith.news.util.logE
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun HomeFeedWithArticleDetailsScreen(
@@ -100,6 +103,17 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.verticalNewsFeed
         is HomeUiState.NoNews -> emptyList()
     }
+
+    val isHorizontalLoading = when(uiState){
+        is HomeUiState.HasNews -> uiState.isHorizontalLoading
+        is HomeUiState.NoNews -> true
+    }
+
+    val isVerticalLoading = when(uiState){
+        is HomeUiState.HasNews -> uiState.isVerticalLoading
+        is HomeUiState.NoNews -> true
+    }
+    TAG.logE("$isVerticalLoading")
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "General")
     val tabIndex = remember {
         mutableIntStateOf(0)
@@ -130,7 +144,8 @@ fun HomeFeedScreen(
                     newsArticle = newsArticles,
                     lazyListState = rememberLazyListState(),
                     onSelectPosts = onSelectPosts,
-                    width = screenWidth
+                    width = screenWidth,
+                    isLoading = isHorizontalLoading
                 )
         }
         Column(modifier = Modifier.height(screenHeight + 100.dp)) {
@@ -145,6 +160,7 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
+                isLoading = isVerticalLoading
             )
         }
     }
@@ -156,7 +172,8 @@ fun TopHeadlines(
     newsArticle: List<NewsArticle>,
     lazyListState: LazyListState,
     onSelectPosts: (NewsArticle) -> Unit,
-    width: Dp
+    width: Dp,
+    isLoading: Boolean
 ){
     Text(
         text = "Top Headlines",
@@ -169,7 +186,12 @@ fun TopHeadlines(
         flingBehavior = rememberSnapFlingBehavior(lazyListState)
     ){
         items(newsArticle.size){index ->
-            NewsCardHorizontal(newsArticle = newsArticle[index], width = width, onSelectPosts = onSelectPosts)
+            NewsCardHorizontal(
+                newsArticle = newsArticle[index],
+                width = width,
+                onSelectPosts = onSelectPosts,
+                isLoading = isLoading
+            )
         }
     }
 }
@@ -219,6 +241,7 @@ fun NewsPager(
     newsArticles: List<NewsArticle>?,
     modifier: Modifier,
     scrollState: ScrollState,
+    isLoading: Boolean
 ){
     LaunchedEffect(state.currentPage, state.isScrollInProgress){
         if(!state.isScrollInProgress){
@@ -248,16 +271,16 @@ fun NewsPager(
         userScrollEnabled = true
     ) {
         // use the same login to get the news from the different categories.
-        LazyNewsColumn(newsArticles = newsArticles)
+        LazyNewsColumn(newsArticles = newsArticles, isLoading = isLoading)
     }
 }
 
 @Composable
-fun LazyNewsColumn(newsArticles: List<NewsArticle>?){
+fun LazyNewsColumn(newsArticles: List<NewsArticle>?, isLoading: Boolean){
     LazyColumn(modifier = Modifier.fillMaxSize()){
         newsArticles?.let {
             items(newsArticles.size){index ->
-                NewsCardVertical(newsArticle = newsArticles[index])
+                NewsCardVertical(newsArticle = newsArticles[index], isLoading = isLoading)
             }
         }
     }

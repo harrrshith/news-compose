@@ -20,25 +20,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HomeViewModelState(
-    val isLoading: Boolean = false,
     val horizontalNewsFeed: List<NewsArticle>? = null,
     val verticalNewsFeed: List<NewsArticle>? = null,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
+    val isHorizontalLoading: Boolean = true,
+    val isVerticalLoading: Boolean = true
 ){
     fun toUiState(): HomeUiState =
         if (horizontalNewsFeed == null) {
             HomeUiState.NoNews(
-                isLoading = isLoading,
                 errorMessage = errorMessage,
                 verticalNewsFeed = emptyList(),
-                horizontalNewsFeed = emptyList()
+                horizontalNewsFeed = emptyList(),
+                isHorizontalLoading = true,
+                isVerticalLoading = true
             )
         }else{
             HomeUiState.HasNews(
-                isLoading = isLoading,
                 errorMessage = errorMessage,
                 verticalNewsFeed = verticalNewsFeed,
-                horizontalNewsFeed = horizontalNewsFeed
+                horizontalNewsFeed = horizontalNewsFeed,
+                isVerticalLoading = false,
+                isHorizontalLoading = false
             )
         }
 }
@@ -50,7 +53,8 @@ class HomeViewModel @Inject constructor(
     private val TAG = "HomeViewModel"
     private var viewModelState = MutableStateFlow(
         HomeViewModelState(
-            isLoading = true
+            isVerticalLoading = true,
+            isHorizontalLoading = true
         )
     )
 
@@ -68,8 +72,8 @@ class HomeViewModel @Inject constructor(
             when(val homeFeedNews = newsRepository.fetchIndiaNews("in")){
                 is NetworkResult.Success -> {
                     viewModelState.update { it.copy(
-                        isLoading = false,
-                        horizontalNewsFeed = homeFeedNews.data.results?.toNewArticleList()
+                        horizontalNewsFeed = homeFeedNews.data.results?.toNewArticleList(),
+                        isHorizontalLoading = false
                     ) }
                 }
                 is NetworkResult.Error -> {
@@ -105,6 +109,9 @@ class HomeViewModel @Inject constructor(
 
     fun getNewsByCategory(category: String) {
 //        "Sports", "Technology", "Entertainment", "Politics", "Others"
+        viewModelState.update {
+            it.copy(isVerticalLoading = true)
+        }
         viewModelScope.launch {
             when (category) {
                 "Sports" -> {
@@ -134,7 +141,8 @@ class HomeViewModel @Inject constructor(
         is NetworkResult.Success -> {
             viewModelState.update {
                 it.copy(
-                    verticalNewsFeed = result.data.results?.toNewArticleList()
+                    verticalNewsFeed = result.data.results?.toNewArticleList(),
+                    isVerticalLoading = false
                 )
             }
         }
