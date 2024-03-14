@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.harshith.news.data.local.dao.NewsArticleDao
 import com.harshith.news.data.local.entities.NewsArticleEntity
-import com.harshith.news.data.local.entities.NewsSourceEntity
 
 @Database(
     entities = [

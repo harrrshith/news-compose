@@ -82,14 +82,10 @@ fun HomeFeedWithArticleDetailsScreen(
 @Composable
 fun HomeFeedScreen(
     uiState: HomeUiState,
-    viewModel: HomeViewModel,
     showTopAppBar: Boolean,
-    onToggleFavourite: (String) -> Unit,
     onSelectPosts: (NewsArticle) -> Unit,
     openDrawer: () -> Unit,
-    homeListLazyListState: LazyListState,
-    snackbarHostState: SnackbarHostState,
-    getNewsByCategory: (String) -> Unit
+    getNewsByCategory: (String) -> Unit,
 ){
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
@@ -113,7 +109,6 @@ fun HomeFeedScreen(
         is HomeUiState.HasNews -> uiState.isVerticalLoading
         is HomeUiState.NoNews -> true
     }
-    TAG.logE("$isVerticalLoading")
     val tabTitles = listOf("Sports", "Technology", "Entertainment", "Politics", "General")
     val tabIndex = remember {
         mutableIntStateOf(0)
@@ -160,7 +155,7 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
-                isLoading = isVerticalLoading
+                onSelectPost = onSelectPosts
             )
         }
     }
@@ -241,7 +236,7 @@ fun NewsPager(
     newsArticles: List<NewsArticle>?,
     modifier: Modifier,
     scrollState: ScrollState,
-    isLoading: Boolean
+    onSelectPost: (NewsArticle) -> Unit
 ){
     LaunchedEffect(state.currentPage, state.isScrollInProgress){
         if(!state.isScrollInProgress){
@@ -271,16 +266,16 @@ fun NewsPager(
         userScrollEnabled = true
     ) {
         // use the same login to get the news from the different categories.
-        LazyNewsColumn(newsArticles = newsArticles, isLoading = isLoading)
+        LazyNewsColumn(newsArticles = newsArticles, onSelectPost = onSelectPost)
     }
 }
 
 @Composable
-fun LazyNewsColumn(newsArticles: List<NewsArticle>?, isLoading: Boolean){
+fun LazyNewsColumn(newsArticles: List<NewsArticle>?, onSelectPost: (NewsArticle) -> Unit){
     LazyColumn(modifier = Modifier.fillMaxSize()){
         newsArticles?.let {
             items(newsArticles.size){index ->
-                NewsCardVertical(newsArticle = newsArticles[index], isLoading = isLoading)
+                NewsCardVertical(newsArticle = newsArticles[index], onSelectPost = onSelectPost)
             }
         }
     }

@@ -71,13 +71,9 @@ fun HomeRoute(
     else{
         HomeFeedScreen(
             uiState = uiState,
-            viewModel = viewModel,
             showTopAppBar = true,
-            onToggleFavourite = onToggleFavourite,
             onSelectPosts = { onSelectPosts(it)},
             openDrawer = { openDrawer() },
-            homeListLazyListState = homeLazyListState,
-            snackbarHostState = snackbarHostState,
             getNewsByCategory = getNewsByCategory
         )
     }

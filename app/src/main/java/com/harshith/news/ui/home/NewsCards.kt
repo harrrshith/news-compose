@@ -122,14 +122,12 @@ fun NewsCardHorizontal(
 @Composable
 fun NewsCardVertical(
     newsArticle: NewsArticle,
-    isLoading: Boolean
+    onSelectPost: (NewsArticle) -> Unit
 ){
     Row(
-        modifier = if(isLoading){
-            Modifier.padding(horizontal = 8.dp, vertical = 8.dp).shimmer()
-        }else{
-            Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
-        }
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp).clickable(
+            onClick = { onSelectPost(newsArticle) }
+        )
     ) {
         GradientImage(
             imageUrl = newsArticle.imageUrl,
@@ -225,7 +223,7 @@ fun PreviewNewsCard(){
         Surface(Modifier.fillMaxSize()) {
             Column {
                 NewsCardHorizontal(newsArticle , {}, 380.dp, false)
-                NewsCardVertical(newsArticle, false)
+                NewsCardVertical(newsArticle, {})
             }
         }
     }

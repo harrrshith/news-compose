@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.harshith.news.data.local.entities.NewsArticleEntity
+import com.harshith.news.model.NewsArticle
 import com.harshith.news.util.Constants
 import kotlinx.coroutines.flow.Flow
 
@@ -13,11 +14,11 @@ interface NewsArticleDao{
     @Insert
     fun addNewsArticles(articles: List<NewsArticleEntity>)
 
-    @Query("SELECT * FROM news_database WHERE myCategory='${Constants.INDIA_NEWS}'")
-    fun observerIndiaCategory(): Flow<List<NewsArticleEntity>>
-
-    @Query("SELECT * FROM news_database WHERE myCategory='${Constants.USA_NEWS}'")
-    fun observerUsaCategory(): Flow<List<NewsArticleEntity>>
+//    @Query("SELECT * FROM news_database WHERE myCategory='${Constants.INDIA_NEWS}'")
+//    fun observerIndiaCategory(): Flow<List<NewsArticleEntity>>
+//
+//    @Query("SELECT * FROM news_database WHERE myCategory='${Constants.USA_NEWS}'")
+//    fun observerUsaCategory(): Flow<List<NewsArticleEntity>>
 
     @Query("SELECT * FROM news_database WHERE uuid=:uuid")
     fun getANewsArticle(uuid: String): NewsArticleEntity
@@ -30,4 +31,7 @@ interface NewsArticleDao{
 
     @Query("SELECT COUNT(*) FROM NEWS_DATABASE")
     fun getDatabaseCount(): Int
+
+    @Insert
+    fun addNewsArticleToReadLater(newsArticleEntity: NewsArticleEntity)
 }

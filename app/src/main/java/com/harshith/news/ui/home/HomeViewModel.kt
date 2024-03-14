@@ -110,7 +110,10 @@ class HomeViewModel @Inject constructor(
     fun getNewsByCategory(category: String) {
 //        "Sports", "Technology", "Entertainment", "Politics", "Others"
         viewModelState.update {
-            it.copy(isVerticalLoading = true)
+            it.copy(
+                isVerticalLoading = true,
+                verticalNewsFeed = emptyList()
+            )
         }
         viewModelScope.launch {
             when (category) {

@@ -9,26 +9,19 @@ import java.util.UUID
 data class NewsArticleEntity(
     @PrimaryKey
     val uuid: String = generateUUID(),
-    var myCategory: String = getCategoryName(),
-    val author: String? = "",
-    val content: String? = "",
-    val description: String? = "",
-    val publishedAt: String? = "",
-    @Embedded val source: NewsSourceEntity?,
-    val title: String? = "",
-    val url: String? = "",
-    val urlToImage: String? = ""
+    val content: String? = null,
+    val creator: String? = null,
+    val description: String? = null,
+    val imageUrl: String? = null,
+    val link: String? = null,
+    val pubDate: String? = null,
+    val title: String? = null,
+    val sourceId: String? = null,
+    val sourceName: String? = null
 ){
     companion object{
-        private const val category: String = ""
         fun generateUUID(): String{
             return UUID.randomUUID().toString()
         }
-        fun getCategoryName() = category
     }
 }
-
-data class NewsSourceEntity(
-    val id: String?,
-    val name: String?
-)
