@@ -16,7 +16,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun NewsTopAppBar(
     modifier: Modifier,
-    openNavigationDrawer: () -> Unit
+    openNavigationDrawer: () -> Unit,
+    topBarTitle: String,
 ){
     val topAppBarColors = TopAppBarDefaults.topAppBarColors(
         containerColor = MaterialTheme.colorScheme.primary,
@@ -26,7 +27,7 @@ fun NewsTopAppBar(
     TopAppBar(
         modifier = modifier,
         title = {
-            Text(text = "NEWS")
+            Text(text = topBarTitle)
         },
         navigationIcon = {
             IconButton(onClick = { openNavigationDrawer() }) {

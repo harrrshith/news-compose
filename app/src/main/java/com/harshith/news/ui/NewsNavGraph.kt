@@ -14,15 +14,12 @@ import com.harshith.news.data.AppContainer
 import com.harshith.news.model.NewsArticle
 import com.harshith.news.ui.article.ArticleScreen
 import com.harshith.news.ui.home.HomeRoute
-import com.harshith.news.ui.interests.InterestsRoute
-import com.harshith.news.ui.interests.InterestsViewModel
+import com.harshith.news.ui.interests.BookmarkedRoute
 import kotlinx.serialization.json.Json.Default.decodeFromString
 
-const val POST_ID = "postId"
 const val NEWS_ARTICLE = "newsArticle"
 @Composable
 fun NewsNavGraph(
-    appContainer: AppContainer,
     isExpandedScreen: Boolean,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
@@ -42,15 +39,10 @@ fun NewsNavGraph(
                 navigateToArticleDetail = { navigationToDetail(it) }
             )
         }
-        composable(NewsDestination.INTERESTS_ROUTE){
-            val interestsViewModel: InterestsViewModel = viewModel(
-                factory = InterestsViewModel.provideFactory(
-                    interestsRepository = appContainer.interestsRepository
-                )
-            )
-            InterestsRoute(
-                interestsViewModel = interestsViewModel,
+        composable(NewsDestination.BOOKMARKED_ROUTE){
+            BookmarkedRoute(
                 isExpandedScreen = isExpandedScreen,
+                onArticleClicked = { navigationToDetail(it) },
                 openDrawer = openDrawer
             )
         }

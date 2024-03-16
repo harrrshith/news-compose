@@ -42,3 +42,18 @@ fun NewsArticle.toNewsArticleEntity() = NewsArticleEntity(
     sourceId = this.sourceId,
     sourceName = this.sourceName
 )
+
+fun List<NewsArticleEntity>.toNewsArticle() = map{ newsArticleEntity ->
+    NewsArticle(
+        content = newsArticleEntity.content,
+        creator = newsArticleEntity.creator,
+        description = newsArticleEntity.description,
+        imageUrl = newsArticleEntity.imageUrl,
+        link = newsArticleEntity.link,
+        pubDate = newsArticleEntity.pubDate,
+        title = newsArticleEntity.title,
+        sourceId = newsArticleEntity.sourceId,
+        sourceName = newsArticleEntity.sourceName
+    )
+
+}

@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun NewsApp(
-    appContainer: AppContainer,
     widthSizeClass: WindowWidthSizeClass
 ){
     NewsTheme {
@@ -45,7 +44,7 @@ fun NewsApp(
                 AppDrawer(
                     currentRoute = currentRoute,
                     navigateToHome = navigationActions.navigateToHome,
-                    navigateToInterests = navigationActions.navigateToInterests,
+                    navigateToInterests = navigationActions.navigateToBookmarks,
                     closeDrawer = { coroutineScope.launch{sizeAwareDrawerState.close()} }
                 )
             },
@@ -53,7 +52,6 @@ fun NewsApp(
             gesturesEnabled = !isExpandedSize
         ) {
             NewsNavGraph(
-                appContainer = appContainer,
                 isExpandedScreen = isExpandedSize,
                 navController = navController,
                 openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },

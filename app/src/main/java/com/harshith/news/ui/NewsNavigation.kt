@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 
 object NewsDestination{
     const val HOME = "home"
-    const val INTERESTS_ROUTE = "interests"
+    const val BOOKMARKED_ROUTE = "bookmark"
     const val  ARTICLE_DETAILS_ROUTE = "articleDetails/{newsArticle}"
 }
 
@@ -24,8 +24,8 @@ class NewsNavigationActions(navController: NavHostController){
         }
     }
 
-    val navigateToInterests: () -> Unit = {
-        navController.navigate(NewsDestination.INTERESTS_ROUTE){
+    val navigateToBookmarks: () -> Unit = {
+        navController.navigate(NewsDestination.BOOKMARKED_ROUTE){
             popUpTo(navController.graph.findStartDestination().id){
                 saveState = true
             }

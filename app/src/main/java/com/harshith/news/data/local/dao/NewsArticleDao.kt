@@ -17,8 +17,8 @@ interface NewsArticleDao{
 //    @Query("SELECT * FROM news_database WHERE myCategory='${Constants.USA_NEWS}'")
 //    fun observerUsaCategory(): Flow<List<NewsArticleEntity>>
 
-    @Query("SELECT * FROM news_database WHERE uuid=:uuid")
-    fun getANewsArticle(uuid: String): NewsArticleEntity
+    @Query("SELECT * FROM news_database")
+    suspend fun getAllBookMarkedNewsArticle(): List<NewsArticleEntity>
 
     //@Query("SELECT * FROM news_database")
     //suspend fun getAllNewsArticles(): List<NewsArticleEntity>

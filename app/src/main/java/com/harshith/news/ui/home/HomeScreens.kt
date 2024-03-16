@@ -130,7 +130,8 @@ fun HomeFeedScreen(
         if(showTopAppBar){
             NewsTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                openDrawer
+                openDrawer,
+                "News"
             )
         }
         newsFeed?.let { newsArticles ->

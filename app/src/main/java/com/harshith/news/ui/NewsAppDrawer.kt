@@ -50,9 +50,9 @@ fun AppDrawer(
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
         NavigationDrawerItem(
-            label = { Text(text = stringResource(id = R.string.interests)) },
+            label = { Text(text = stringResource(id = R.string.bookmarked)) },
             icon = { Icon( Icons.Filled.List, null) },
-            selected = currentRoute == NewsDestination.INTERESTS_ROUTE,
+            selected = currentRoute == NewsDestination.BOOKMARKED_ROUTE,
             onClick = { navigateToInterests(); closeDrawer() },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
