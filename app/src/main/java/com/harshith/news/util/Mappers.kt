@@ -1,5 +1,6 @@
 package com.harshith.news.util
 
+import com.harshith.news.data.local.entities.NewsArticleEntity
 import com.harshith.news.data.network.model.NetworkNewsArticle
 import com.harshith.news.data.network.model.NetworkNewsResponse
 import com.harshith.news.model.NewsArticle
@@ -30,3 +31,14 @@ fun List<NetworkNewsArticle>.toNewArticleList() = map { networkNewsArticle ->
     )
 }
 
+fun NewsArticle.toNewsArticleEntity() = NewsArticleEntity(
+    content = this.content,
+    creator = this.creator,
+    description = this.description,
+    imageUrl = this.imageUrl,
+    link = this.link,
+    pubDate = this.pubDate,
+    title = this.title,
+    sourceId = this.sourceId,
+    sourceName = this.sourceName
+)

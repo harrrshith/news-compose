@@ -4,9 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.harshith.news.data.local.entities.NewsArticleEntity
-import com.harshith.news.model.NewsArticle
-import com.harshith.news.util.Constants
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NewsArticleDao{
@@ -23,8 +20,8 @@ interface NewsArticleDao{
     @Query("SELECT * FROM news_database WHERE uuid=:uuid")
     fun getANewsArticle(uuid: String): NewsArticleEntity
 
-    @Query("SELECT * FROM news_database")
-    suspend fun getAllNewsArticles(): List<NewsArticleEntity>
+    //@Query("SELECT * FROM news_database")
+    //suspend fun getAllNewsArticles(): List<NewsArticleEntity>
 
     @Query("DELETE FROM news_database")
     fun deleteAllNews()
@@ -33,5 +30,5 @@ interface NewsArticleDao{
     fun getDatabaseCount(): Int
 
     @Insert
-    fun addNewsArticleToReadLater(newsArticleEntity: NewsArticleEntity)
+    suspend fun addNewsArticleToReadLater(newsArticleEntity: NewsArticleEntity)
 }
