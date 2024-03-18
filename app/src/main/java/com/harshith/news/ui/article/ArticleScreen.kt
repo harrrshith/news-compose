@@ -46,6 +46,7 @@ import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.util.addRegex
+import com.harshith.news.util.logE
 import com.harshith.news.util.parseTime
 import kotlinx.coroutines.launch
 
@@ -57,6 +58,7 @@ fun ArticleScreen(
     isBookmarked: Boolean = false,
     onBack: () -> Unit,
 ){
+    TAG.logE("$newsArticle")
     Column(
         modifier = Modifier
             .fillMaxSize()

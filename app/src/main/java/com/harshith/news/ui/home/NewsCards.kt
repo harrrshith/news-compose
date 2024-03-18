@@ -41,6 +41,7 @@ import com.harshith.news.model.NewsArticle
 import com.harshith.news.model.newsArticle
 import com.harshith.news.ui.theme.NewsTheme
 import com.harshith.news.ui.utils.getFormattedTimeStamp
+import com.harshith.news.util.logE
 import com.harshith.news.util.toDecodedUrl
 import com.valentinilk.shimmer.shimmer
 

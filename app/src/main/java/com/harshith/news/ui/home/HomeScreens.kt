@@ -139,7 +139,7 @@ fun HomeFeedScreen(
                 TopHeadlines(
                     newsArticle = newsArticles,
                     lazyListState = rememberLazyListState(),
-                    onSelectPosts = onSelectPosts,
+                    onSelectPosts = { onSelectPosts(it) },
                     width = screenWidth,
                     isLoading = isHorizontalLoading
                 )
@@ -156,7 +156,7 @@ fun HomeFeedScreen(
                 newsArticles = verticaNewsFeed,
                 modifier = Modifier,
                 scrollState = scrollState,
-                onSelectPost = onSelectPosts
+                onSelectPost = { onSelectPosts(it) }
             )
         }
     }
@@ -185,7 +185,7 @@ fun TopHeadlines(
             NewsCardHorizontal(
                 newsArticle = newsArticle[index],
                 width = width,
-                onSelectPosts = onSelectPosts,
+                onSelectPosts = { onSelectPosts(it) },
                 isLoading = isLoading
             )
         }
@@ -267,7 +267,7 @@ fun NewsPager(
         userScrollEnabled = true
     ) {
         // use the same login to get the news from the different categories.
-        LazyNewsColumn(newsArticles = newsArticles, onSelectPost = onSelectPost)
+        LazyNewsColumn(newsArticles = newsArticles, onSelectPost = { onSelectPost(it) })
     }
 }
 
@@ -276,7 +276,7 @@ fun LazyNewsColumn(newsArticles: List<NewsArticle>?, onSelectPost: (NewsArticle)
     LazyColumn(modifier = Modifier.fillMaxSize()){
         newsArticles?.let {
             items(newsArticles.size){index ->
-                NewsCardVertical(newsArticle = newsArticles[index], onSelectPost = onSelectPost)
+                NewsCardVertical(newsArticle = newsArticles[index], onSelectPost = { onSelectPost(it) })
             }
         }
     }
