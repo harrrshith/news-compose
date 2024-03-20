@@ -6,7 +6,8 @@ This is a project through which I learnt jetpack compose.
 
 * MVVM Architecture (ViewModel + MutableState + Flow)
 * Dagger Hilt for DI
-* Compose ConstraintLayout
+* Retrofit
+* kotlinx.serialization
 * Compose TopBar
 * Using Newsapi.org API as a data source
 
@@ -20,7 +21,7 @@ This is a project through which I learnt jetpack compose.
 ### Status: 🚧 Still Learning
 <ol>
     <li>This project helped me learn jetpack compose.</li>
-    <li>Still many improvements can be done.</li>
+    <li>Feedbacks are appreciated</li>
 </ol>
 
 ### How to get started
